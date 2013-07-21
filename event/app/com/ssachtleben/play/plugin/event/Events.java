@@ -1,7 +1,7 @@
 package com.ssachtleben.play.plugin.event;
 
 /**
- * Events provides an instance of {@link EventService for publishing events,
+ * Events provides an instance of {@link EventService} for publishing events,
  * register new and unregister existing subscribers.
  * <p/>
  * Its planed to allow swapping the EventService implementation via a

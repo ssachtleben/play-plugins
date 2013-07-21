@@ -10,10 +10,14 @@ import play.Plugin;
 import com.ssachtleben.play.plugin.event.annotations.Observer;
 
 /**
- * The EventPlugin register all subscriber methods to the eventbus during the
- * play application start.
+ * During application start the EventPlugin checks for all {@link Observer}
+ * annotated methods register them as subscribers at the implemented instance of
+ * {@link EventService} which could be received from {@link Events}.
  * 
  * @author Sebastian Sachtleben
+ * @see Observer
+ * @see EventService
+ * @see Events
  */
 public class EventPlugin extends Plugin {
   private static final Logger.ALogger log = Logger.of(EventPlugin.class);

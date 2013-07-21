@@ -5,11 +5,23 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.ssachtleben.play.plugin.event.EventPlugin;
+import com.ssachtleben.play.plugin.event.EventService;
+
 /**
- * Marks a method as an event observerThe Observer annotation declares a method as listener to events and will be
- * registered during application start.
+ * Marks the annotated method as potential subscriber for the class-based or
+ * topic-based, if the topic name is changed, event publication and subscription
+ * process.
+ * <p/>
+ * The method will be registered to the implemented instance of
+ * {@link EventService} during the application start by the {@link EventPlugin}.
+ * <p/>
+ * <b>Important: Currently only static methods can be registered as
+ * subscribers.</b>
  * 
  * @author Sebastian Sachtleben
+ * @see EventService
+ * @see EventPlugin
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
