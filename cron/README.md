@@ -1,18 +1,18 @@
-## Play Cron Plugin - A time-based job scheduler plugin for Play Framework 2.1.x
+# Play Cron Plugin - A time-based job scheduler plugin for Play Framework 2.1.x
 
 This plugin provides a cron service to run time-based jobs. 
 
-### Features
+## Features
 
 The plugin will be started during the application start process and add any class which has the ```@Cronjob``` annotation and an active value of true to the scheduler and execute the job at the given cron expression pattern.
 
-### Requirements
+## Requirements
 
 **play-cron-plugin currently needs Play Framework 2.x**
 
 The `master` branch contains the code for 2.1.0 and the plugin is only tested with Play Framework 2.1.0.
 
-### Installation
+## Installation
 
 * Add to repository resolvers: ```resolvers += Resolver.url("ssachtleben repo (snapshots)", url("http://ssachtleben.github.io/play-plugins/repository/snapshots/"))(Resolver.ivyStylePatterns)```
 
@@ -22,7 +22,7 @@ The `master` branch contains the code for 2.1.0 and the plugin is only tested wi
 
 * Add ```1500:com.ssachtleben.play.plugin.cron.CronPlugin``` to ```play.plugins```
 
-### Usage
+## Usage
 
 Creating new cronjobs never been easier. Just create a new job class. It must be impements the Runnable interface and add the @Cronjob annotation:
 
@@ -56,15 +56,22 @@ public class DisabledJob implements Runnable {
 }
 ```
 
+If any problem or unexpected behavior occur change the log level to debug for play-cron-plugin, try again and check the logs. Maybe its just a wrong pattern or something like that.
+
+```
+# Logger for play-cron-plugin
+logger.com.ssachtleben.play.plugin.cron=DEBUG
+```
+
 For more details check out the [play-cron-plugin-usage](samples/play-cron-plugin-usage) example project.
 
-### Todos
+## Todos
 
 * Add more cronjobs to "play-cron-plugin-usage" project (For example with database read and write parts)
 * Add possibility to pass a package path for the class search (Speed up the search for larger projects)
 * Check job behaviour on cluster deployments (Jobs shouldnt run on multiple servers)
 
-### Licence
+## Licence
 
 This software is licensed under the Apache 2 license, quoted below.
 
