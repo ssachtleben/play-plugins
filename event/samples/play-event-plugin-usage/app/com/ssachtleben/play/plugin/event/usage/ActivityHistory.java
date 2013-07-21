@@ -43,7 +43,7 @@ public class ActivityHistory {
   public static void save(Object event) {
     DateFormat df = SimpleDateFormat.getDateTimeInstance();
     history.add(df.format(new Date()) + " - " + event.toString());
-    log.info("Saved: " + event.toString());
+    log.info("Observed event and save to history: " + event.toString());
   }
 
   /**

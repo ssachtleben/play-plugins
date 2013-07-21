@@ -26,62 +26,99 @@ public class EventBus implements EventService {
   /**
    * The map contains of several method lists grouped by topic.
    */
-  private ConcurrentHashMap<String, List<Method>> listeners = new ConcurrentHashMap<String, List<Method>>();
+  private ConcurrentHashMap<String, List<Method>> subscribers = new ConcurrentHashMap<String, List<Method>>();
 
   /**
    * Create a akka ActorSystem for asyncronous events.
    */
   private ActorSystem system = ActorSystem.create("events");
 
+  /**
+   * The name of the EventBus instance.
+   */
+  private String name;
+
+  /**
+   * Creates a EventBus instance named "default".
+   */
+  public EventBus() {
+    this("default");
+  }
+
+  /**
+   * Creates a EventBus instance with the given {@code name}.
+   * 
+   * @param name
+   *          The EventBus name should be a valid java identifier.
+   */
+  public EventBus(String name) {
+    this.name = name;
+  }
+
   @Override
   public void publish(Object event) {
     log.info("Publish " + event);
-    publish(listeners.get(""), event);
+    publish(subscribers.get(""), event);
   }
 
   @Override
   public void publish(String topic, Object event) {
     log.info("Publish to " + topic + " " + event);
-    publish(listeners.get(topic), event);
+    publish(subscribers.get(topic), event);
   }
 
   @Override
   public void publishAsync(Object event) {
     log.info("Publish async " + event);
-    publishAsync(listeners.get(""), event);
+    publishAsync(subscribers.get(""), event);
   }
 
   @Override
   public void publishAsync(String topic, Object event) {
     log.info("Publish async to " + topic + " " + event);
-    publishAsync(listeners.get(topic), event);
+    publishAsync(subscribers.get(topic), event);
   }
 
   @Override
-  public void addListener(Method method) {
-    log.info("Add listener " + method);
-    add("", method);
+  public void register(Object object) {
+    log.info("Register " + object);
+    add("", object);
   }
 
   @Override
-  public void addListener(String topic, Method method) {
-    log.info("Add listener to " + topic + " " + method);
-    add(topic, method);
+  public void register(String topic, Object object) {
+    log.info("Register " + topic + " " + object);
+    add(topic, object);
+  }
+
+  @Override
+  public void unregister(Object object) {
+    log.warn("Unregister is not implemented yet");
+  }
+
+  @Override
+  public void unregister(String topic, Object object) {
+    log.warn("Unregister is not implemented yet");
   }
 
   /**
-   * Add a new method to our listeners cache.
+   * Adds new subscriber to the EventBus.
    * 
    * @param topic
-   *          The topic receiver.
-   * @param method
-   *          The method to invoke.
+   *          The topic name.
+   * @param object
+   *          The subcriber object.
    */
-  private void add(String topic, Method method) {
-    if (!listeners.contains(topic)) {
-      listeners.put(topic, new ArrayList<Method>());
+  private void add(String topic, Object object) {
+    if (!(object instanceof Method)) {
+      log.warn("Currently only methods can be registered as subscribers");
+      return;
     }
-    listeners.get(topic).add(method);
+    Method method = (Method) object;
+    if (!subscribers.contains(topic)) {
+      subscribers.put(topic, new ArrayList<Method>());
+    }
+    subscribers.get(topic).add(method);
   }
 
   /**
@@ -188,5 +225,4 @@ public class EventBus implements EventService {
       request.getMethod().invoke(null, request.getEvent());
     }
   }
-
 }

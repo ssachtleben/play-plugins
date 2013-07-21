@@ -1,69 +1,112 @@
 package com.ssachtleben.play.plugin.event;
 
-import java.lang.reflect.Method;
-
 /**
- * The EventBus interface provides event subscription and publication services.
- * Its a simple interface for an EventService.
+ * An EventService provides services for publishing events, register new and
+ * unregister existing subscribers. It provides two types of publications and
+ * subcriptions: object-based and topic-based.
+ * <p/>
+ * In the class-based process the subscribers will be notified by the
+ * EventService after the subscribed event object is published.
+ * <p/>
+ * In the topic-based process only subscribers who registered to the topic where
+ * the event object is published will be notified.
  * 
  * @author Sebastian Sachtleben
  */
 public interface EventService {
 
   /**
-   * Publishes synchronously a event to all registered listeners.
+   * Publishes an {@code event} synchronously and all registered subscribers
+   * will be notified if they subscribed to the {@code event}, one of its
+   * subclasses, or to one of the interfaces it implements. The call is blocked
+   * until every listener has processed the {@code event}.
    * 
    * @param event
-   *          The event to publish
+   *          The event object to publish.
    */
   void publish(Object event);
 
   /**
-   * Publishes synchronously a event to all registered listeners of a specific
-   * topic.
+   * Publishes an {@code event} synchronously on a {@code topic} and all
+   * registered subscribers to that name will be notified. The call is blocked
+   * until every listener has processed the {@code event}.
    * 
    * @param topic
-   *          The topic receiver
+   *          The topic to publish.
    * @param event
-   *          The event to publish
+   *          The event object to publish.
    */
   void publish(String topic, Object event);
 
   /**
-   * Publishes asynchronously a event to all registered listeners.
+   * Publishes an {@code event} asynchronously and all registered subscribers
+   * will be notified if they subscribed to the {@code event}, one of its
+   * subclasses, or to one of the interfaces it implements. The call is blocked
+   * until every listener has processed the {@code event}.
    * 
    * @param event
-   *          The event to publish
+   *          The event object to publish.
    */
   void publishAsync(Object event);
 
   /**
-   * Publishes asynchronously a event to all registered listeners of a specific
-   * topic.
+   * Publishes an {@code event} asynchronously on a {@code topic} and all
+   * registered subscribers to that name will be notified. The call is blocked
+   * until every listener has processed the {@code event}.
    * 
    * @param topic
-   *          The topic receiver
+   *          The topic to publish.
    * @param event
-   *          The event to publish
+   *          The event object to publish.
    */
   void publishAsync(String topic, Object event);
 
   /**
-   * Add new method listener to current service.
+   * Register new subscriber to the EventService. The given {@code object} could
+   * be a class, so we check for annotated methods, or it could be directly a
+   * method which will be registered without checking other methods from the
+   * same class.
    * 
-   * @param method
-   *          The method to invoke
+   * @param object
+   *          The subscriber object.
    */
-  void addListener(Method method);
+  void register(Object object);
 
   /**
-   * Add new method listener to current service for a specific topic.
+   * Register new subscriber to the EventService for publication of a specific
+   * {@code topic}. The given {@code object} could be a class, so we check for
+   * annotated methods, or it could be directly a method which will be
+   * registered without checking other methods from the same class.
    * 
    * @param topic
-   *          The topic receiver
-   * @param method
-   *          The method to invoke
+   *          The topic name to subscribe.
+   * @param object
+   *          The subscriber object.
    */
-  void addListener(String topic, Method method);
+  void register(String topic, Object object);
+
+  /**
+   * Unregister subscriber from EventService. The given {@code object} could be
+   * a class, so we check for annotated methods, or it could be directly a
+   * method which will be registered without checking other methods from the
+   * same class.
+   * 
+   * @param object
+   *          he subscribed object.
+   */
+  void unregister(Object object);
+
+  /**
+   * Unregister subscriber for a specific {@code topic} from EventService. The
+   * given {@code object} could be a class, so we check for annotated methods,
+   * or it could be directly a method which will be registered without checking
+   * other methods from the same class.
+   * 
+   * @param topic
+   *          The topic name to subscribe.
+   * @param object
+   *          The subscribed object.
+   */
+  void unregister(String topic, Object object);
 
 }

@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The Observer annotation declares a method as listener to events and will be
+ * Marks a method as an event observerThe Observer annotation declares a method as listener to events and will be
  * registered during application start.
  * 
  * @author Sebastian Sachtleben

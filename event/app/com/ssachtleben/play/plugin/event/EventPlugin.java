@@ -10,8 +10,8 @@ import play.Plugin;
 import com.ssachtleben.play.plugin.event.annotations.Observer;
 
 /**
- * The EventPlugin register all subscriber methods to the eventbus during
- * application start.
+ * The EventPlugin register all subscriber methods to the eventbus during the
+ * play application start.
  * 
  * @author Sebastian Sachtleben
  */
@@ -45,9 +45,9 @@ public class EventPlugin extends Plugin {
     for (Method method : annotatedMethods) {
       Observer observer = method.getAnnotation(Observer.class);
       if (observer.topic() == null || "".equals(observer.topic())) {
-        Events.instance().addListener(method);
+        Events.instance().register(method);
       } else {
-        Events.instance().addListener(observer.topic(), method);
+        Events.instance().register(observer.topic(), method);
       }
     }
     super.onStart();
