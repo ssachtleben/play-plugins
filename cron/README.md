@@ -56,7 +56,7 @@ public class DisabledJob implements Runnable {
 }
 ```
 
-If any problem or unexpected behavior occur change the log level to debug for play-cron-plugin, try again and check the logs. Maybe its just a wrong pattern or something like that.
+If any problem or unexpected behavior occur change the log level in ```app/conf/application.conf``` to debug for play-cron-plugin, try again and check the logs. Maybe its just a wrong pattern or something like that.
 
 ```
 # Logger for play-cron-plugin
@@ -67,6 +67,7 @@ For more details check out the [play-cron-plugin-usage](samples/play-cron-plugin
 
 ## Todos
 
+* Add test cases
 * Add more cronjobs to "play-cron-plugin-usage" project (For example with database read and write parts)
 * Add possibility to pass a package path for the class search (Speed up the search for larger projects)
 * Check job behaviour on cluster deployments (Jobs shouldnt run on multiple servers)
