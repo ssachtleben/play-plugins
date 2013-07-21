@@ -2,6 +2,8 @@
 
 This plugin provides a cron service to run time-based jobs. 
 
+**IMPORTANT: The plugin is still in develop and maybe cause unexpected behaviors**
+
 ## Features
 
 * Find and register any ```@Cronjob``` annotated job classes
@@ -28,7 +30,7 @@ The `master` branch contains the code for 2.1.0 and the plugin is only tested wi
 
 ## Usage
 
-Creating new cronjobs never been easier. Just create a new job class. It must be impements the Job interface and add the @Cronjob annotation:
+Creating new cronjobs has never been easier. Just create a new job class. It must be impements the Job interface and add the @Cronjob annotation:
 
 ```java
 import com.ssachtleben.play.plugin.cron.annotations.Cronjob;

@@ -6,9 +6,10 @@ Useful plugins for Play Framework 2.x.
 
 **Here is a list of all plugins:**
 
-| Name                     | Description                        | Plugin Version | Play Version |
-| ------------------------ | ---------------------------------- | -------------- | ------------ |
-| [play-cron-plugin](cron) | A time-based job scheduler plugin. | 0.1-SNAPSHOT   | 2.1.0        |
+| Name                       | Description                        | Plugin Version | Play Version |
+| -------------------------- | ---------------------------------- | -------------- | ------------ |
+| [play-cron-plugin](cron)   | A time-based job scheduler plugin. | 0.1-SNAPSHOT   | 2.1.0        |
+| [play-event-plugin](event) | A eventbus plugin.                 | 0.1-SNAPSHOT   | 2.1.0        |
 
 Check the plugin readme to learn how to add the plugin to your project. Every plugin has usage informations in the readme and at least one sample project so it should be easy to find out how to use it.
 

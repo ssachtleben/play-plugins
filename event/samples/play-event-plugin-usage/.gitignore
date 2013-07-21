@@ -1,0 +1,11 @@
+/.settings
+/conf/evolutions
+/logs
+/project/project
+/project/target
+/target
+.classpath
+.project
+play_eclipse.bat
+play_run.bat
+play_test.bat
