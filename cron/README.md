@@ -62,7 +62,7 @@ public class DisabledJob implements Job {
 }
 ```
 
-If any problem or unexpected behavior occur change the log level in ```app/conf/application.conf``` to debug for play-cron-plugin, try again and check the logs. Maybe its just a wrong pattern or something like that.
+In case of problems or unexpected behavior, e.g. a wrong cron pattern, you can increase the log level to debug in ```app/conf/application.conf```.
 
 ```
 # Logger for play-cron-plugin

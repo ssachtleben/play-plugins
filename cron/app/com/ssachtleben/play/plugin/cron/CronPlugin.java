@@ -73,8 +73,7 @@ public class CronPlugin extends Plugin {
   }
 
   /**
-   * The onStop method will be invoked during application stop and stops all
-   * cronjobs.
+   * The onStop method shutdown and remove all scheduled jobs.
    */
   @Override
   public void onStop() {
@@ -111,7 +110,8 @@ public class CronPlugin extends Plugin {
    * @return Set of classes which extends the job interface
    */
   private Set<Job> findJobs() {
-    return app.configuration().getBoolean("cron.scanner.annotation", Boolean.TRUE) ? CronUtils.findAnnotatedJobs(Cronjob.class) : CronUtils.findImplementedJobs();
+    return app.configuration().getBoolean("cron.scanner.annotation", Boolean.TRUE) ? CronUtils.findAnnotatedJobs(Cronjob.class) : CronUtils
+        .findImplementedJobs();
   }
 
 }
