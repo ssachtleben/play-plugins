@@ -1,4 +1,4 @@
-package com.play.module.cron;
+package com.ssachtleben.play.plugin.cron;
 
 import play.Logger;
 import akka.actor.UntypedActor;
