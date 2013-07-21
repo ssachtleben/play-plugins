@@ -1,4 +1,4 @@
-package com.ssachtleben.play.plugin.cron.usage;
+package com.ssachtleben.play.plugin.cron.usage.jobs;
 
 import play.Logger;
 
