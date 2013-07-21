@@ -1,0 +1,8 @@
+/.settings
+/project
+/target
+.classpath
+.project
+play_eclipse.bat
+play_publish-local.bat
+play_release.bat

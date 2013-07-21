@@ -1,0 +1,8 @@
+/.settings
+/logs
+/project
+/target
+.classpath
+.project
+play_eclipse.bat
+play_run.bat
