@@ -4,7 +4,11 @@ This plugin provides a cron service to run time-based jobs.
 
 ## Features
 
-The plugin will be started during the application start process and add any class which has the ```@Cronjob``` annotation and an active value of true to the scheduler and execute the job at the given cron expression pattern.
+* Find and register any ```@Cronjob``` annotated job classes
+
+* Execute jobs at the given [cron expression](http://quartz-scheduler.org/documentation/quartz-2.1.x/tutorials/tutorial-lesson-06#TutorialLesson6-CronExpressions)
+
+* Disable jobs without removing them (set active boolean to false)
 
 ## Requirements
 
