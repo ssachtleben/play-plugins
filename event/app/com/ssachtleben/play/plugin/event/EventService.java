@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 public interface EventService {
 
   /**
-   * Publishes a event.
+   * Publishes synchronously a event to all registered listeners.
    * 
    * @param event
    *          The event to publish
@@ -19,7 +19,8 @@ public interface EventService {
   void publish(Object event);
 
   /**
-   * Publishes a event to a specific topic.
+   * Publishes synchronously a event to all registered listeners of a specific
+   * topic.
    * 
    * @param topic
    *          The topic receiver
@@ -27,6 +28,25 @@ public interface EventService {
    *          The event to publish
    */
   void publish(String topic, Object event);
+
+  /**
+   * Publishes asynchronously a event to all registered listeners.
+   * 
+   * @param event
+   *          The event to publish
+   */
+  void publishAsync(Object event);
+
+  /**
+   * Publishes asynchronously a event to all registered listeners of a specific
+   * topic.
+   * 
+   * @param topic
+   *          The topic receiver
+   * @param event
+   *          The event to publish
+   */
+  void publishAsync(String topic, Object event);
 
   /**
    * Add new method listener to current service.
