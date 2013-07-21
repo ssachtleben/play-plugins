@@ -56,7 +56,7 @@ public class DisabledJob implements Runnable {
 }
 ```
 
-For more details check the [play-cron-plugin-usage](samples/play-cron-plugin-usage) example project.
+For more details check out the [play-cron-plugin-usage](samples/play-cron-plugin-usage) example project.
 
 ### Todos
 
