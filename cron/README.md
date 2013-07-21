@@ -71,8 +71,8 @@ For more details check out the [play-cron-plugin-usage](samples/play-cron-plugin
 
 ## Todos
 
-* Add test cases
 * Add more cronjobs to "play-cron-plugin-usage" project (For example with database read and write parts)
+* Add more and improve current test cases in "play-cron-plugin-usage" project
 * Add possibility to pass a package path for the class search (Speed up the search for larger projects)
 * Check job behaviour on cluster deployments (Jobs shouldnt run on multiple servers)
 
