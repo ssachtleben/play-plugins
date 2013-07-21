@@ -1,9 +1,9 @@
 package com.ssachtleben.play.plugin.cron;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
-import com.ssachtleben.play.plugin.cron.annotations.Cronjob;
 
 import play.Application;
 import play.Logger;
@@ -14,6 +14,9 @@ import us.theatr.akka.quartz.QuartzActor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+
+import com.ssachtleben.play.plugin.cron.annotations.Cronjob;
+import com.ssachtleben.play.plugin.cron.jobs.Job;
 
 /**
  * The CronPlugin handles the start and stop process for all cronjobs. During
@@ -35,7 +38,12 @@ public class CronPlugin extends Plugin {
   /**
    * Create a ActorSystem for Akka to schedule jobs.
    */
-  private static ActorSystem system = ActorSystem.create("sys");
+  private ActorSystem system = ActorSystem.create("sys");
+
+  /**
+   * A set with all registered jobs.
+   */
+  private Set<Job> jobs = Collections.synchronizedSet(new HashSet<Job>());
 
   /**
    * Default constructor.
@@ -57,9 +65,9 @@ public class CronPlugin extends Plugin {
     log.debug("Plugin started");
     ActorRef quartzActor = system.actorOf(new Props(QuartzActor.class));
     ActorRef cronActor = system.actorOf(new Props(CronActor.class));
-    Set<Class<?>> cronjobClasses = CronUtils.findAnnotatedClasses(Cronjob.class);
-    for (Class<?> cronjobClass : cronjobClasses) {
-      scheduleJob(quartzActor, cronActor, cronjobClass);
+    jobs.addAll(findJobs());
+    for (Job job : jobs) {
+      scheduleJob(quartzActor, cronActor, job);
     }
     super.onStart();
   }
@@ -86,18 +94,24 @@ public class CronPlugin extends Plugin {
    * @param jobClass
    *          The jobClass to set
    */
-  private void scheduleJob(ActorRef quartzActor, ActorRef runActor, Class<?> jobClass) {
-    try {
-      Cronjob cronjob = jobClass.getAnnotation(Cronjob.class);
-      if (cronjob.active()) {
-        Object job = jobClass.newInstance();
-        log.debug("Register job '" + job.toString() + "' with cron pattern '" + cronjob.pattern() + "'");
-        system.scheduler().scheduleOnce(Duration.create(50, TimeUnit.MILLISECONDS), quartzActor,
-            new AddCronSchedule(runActor, cronjob.pattern(), jobClass.newInstance(), true), system.dispatcher());
-      }
-    } catch (InstantiationException | IllegalAccessException e) {
-      log.error("Failed to start scheduled job: " + jobClass.getName(), e);
+  private void scheduleJob(ActorRef quartzActor, ActorRef runActor, Job job) {
+    Cronjob cronjob = job.getClass().getAnnotation(Cronjob.class);
+    if (cronjob.active()) {
+      log.debug("Register job '" + job.toString() + "' with cron pattern '" + cronjob.pattern() + "'");
+      system.scheduler().scheduleOnce(Duration.create(50, TimeUnit.MILLISECONDS), quartzActor, new AddCronSchedule(runActor, cronjob.pattern(), job, true),
+          system.dispatcher());
     }
+  }
+
+  /**
+   * Check the classpath for jobs. Depending on the config property
+   * "cron.useAnnotation" the classes will be searched by @Cronjob annotation or
+   * by Job interace.
+   * 
+   * @return Set of classes which extends the job interface
+   */
+  private Set<Job> findJobs() {
+    return app.configuration().getBoolean("cron.scanner.annotation", Boolean.TRUE) ? CronUtils.findAnnotatedJobs(Cronjob.class) : CronUtils.findImplementedJobs();
   }
 
 }
