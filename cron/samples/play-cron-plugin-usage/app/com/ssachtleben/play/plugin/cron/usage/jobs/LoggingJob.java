@@ -2,7 +2,8 @@ package com.ssachtleben.play.plugin.cron.usage.jobs;
 
 import play.Logger;
 
-import com.ssachtleben.play.plugin.cron.Cronjob;
+import com.ssachtleben.play.plugin.cron.annotations.Cronjob;
+import com.ssachtleben.play.plugin.cron.jobs.Job;
 
 /**
  * The LoggingJob will be run every second (because in @Cronjob annotation is no
@@ -11,7 +12,7 @@ import com.ssachtleben.play.plugin.cron.Cronjob;
  * @author Sebastian Sachtleben
  */
 @Cronjob
-public class LoggingJob implements Runnable {
+public class LoggingJob implements Job {
   private static final Logger.ALogger log = Logger.of(LoggingJob.class);
 
   @Override

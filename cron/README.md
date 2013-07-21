@@ -28,13 +28,14 @@ The `master` branch contains the code for 2.1.0 and the plugin is only tested wi
 
 ## Usage
 
-Creating new cronjobs never been easier. Just create a new job class. It must be impements the Runnable interface and add the @Cronjob annotation:
+Creating new cronjobs never been easier. Just create a new job class. It must be impements the Job interface and add the @Cronjob annotation:
 
 ```java
-import com.ssachtleben.play.plugin.cron.Cronjob;
+import com.ssachtleben.play.plugin.cron.annotations.Cronjob;
+import com.ssachtleben.play.plugin.cron.jobs.Job;
 
-@Cronjob(pattern = "0 * * * * ?")
-public class EveryMinuteJob implements Runnable {
+@Cronjob
+public class EveryMinuteJob implements Job {
 
   @Override
   public void run() {
@@ -47,10 +48,11 @@ public class EveryMinuteJob implements Runnable {
 Maybe you want to disable a job temporarily or permanent but not delete the job code itself its possible to set the active boolean to false and the job will not run:
 
 ```java
-import com.ssachtleben.play.plugin.cron.Cronjob;
+import com.ssachtleben.play.plugin.cron.annotations.Cronjob;
+import com.ssachtleben.play.plugin.cron.jobs.Job;
 
 @Cronjob(pattern = "0 * * * * ?", active = false)
-public class DisabledJob implements Runnable {
+public class DisabledJob implements Job {
 
   @Override
   public void run() {

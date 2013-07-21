@@ -3,6 +3,8 @@ package com.ssachtleben.play.plugin.cron;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import com.ssachtleben.play.plugin.cron.annotations.Cronjob;
+
 import play.Application;
 import play.Logger;
 import play.Plugin;

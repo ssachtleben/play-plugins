@@ -1,4 +1,4 @@
-package com.ssachtleben.play.plugin.cron;
+package com.ssachtleben.play.plugin.cron.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
