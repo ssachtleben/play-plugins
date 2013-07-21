@@ -4,7 +4,7 @@ import play.Project._
 
 object ApplicationBuild extends Build {
 
-    val appName         = "play-cron"
+    val appName         = "play-cron-plugin"
     val libVersion      = "0.1-SNAPSHOT"
 
     val appDependencies = Seq(
@@ -13,6 +13,7 @@ object ApplicationBuild extends Build {
     )
 
     val main = play.Project(appName, libVersion, appDependencies).settings(
+		organization := "com.ssachtleben",
         publishArtifact in(Compile, packageDoc) := false
     )
 }

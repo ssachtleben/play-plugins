@@ -2,7 +2,7 @@ package play.plugin.cron.usage.jobs;
 
 import play.Logger;
 
-import com.play.module.cron.Cronjob;
+import com.ssachtleben.play.plugin.cron.Cronjob;
 
 /**
  * The LoggingJob will be run every second (because in @Cronjob annotation is no

@@ -2,7 +2,7 @@ package play.plugin.cron.usage.jobs;
 
 import play.Logger;
 
-import com.play.module.cron.Cronjob;
+import com.ssachtleben.play.plugin.cron.Cronjob;
 
 /**
  * The DisabledJob will not run because the active boolean in the @Cronjob

@@ -1,4 +1,4 @@
-## Play Cron - A time-based job scheduler plugin for Play Framework 2.1.x
+## Play Cron Plugin - A time-based job scheduler plugin for Play Framework 2.1.x
 
 This plugin provides a cron service to run time-based jobs. 
 
@@ -8,26 +8,26 @@ The plugin will be started during the application start process and add any clas
 
 ### Requirements
 
-**play-cron currently needs Play Framework 2.x**
+**play-cron-plugin currently needs Play Framework 2.x**
 
 The `master` branch contains the code for 2.1.0 and the plugin is only tested with Play Framework 2.1.0.
 
 ### Installation
 
-* Add to repository resolvers: ```resolvers += Resolver.url("play-cron repository", url("http://ssachtleben.github.io/play-cron/releases/"))(Resolver.ivyStylePatterns)```
+* Add to repository resolvers: ```resolvers += Resolver.url("ssachtleben repo (snapshots)", url("http://ssachtleben.github.io/play-plugins/repository/snapshots/"))(Resolver.ivyStylePatterns)```
 
-* Add to your dependencies: ```"play-cron" %% "play-cron" % "0.1-SNAPSHOT"```
+* Add to your dependencies: ```"com.ssachtleben" %% "play-cron-plugin" % "0.1-SNAPSHOT"```
 
-* Create a file called ```play.plugins``` in your ```app/conf``` directory
+* Create if not exists a file called ```play.plugins``` in your ```app/conf``` directory
 
-* Add ```1500:com.play.module.cron.CronPlugin``` to ```play.plugins```
+* Add ```1500:com.ssachtleben.play.plugin.cron.CronPlugin``` to ```play.plugins```
 
 ### Usage
 
 Creating new cronjobs never been easier. Just create a new job class. It must be impements the Runnable interface and add the @Cronjob annotation:
 
 ```java
-import com.play.module.cron.Cronjob;
+import com.ssachtleben.play.plugin.cron.Cronjob;
 
 @Cronjob(pattern = "0 * * * * ?")
 public class EveryMinuteJob implements Runnable {
@@ -43,7 +43,7 @@ public class EveryMinuteJob implements Runnable {
 Maybe you want to disable a job temporarily or permanent but not delete the job code itself its possible to set the active boolean to false and the job will not run:
 
 ```java
-import com.play.module.cron.Cronjob;
+import com.ssachtleben.play.plugin.cron.Cronjob;
 
 @Cronjob(pattern = "0 * * * * ?", active = false)
 public class DisabledJob implements Runnable {
@@ -56,11 +56,11 @@ public class DisabledJob implements Runnable {
 }
 ```
 
-For more details check the [play-cron-usage](samples/play-cron-usage) example project.
+For more details check the [play-cron-plugin-usage](samples/play-cron--plugin-usage) example project.
 
 ### Todos
 
-* Add more cronjobs to play-cron-usage project (For example with database read and write parts)
+* Add more cronjobs to "play-cron-plugin-usage" project (For example with database read and write parts)
 * Add possibility to pass a package path for the class search (Speed up the search for larger projects)
 * Check job behaviour on cluster deployments (Jobs shouldnt run on multiple servers)
 
