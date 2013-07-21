@@ -6,11 +6,6 @@ package com.ssachtleben.play.plugin.cron.jobs;
  * 
  * @author Sebastian Sachtleben
  */
-public interface Job {
-
-  /**
-   * The run method will be invoked during the job execution.
-   */
-  void run() throws Exception;
+public interface Job extends Runnable {
 
 }

@@ -11,6 +11,8 @@ object ApplicationBuild extends Build {
     javaCore,
     javaJdbc,
     javaEbean,
+    javaJpa,
+    "org.hibernate" % "hibernate-entitymanager" % "4.2.3.Final",
     "com.ssachtleben" %% "play-cron-plugin" % "0.1-SNAPSHOT"
   )
 

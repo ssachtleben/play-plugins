@@ -14,7 +14,7 @@ import play.db.ebean.Model;
  */
 @Entity
 @SuppressWarnings("serial")
-public class EbeanModel extends Model {
+public class ModelEbean extends Model {
 
   @Id
   public Long id;
@@ -24,10 +24,10 @@ public class EbeanModel extends Model {
   /**
    * Generic ebean query helper for model ExampleModel.
    */
-  public static Finder<Long, EbeanModel> find = new Finder<Long, EbeanModel>(Long.class, EbeanModel.class);
+  public static Finder<Long, ModelEbean> find = new Finder<Long, ModelEbean>(Long.class, ModelEbean.class);
 
   @Override
   public String toString() {
-    return "EbeanModel [id=" + id + ", date=" + date + "]";
+    return "ModelEbean [id=" + id + ", date=" + date + "]";
   }
 }

@@ -7,10 +7,10 @@ import play.Logger;
 
 import com.ssachtleben.play.plugin.cron.annotations.Cronjob;
 import com.ssachtleben.play.plugin.cron.jobs.SimpleJob;
-import com.ssachtleben.play.plugin.cron.usage.models.ebean.EbeanModel;
+import com.ssachtleben.play.plugin.cron.usage.models.ebean.ModelEbean;
 
 /**
- * The ExampleDatabaseJob runs every 10 seconds and creates a new ExampleModel
+ * The DatabaseEbeanJob runs every 10 seconds and creates a new ModelEbean
  * instance and save to database. Once a model exists the job will update the
  * date property on every execution.
  * 
@@ -21,16 +21,16 @@ public class DatabaseEbeanJob extends SimpleJob {
   private static final Logger.ALogger log = Logger.of(DatabaseEbeanJob.class);
 
   @Override
-  public void run() throws Exception {
-    List<EbeanModel> models = EbeanModel.find.all();
+  public void run() {
+    List<ModelEbean> models = ModelEbean.find.all();
     if (models.size() > 0) {
-      EbeanModel model = models.get(0);
+      ModelEbean model = models.get(0);
       log.info(model + " loaded");
       model.date = new Date();
       model.save();
       log.info(model + " saved");
     } else {
-      EbeanModel model = new EbeanModel();
+      ModelEbean model = new ModelEbean();
       model.save();
       log.info(model + " persisted");
     }
