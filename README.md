@@ -2,6 +2,14 @@
 
 Useful plugins for Play Framework 2.x.
 
+## Overview
+
+**Here is a list of all plugins:**
+
+| Name                     | Description                        | Plugin Version | Play Version |
+| ------------------------ | ---------------------------------- | -------------- | ------------ |
+| [play-cron-plugin](cron) | A time-based job scheduler plugin. | 0.1-SNAPSHOT   | 2.1.0        |
+
 ## Licence
 
 This software is licensed under the Apache 2 license, quoted below.
