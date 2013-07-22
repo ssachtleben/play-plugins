@@ -13,10 +13,20 @@ import scala.concurrent.duration.Duration;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import akka.actor.Scheduler;
 import akka.actor.UntypedActor;
 
 /**
- * The default EventService implementation.
+ * The Eventbus implements the core interface {@link EventService} and is
+ * accessible via {@link Events#instance()}.
+ * <p/>
+ * Synchronous events will be delivered immediately after publishing and blocks
+ * until all handler finished their work. The {@link Scheduler} from <a
+ * href="http://akka.io/">akka</a> is used to publish asynchronous events with a
+ * delay of 50ms.
+ * <p/>
+ * Using different implementations for {@link EventService} is currently not
+ * possible, but planed for future releases.
  * 
  * @author Sebstian Sachtleben
  */
@@ -57,37 +67,37 @@ public class EventBus implements EventService {
 
   @Override
   public void publish(Object event) {
-    log.info("Publish " + event);
+    log.debug("Publish " + event);
     publish(subscribers.get(""), event);
   }
 
   @Override
   public void publish(String topic, Object event) {
-    log.info("Publish to " + topic + " " + event);
+    log.debug("Publish to " + topic + " " + event);
     publish(subscribers.get(topic), event);
   }
 
   @Override
   public void publishAsync(Object event) {
-    log.info("Publish async " + event);
+    log.debug("Publish async " + event);
     publishAsync(subscribers.get(""), event);
   }
 
   @Override
   public void publishAsync(String topic, Object event) {
-    log.info("Publish async to " + topic + " " + event);
+    log.debug("Publish async to " + topic + " " + event);
     publishAsync(subscribers.get(topic), event);
   }
 
   @Override
   public void register(Object object) {
-    log.info("Register " + object);
+    log.debug("Register " + object);
     add("", object);
   }
 
   @Override
   public void register(String topic, Object object) {
-    log.info("Register " + topic + " " + object);
+    log.debug("Register " + topic + " " + object);
     add(topic, object);
   }
 
@@ -132,13 +142,20 @@ public class EventBus implements EventService {
    */
   private void publish(List<Method> receivers, Object event) {
     Iterator<Method> iter = receivers.iterator();
+    boolean published = false;
     while (iter.hasNext()) {
       Method method = iter.next();
       try {
         method.invoke(null, event);
+        if (!published) {
+          published = true;
+        }
       } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
         log.error("Failed to invoke " + method, e);
       }
+    }
+    if (!published && !(event instanceof DeadEvent)) {
+      publish(new DeadEvent(this, event));
     }
   }
 
@@ -153,15 +170,22 @@ public class EventBus implements EventService {
    */
   private void publishAsync(List<Method> receivers, Object event) {
     Iterator<Method> iter = receivers.iterator();
+    boolean published = false;
     while (iter.hasNext()) {
       Method method = iter.next();
       try {
         ActorRef eventActor = system.actorOf(new Props(EventActor.class));
         EventDeliveryRequest request = new EventDeliveryRequest(method, event);
         system.scheduler().scheduleOnce(Duration.create(50, TimeUnit.MILLISECONDS), eventActor, request, system.dispatcher());
+        if (!published) {
+          published = true;
+        }
       } catch (IllegalArgumentException e) {
         log.error("Failed to schedule async event delivery request for " + method, e);
       }
+    }
+    if (!published && !(event instanceof DeadEvent)) {
+      publishAsync(new DeadEvent(this, event));
     }
   }
 

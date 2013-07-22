@@ -30,12 +30,12 @@ public class EventUtils {
   }
 
   /**
-   * Searches for annotated methods in current classpath and returns them as a
-   * set.
+   * Searches in all via {@link ClassLoader} provided classes for methods
+   * annotated by {@code annotation} and returns a set of matching methods.
    * 
    * @param annotation
-   *          The annotation to set
-   * @return Set of methods
+   *          The annotation to search for.
+   * @return A set of methods.
    */
   public static final Set<Method> findAnnotatedMethods(Class<? extends Annotation> annotation) {
     long nanos = System.nanoTime();

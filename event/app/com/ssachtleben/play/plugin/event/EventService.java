@@ -5,8 +5,8 @@ package com.ssachtleben.play.plugin.event;
  * unregister existing subscribers. It provides two types of publications and
  * subcriptions: object-based and topic-based.
  * <p/>
- * In the class-based process the subscribers will be notified by the
- * EventService after the subscribed event object is published.
+ * In the class-based process an event will be delivered to any handler where
+ * the event is <em>assignable</em>.
  * <p/>
  * In the topic-based process only subscribers who registered to the topic where
  * the event object is published will be notified.

@@ -1,11 +1,13 @@
 package com.ssachtleben.play.plugin.event;
 
 /**
- * Events provides an instance of {@link EventService} for publishing events,
- * register new and unregister existing subscribers.
+ * Provides via {@link #instance()} the current used {@link EventService}
+ * implementation which allows to publishing events, register new and unregister
+ * existing subscribers.
  * <p/>
- * Its planed to allow swapping the EventService implementation via a
- * configuration property.
+ * Its planed to allow custom implementations of {@link EventService} and serve
+ * them here, but its not possible right now. The implemented instance is always
+ * {@link EventBus}.
  * 
  * @author Sebastian Sachtleben
  * @see EventService
