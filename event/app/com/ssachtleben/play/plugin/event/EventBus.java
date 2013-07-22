@@ -2,6 +2,7 @@ package com.ssachtleben.play.plugin.event;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -82,6 +83,11 @@ public class EventBus implements EventService {
     log.debug("Publish to " + topic + " " + event);
     publish(subscribers.get(topic), event);
   }
+  
+  @Override
+  public void publish(Type genericType, Object event) {
+	log.warn("publish(Type, Object) is not implemented yet");
+  }
 
   @Override
   public void publishAsync(Object event) {
@@ -93,6 +99,11 @@ public class EventBus implements EventService {
   public void publishAsync(String topic, Object event) {
     log.debug("Publish async to " + topic + " " + event);
     publishAsync(subscribers.get(topic), event);
+  }
+  
+  @Override
+  public void publishAsync(Type genericType, Object event) {
+	log.warn("publishAsync(Type, Object) is not implemented yet");
   }
 
   @Override
