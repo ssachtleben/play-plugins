@@ -13,6 +13,7 @@ object ApplicationBuild extends Build {
     )
 
     val main = play.Project(appName, libVersion, appDependencies).settings(
+		resolvers += "Theatr.us repository" at "http://repo.theatr.us/",
 		organization := "com.ssachtleben",
         publishArtifact in(Compile, packageDoc) := false
     )
