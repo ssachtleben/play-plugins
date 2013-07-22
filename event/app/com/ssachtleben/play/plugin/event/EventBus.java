@@ -27,8 +27,12 @@ import akka.actor.UntypedActor;
  * <p/>
  * Using different implementations for {@link EventService} is currently not
  * possible, but planed for future releases.
+ * <p/>
+ * Do not try to create this class, use the provides instance via
+ * {@link Events#instance()}.
  * 
  * @author Sebstian Sachtleben
+ * @see Events
  */
 public class EventBus implements EventService {
   private static final Logger.ALogger log = Logger.of(EventBus.class);
@@ -49,19 +53,21 @@ public class EventBus implements EventService {
   private String name;
 
   /**
-   * Creates a EventBus instance named "default".
+   * Creates a EventBus instance named "default". Get the instance via
+   * {@link Events#instance()}.
    */
-  public EventBus() {
+  private EventBus() {
     this("default");
   }
 
   /**
-   * Creates a EventBus instance with the given {@code name}.
+   * Creates a EventBus instance with the given {@code name}. Get the instance
+   * via {@link Events#instance()}.
    * 
    * @param name
    *          The EventBus name should be a valid java identifier.
    */
-  public EventBus(String name) {
+  private EventBus(String name) {
     this.name = name;
   }
 
