@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
-	<info organisation="com.ssachtleben" module="play-json-plugin_2.10" revision="0.1-SNAPSHOT" status="integration" publication="20130729004301">
+	<info organisation="com.ssachtleben" module="play-json-plugin_2.10" revision="0.1-SNAPSHOT" status="integration" publication="20130729010101">
 		<description>
 		play-json-plugin
 		</description>
@@ -29,6 +29,9 @@
 		<dependency org="play" name="play_2.10" rev="2.1.0" conf="compile->default(compile)"/>
 		<dependency org="play" name="play-test_2.10" rev="2.1.0" conf="test->default(compile)"/>
 		<dependency org="play" name="play-java_2.10" rev="2.1.0" conf="compile->default(compile)"/>
+		<dependency org="com.fasterxml.jackson.core" name="jackson-databind" rev="2.2.2" conf="compile->default(compile)"/>
+		<dependency org="com.fasterxml.jackson.core" name="jackson-core" rev="2.2.2" conf="compile->default(compile)"/>
+		<dependency org="com.fasterxml.jackson.core" name="jackson-annotations" rev="2.2.2" conf="compile->default(compile)"/>
 		<exclude org="org.scala-lang" module="scala-library" artifact="*" type="jar" ext="*" matcher="exact"/>
 		<exclude org="org.scala-lang" module="scala-compiler" artifact="*" type="jar" ext="*" matcher="exact"/>
 		<override org="org.scala-lang" module="scala-library" matcher="exact" rev="2.10.0"/>
