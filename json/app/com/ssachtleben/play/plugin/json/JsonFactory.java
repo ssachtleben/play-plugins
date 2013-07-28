@@ -13,6 +13,8 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 
+import play.Logger;
+
 import com.ssachtleben.play.plugin.json.exceptions.JsonFactoryChainException;
 import com.ssachtleben.play.plugin.json.exceptions.JsonFactoryConvertException;
 
@@ -37,6 +39,7 @@ import com.ssachtleben.play.plugin.json.exceptions.JsonFactoryConvertException;
  * @author Sebastian Sachtleben
  */
 public class JsonFactory {
+  private static final Logger.ALogger log = Logger.of(JsonFactory.class);
 
   /**
    * Provides the {@link ObjectMapper} to serialize or deserialize json.
@@ -219,16 +222,16 @@ public class JsonFactory {
 
   /**
    * Converts the objects added via {@link #convert(Object)} or
-   * {@link #convert(String, Object)} to {@link ObjectNode}.
+   * {@link #convert(String, Object)} to {@link JsonNode}.
    * 
-   * @return The converted {@link ObjectNode}.
+   * @return The converted {@link JsonNode}.
    * @throws JsonFactoryConvertException
    *           Throws if exception occur during convert process.
    * @throws JsonFactoryChainException
    *           This exception occur if no convertible objects provided before
    *           via {@link #convert(Object)} or {@link #convert(String, Object)}.
    */
-  private ObjectNode createObjectNode() throws JsonFactoryConvertException, JsonFactoryChainException {
+  private JsonNode createObjectNode() throws JsonFactoryConvertException, JsonFactoryChainException {
     if (this.lastAddedObject == null) {
       throw new JsonFactoryChainException("Use the convert() method to provide convertable content before convert to string");
     }
@@ -244,31 +247,32 @@ public class JsonFactory {
   }
 
   /**
-   * Create a {@link ObjectNode} from the last added object via
+   * Create a {@link JsonNode} from the last added object via
    * {@link #convert(Object)}. Any objects set for specific paths via
    * {@link #convert(String, Object)} will be ignored.
    * 
-   * @return The {@link ObjectNode}.
+   * @return The {@link JsonNode}.
    * @throws JsonMappingException
    * @throws JsonProcessingException
    * @throws IOException
    */
-  private ObjectNode createSimpleObjectNode() throws JsonMappingException, JsonProcessingException, IOException {
+  private JsonNode createSimpleObjectNode() throws JsonMappingException, JsonProcessingException, IOException {
     addMixins(mapper, mixins);
-    return (ObjectNode) this.mapper.readTree(this.mapper.writeValueAsString(this.lastAddedObject));
+    String content = this.mapper.writeValueAsString(this.lastAddedObject);
+    return this.mapper.readTree(content);
   }
 
   /**
-   * Create a {@link ObjectNode} and puts a new node for every given path via
+   * Create a {@link JsonNode} and puts a new node for every given path via
    * {@link #convert(String, Object)}. Any object set without path
    * {@link #convert(Object)} will be ignored.
    * 
-   * @return The {@link ObjectNode}.
+   * @return The {@link JsonNode}.
    * @throws JsonGenerationException
    * @throws JsonMappingException
    * @throws IOException
    */
-  private ObjectNode createPathObjectNode() throws JsonGenerationException, JsonMappingException, IOException {
+  private JsonNode createPathObjectNode() throws JsonGenerationException, JsonMappingException, IOException {
     ObjectNode root = this.mapper.createObjectNode();
     Iterator<Map.Entry<String, Object>> iter = this.content.entrySet().iterator();
     while (iter.hasNext()) {
@@ -277,8 +281,8 @@ public class JsonFactory {
       if (pathMixins.containsKey(path.getKey())) {
         addMixins(mapper, pathMixins.get(path.getKey()));
       }
-      String jsonString = mapper.writeValueAsString(path.getValue());
-      root.put(path.getKey(), mapper.readTree(jsonString));
+      String content = mapper.writeValueAsString(path.getValue());
+      root.put(path.getKey(), mapper.readTree(content));
     }
     return root;
   }
