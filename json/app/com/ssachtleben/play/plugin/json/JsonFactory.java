@@ -100,10 +100,17 @@ public class JsonFactory {
    * @param object
    *          The object to add.
    * @return The {@link JsonFactory} instance.
+   * @throws JsonFactoryChainException
+   *           This exception occur when objects already added for the given
+   *           path.
    */
-  public JsonFactory convert(String path, Object object) {
+  public JsonFactory convert(String path, Object object) throws JsonFactoryChainException {
     this.lastAddedPath = path;
     this.lastAddedObject = object;
+    if (this.content.containsKey(path)) {
+      throw new JsonFactoryChainException(String.format("Found registered objects for path '%s'", path));
+    }
+    this.content.put(path, object);
     return this;
   }
 
@@ -233,7 +240,7 @@ public class JsonFactory {
       throw new JsonFactoryChainException("Use the convert() method to provide convertable content before convert to string");
     }
     try {
-      return this.content.isEmpty() ? createSimpleObjectNode() : createPathObjectNode();
+      return this.content.isEmpty() ? createSimpleJsonNode() : createPathJsonNode();
     } catch (JsonGenerationException e) {
       throw new JsonFactoryConvertException(e);
     } catch (JsonMappingException e) {
@@ -253,10 +260,9 @@ public class JsonFactory {
    * @throws JsonProcessingException
    * @throws IOException
    */
-  private JsonNode createSimpleObjectNode() throws JsonMappingException, JsonProcessingException, IOException {
+  private JsonNode createSimpleJsonNode() throws JsonMappingException, JsonProcessingException, IOException {
     addMixins(mapper, mixins);
-    String content = this.mapper.writeValueAsString(this.lastAddedObject);
-    return this.mapper.readTree(content);
+    return this.mapper.readTree(this.mapper.writeValueAsString(this.lastAddedObject));
   }
 
   /**
@@ -269,7 +275,7 @@ public class JsonFactory {
    * @throws JsonMappingException
    * @throws IOException
    */
-  private JsonNode createPathObjectNode() throws JsonGenerationException, JsonMappingException, IOException {
+  private JsonNode createPathJsonNode() throws JsonGenerationException, JsonMappingException, IOException {
     ObjectNode root = this.mapper.createObjectNode();
     Iterator<Map.Entry<String, Object>> iter = this.content.entrySet().iterator();
     while (iter.hasNext()) {
