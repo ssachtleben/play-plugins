@@ -7,6 +7,6 @@ package com.ssachtleben.play.plugin.json;
  */
 public interface MixinProvider {
 
-  Class<?> mixins();
+  Class<?>[] mixins();
 
 }
