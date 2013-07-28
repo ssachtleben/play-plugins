@@ -13,6 +13,12 @@ import com.ssachtleben.play.plugin.json.JsonFactory;
 @SuppressWarnings("serial")
 public class JsonFactoryConvertException extends Exception {
 
+  /**
+   * Default {@link JsonFactoryConvertException} constructor with an exception.
+   * 
+   * @param e
+   *          The ocurred exception.
+   */
   public JsonFactoryConvertException(Exception e) {
     super(e);
   }

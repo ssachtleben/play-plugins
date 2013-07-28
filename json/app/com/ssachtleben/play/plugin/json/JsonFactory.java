@@ -20,14 +20,18 @@ import com.ssachtleben.play.plugin.json.exceptions.JsonFactoryConvertException;
  * Converts any kind of {@link Object} or {@link Collection} to {@link String}
  * or {@link JsonNode}.
  * <p>
- * Use {link {@link #instance()} to retrieve a instance of {@link JsonFactory}.
+ * Use {@link #instance()} to retrieve a instance of {@link JsonFactory}. Its
+ * important to add convertible objects via {@link #convert(Object)} or
+ * {@link #convert(String, Object)}.
+ * </p>
+ * <p>
  * For adding new mixins just chain to {@link #with(Class...)}. Return the
  * string representation use {@link #string(Object...)} and for the
- * {@link JsonNode} use {{@link #json(Object...)}.
+ * {@link JsonNode} use { {@link #json(Object...)}.
  * </p>
  * <p>
  * Example:
- * {@code JsonFactory.instance().convert(account).with(Account.class, AccountMixin.class).json()}
+ * {@code JsonFactory.instance().convert(acc).with(Account.class, AccountMixin.class).json()}
  * </p>
  * 
  * @author Sebastian Sachtleben
@@ -74,7 +78,7 @@ public class JsonFactory {
     return new JsonFactory();
   }
 
-  // --- CHAIN CONFIG METHODS ---
+  // --- CHAIN CONFIGURATION METHODS ---
 
   /**
    * Add new object to the current factory.
@@ -101,6 +105,30 @@ public class JsonFactory {
     this.lastAddedPath = path;
     this.lastAddedObject = object;
     return this;
+  }
+
+  /**
+   * Adds mixins provided by an {@link MixinProvider} class to the last added
+   * object via {@link #convert(Object)} or {@link #convert(String, Object)}.
+   * 
+   * @param providerClass
+   *          The providerClass needs to implements the {@link MixinProvider}
+   *          interface.
+   * @return The {@link JsonFactory} instance.
+   * @throws JsonFactoryChainException
+   *           This exception occur if the {@code providerClass} not implements
+   *           the {@link MixinProvider} interface or no convertible objects
+   *           provided before via {@link #convert(Object)} or
+   *           {@link #convert(String, Object)}.
+   */
+  public JsonFactory with(Class<? extends MixinProvider> providerClass) throws JsonFactoryChainException {
+    try {
+      return with(providerClass.newInstance());
+    } catch (InstantiationException e) {
+      throw new JsonFactoryChainException(e);
+    } catch (IllegalAccessException e) {
+      throw new JsonFactoryChainException(e);
+    }
   }
 
   /**

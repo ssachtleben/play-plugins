@@ -11,7 +11,7 @@ import com.ssachtleben.play.plugin.json.JsonFactory;
 public class JsonFactoryChainException extends Exception {
 
   /**
-   * Default {@link JsonFactoryChainException} contructor with message that
+   * Default {@link JsonFactoryChainException} constructor with message that
    * contains what happend.
    * 
    * @param message
@@ -19,5 +19,15 @@ public class JsonFactoryChainException extends Exception {
    */
   public JsonFactoryChainException(String message) {
     super(message);
+  }
+
+  /**
+   * Default {@link JsonFactoryChainException} constructor with an exception.
+   * 
+   * @param e
+   *          The ocurred exception.
+   */
+  public JsonFactoryChainException(Exception e) {
+    super(e);
   }
 }
