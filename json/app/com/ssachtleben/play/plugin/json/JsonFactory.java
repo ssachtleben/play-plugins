@@ -6,15 +6,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.node.ObjectNode;
-
-import play.Logger;
-
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ssachtleben.play.plugin.json.exceptions.JsonFactoryChainException;
 import com.ssachtleben.play.plugin.json.exceptions.JsonFactoryConvertException;
 
@@ -39,7 +36,6 @@ import com.ssachtleben.play.plugin.json.exceptions.JsonFactoryConvertException;
  * @author Sebastian Sachtleben
  */
 public class JsonFactory {
-  private static final Logger.ALogger log = Logger.of(JsonFactory.class);
 
   /**
    * Provides the {@link ObjectMapper} to serialize or deserialize json.
@@ -297,7 +293,7 @@ public class JsonFactory {
    */
   private void addMixins(ObjectMapper mapper, Map<Class<?>, Class<?>> mixins) {
     for (Class<?> c : mixins.keySet()) {
-      mapper.getSerializationConfig().addMixInAnnotations(c, mixins.get(c));
+      mapper.addMixInAnnotations(c, mixins.get(c));
     }
   }
 }
