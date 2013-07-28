@@ -1,5 +1,7 @@
 package com.ssachtleben.play.plugin.event;
 
+import java.lang.reflect.Type;
+
 /**
  * An EventService provides services for publishing events, register new and
  * unregister existing subscribers. It provides two types of publications and
@@ -39,10 +41,19 @@ public interface EventService {
   void publish(String topic, Object event);
 
   /**
+   * Publishes an {@code event} synchronously to all registered subscribers 
+   * of the {@code genericType}. The call is blocked until every listener has 
+   * processed the {@code event}.
+   * 
+   * @param genericType
+   * @param event
+   */
+  void publish(Type genericType, Object event);
+  
+  /**
    * Publishes an {@code event} asynchronously and all registered subscribers
    * will be notified if they subscribed to the {@code event}, one of its
-   * subclasses, or to one of the interfaces it implements. The call is blocked
-   * until every listener has processed the {@code event}.
+   * subclasses, or to one of the interfaces it implements.
    * 
    * @param event
    *          The event object to publish.
@@ -51,8 +62,7 @@ public interface EventService {
 
   /**
    * Publishes an {@code event} asynchronously on a {@code topic} and all
-   * registered subscribers to that name will be notified. The call is blocked
-   * until every listener has processed the {@code event}.
+   * registered subscribers to that name will be notified.
    * 
    * @param topic
    *          The topic to publish.
@@ -61,6 +71,15 @@ public interface EventService {
    */
   void publishAsync(String topic, Object event);
 
+  /**
+   * Publishes an {@code event} asynchronously to all registered subscribers 
+   * of the {@code genericType}.
+   * 
+   * @param genericType
+   * @param event
+   */
+  void publishAsync(Type genericType, Object event);
+  
   /**
    * Register new subscriber to the EventService. The given {@code object} could
    * be a class, so we check for annotated methods, or it could be directly a
