@@ -1,4 +1,5 @@
 /.settings
+/.target
 /conf/evolutions
 /logs
 /project/project
