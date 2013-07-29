@@ -1,6 +1,7 @@
 package com.ssachtleben.play.plugin.json;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -9,9 +10,12 @@ import java.util.Map;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.codehaus.jackson.node.ObjectNode;
+import org.jboss.logging.Logger;
 
 import com.ssachtleben.play.plugin.json.exceptions.JsonFactoryChainException;
 import com.ssachtleben.play.plugin.json.exceptions.JsonFactoryConvertException;
@@ -37,11 +41,12 @@ import com.ssachtleben.play.plugin.json.exceptions.JsonFactoryConvertException;
  * @author Sebastian Sachtleben
  */
 public class JsonFactory {
+  private static final Logger log = Logger.getLogger(JsonFactory.class);
 
   /**
    * Provides the {@link ObjectMapper} to serialize or deserialize json.
    */
-  private ObjectMapper mapper = new ObjectMapper();
+  private ObjectMapper mapper = getObjectMapper();
 
   /**
    * Contains last added object via {@link #convert(Object)} or
@@ -176,6 +181,7 @@ public class JsonFactory {
       for (int i = 0; i < mixins.length; i += 2) {
         this.pathMixins.get(this.lastAddedPath).put(mixins[i], mixins[i + 1]);
       }
+      log.debug(String.format("Adding mixins for path %s: %s", this.lastAddedPath, this.pathMixins.get(this.lastAddedPath)));
     } else {
       for (int i = 0; i < mixins.length; i += 2) {
         this.mixins.put(mixins[i], mixins[i + 1]);
@@ -261,6 +267,7 @@ public class JsonFactory {
    * @throws IOException
    */
   private JsonNode createSimpleJsonNode() throws JsonMappingException, JsonProcessingException, IOException {
+    log.debug("Serialize simple node");
     addMixins(mapper, mixins);
     return this.mapper.readTree(this.mapper.writeValueAsString(this.lastAddedObject));
   }
@@ -276,12 +283,16 @@ public class JsonFactory {
    * @throws IOException
    */
   private JsonNode createPathJsonNode() throws JsonGenerationException, JsonMappingException, IOException {
+    log.debug("Serialize path node");
+    log.debug("Found paths: " + Arrays.toString(this.content.keySet().toArray(new String[0])));
     ObjectNode root = this.mapper.createObjectNode();
     Iterator<Map.Entry<String, Object>> iter = this.content.entrySet().iterator();
     while (iter.hasNext()) {
       Map.Entry<String, Object> path = iter.next();
-      ObjectMapper mapper = new ObjectMapper();
+      log.debug("Create node for path: " + path.getKey());
+      ObjectMapper mapper = getObjectMapper();
       if (pathMixins.containsKey(path.getKey())) {
+        log.debug("Using mixins: " + pathMixins.get(path.getKey()));
         addMixins(mapper, pathMixins.get(path.getKey()));
       }
       String content = mapper.writeValueAsString(path.getValue());
@@ -302,5 +313,19 @@ public class JsonFactory {
     for (Class<?> c : mixins.keySet()) {
       mapper.getSerializationConfig().addMixInAnnotations(c, mixins.get(c));
     }
+  }
+
+  /**
+   * Get object mapper from jackson and set all visibility to none except for @JsonProperty
+   * annotation.
+   * 
+   * @return ObjectMapper
+   */
+  private ObjectMapper getObjectMapper() {
+    ObjectMapper mapper = new ObjectMapper();
+    mapper.enable(Feature.INDENT_OUTPUT);
+    mapper.setVisibilityChecker(mapper.getVisibilityChecker().withCreatorVisibility(Visibility.NONE).withFieldVisibility(Visibility.NONE)
+        .withGetterVisibility(Visibility.NONE).withIsGetterVisibility(Visibility.NONE).withSetterVisibility(Visibility.NONE));
+    return mapper;
   }
 }
