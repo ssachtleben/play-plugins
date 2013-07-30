@@ -41,17 +41,17 @@ public class EventBus implements EventService {
   /**
    * The map contains of several method lists grouped by topic.
    */
-  private ConcurrentHashMap<String, List<Method>> subscribers = new ConcurrentHashMap<String, List<Method>>();
+  protected ConcurrentHashMap<String, List<Method>> subscribers = new ConcurrentHashMap<String, List<Method>>();
 
   /**
    * Create a akka ActorSystem for asyncronous events.
    */
-  private ActorSystem system = ActorSystem.create("events");
+  protected ActorSystem system = ActorSystem.create("events");
 
   /**
    * The name of the EventBus instance.
    */
-  private String name;
+  protected String name;
 
   /**
    * Creates a EventBus instance named "default". Get the instance via

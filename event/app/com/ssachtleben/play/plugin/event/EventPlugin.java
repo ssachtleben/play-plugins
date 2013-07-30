@@ -49,8 +49,10 @@ public class EventPlugin extends Plugin {
     for (Method method : annotatedMethods) {
       Observer observer = method.getAnnotation(Observer.class);
       if (observer.topic() == null || "".equals(observer.topic())) {
+    	log.info(String.format("Register: %s", method));
         Events.instance().register(method);
       } else {
+    	log.info(String.format("Register on topic '%s': %s", method));
         Events.instance().register(observer.topic(), method);
       }
     }
