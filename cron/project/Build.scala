@@ -9,7 +9,7 @@ object ApplicationBuild extends Build {
 
     val appDependencies = Seq(
         javaCore,
-		"us.theatr" %% "akka-quartz" % "0.2.0"
+        "us.theatr" %% "akka-quartz" % "0.2.0"
     )
 
     val main = play.Project(appName, libVersion, appDependencies).settings(

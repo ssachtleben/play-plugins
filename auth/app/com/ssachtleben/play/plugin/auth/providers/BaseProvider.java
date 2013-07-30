@@ -1,8 +1,11 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
 import play.Application;
+import play.Configuration;
 import play.Plugin;
 import play.mvc.Http.Context;
+
+import com.ssachtleben.play.plugin.auth.Authenticator;
 
 /**
  * Register all authentication provider as Play {@link Plugin} and provides the {{@link #authenticate(Context, Object)} method.
@@ -17,11 +20,13 @@ public abstract class BaseProvider extends Plugin {
 		application = app;
 	}
 
-	public abstract String getKey();
+	public abstract String key();
 
-	public abstract Object authenticate(final Context context, final Object payload);
+	protected Configuration config() {
+		return Authenticator.config().getConfig(key());
+	}
 
-	public Application getApplication() {
+	public Application app() {
 		return application;
 	}
 }

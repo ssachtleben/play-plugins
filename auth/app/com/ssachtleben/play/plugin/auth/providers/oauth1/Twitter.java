@@ -1,30 +1,30 @@
 package com.ssachtleben.play.plugin.auth.providers.oauth1;
 
-import play.Application;
-import play.mvc.Http.Context;
+import org.scribe.builder.api.Api;
+import org.scribe.builder.api.TwitterApi.Authenticate;
 
-import com.ssachtleben.play.plugin.auth.providers.BaseProvider;
+import play.Application;
+
+import com.ssachtleben.play.plugin.auth.providers.OAuthProvider;
 
 /**
  * Provides authentication with Twitter oauth1 interface.
  * 
  * @author Sebastian Sachtleben
  */
-public class Twitter extends BaseProvider {
+public class Twitter extends OAuthProvider {
 
-	public Twitter(Application app) {
+	public Twitter(Application app) throws Exception {
 		super(app);
 	}
 
 	@Override
-	public String getKey() {
-		// TODO Auto-generated method stub
-		return null;
+	public String key() {
+		return "twitter";
 	}
 
 	@Override
-	public Object authenticate(Context context, Object payload) {
-		// TODO Auto-generated method stub
-		return null;
+	public Class<? extends Api> provider() {
+		return Authenticate.class;
 	}
 }

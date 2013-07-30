@@ -8,7 +8,8 @@ object ApplicationBuild extends Build {
     val libVersion      = "0.1-SNAPSHOT"
 
     val appDependencies = Seq(
-        javaCore
+        javaCore,
+        "org.scribe" % "scribe" % "1.3.5"
     )
 
     val main = play.Project(appName, libVersion, appDependencies).settings(

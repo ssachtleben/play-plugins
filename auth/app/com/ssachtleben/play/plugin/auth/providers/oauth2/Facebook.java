@@ -1,30 +1,30 @@
 package com.ssachtleben.play.plugin.auth.providers.oauth2;
 
-import play.Application;
-import play.mvc.Http.Context;
+import org.scribe.builder.api.Api;
+import org.scribe.builder.api.FacebookApi;
 
-import com.ssachtleben.play.plugin.auth.providers.BaseProvider;
+import play.Application;
+
+import com.ssachtleben.play.plugin.auth.providers.OAuthProvider;
 
 /**
  * Provides authentication with Facebook oauth2 interface.
  * 
  * @author Sebastian Sachtleben
  */
-public class Facebook extends BaseProvider {
+public class Facebook extends OAuthProvider {
 
-	public Facebook(Application app) {
+	public Facebook(Application app) throws Exception {
 		super(app);
 	}
 
 	@Override
-	public String getKey() {
-		// TODO Auto-generated method stub
-		return null;
+	public String key() {
+		return "facebook";
 	}
 
 	@Override
-	public Object authenticate(Context context, Object payload) {
-		// TODO Auto-generated method stub
-		return null;
+	public Class<? extends Api> provider() {
+		return FacebookApi.class;
 	}
 }
