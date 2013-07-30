@@ -9,6 +9,7 @@ object ApplicationBuild extends Build {
 
     val appDependencies = Seq(
         javaCore,
+        "commons-lang" % "commons-lang" % "2.4",
         "org.scribe" % "scribe" % "1.3.5"
     )
 

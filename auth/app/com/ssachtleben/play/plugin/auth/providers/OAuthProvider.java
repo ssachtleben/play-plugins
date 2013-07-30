@@ -12,6 +12,8 @@ import org.scribe.oauth.OAuthService;
 import play.Application;
 import play.Configuration;
 
+import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
+
 /**
  * Wrap the scribe library to handle the oAuth process. The tokens are saved and retrieved in the user session. When an access token is
  * acquired the stored session values removed.
@@ -34,7 +36,7 @@ public abstract class OAuthProvider extends BaseProvider {
 		validate();
 	}
 
-	public OAuthService service() {
+	public OAuthService service() throws MissingConfigurationException {
 		if (service == null) {
 			final Configuration config = config();
 			service = new ServiceBuilder().provider(provider()).apiKey(config.getString(SettingKeys.API_KEY))
@@ -47,14 +49,14 @@ public abstract class OAuthProvider extends BaseProvider {
 		return Arrays.asList(new String[] { SettingKeys.API_KEY, SettingKeys.API_SECRET, SettingKeys.API_CALLBACK });
 	}
 
-	private void validate() throws Exception {
+	private void validate() throws MissingConfigurationException {
 		final Configuration config = config();
 		Iterator<String> iter = settingKeys().iterator();
 		while (iter.hasNext()) {
 			String key = iter.next();
 			String value = config.getString(key);
 			if (StringUtils.isEmpty(value)) {
-				throw new Exception(String.format("Failed to initialize %s provider - Missing key: %s", key(), key));
+				throw new MissingConfigurationException(String.format("Failed to initialize %s provider - Missing key: %s", key(), key));
 			}
 		}
 	}

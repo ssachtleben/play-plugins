@@ -1,11 +1,10 @@
-package com.ssachtleben.play.plugin.auth.providers.oauth2;
+package com.ssachtleben.play.plugin.auth.providers;
 
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.FacebookApi;
 
 import play.Application;
 
-import com.ssachtleben.play.plugin.auth.providers.OAuthProvider;
 
 /**
  * Provides authentication with Facebook oauth2 interface.

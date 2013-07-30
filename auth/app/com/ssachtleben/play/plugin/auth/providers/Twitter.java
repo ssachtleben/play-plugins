@@ -1,11 +1,10 @@
-package com.ssachtleben.play.plugin.auth.providers.oauth1;
+package com.ssachtleben.play.plugin.auth.providers;
 
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi.Authenticate;
 
 import play.Application;
 
-import com.ssachtleben.play.plugin.auth.providers.OAuthProvider;
 
 /**
  * Provides authentication with Twitter oauth1 interface.

@@ -1,8 +1,11 @@
 package com.ssachtleben.play.plugin.auth;
 
+import play.Application;
 import play.Configuration;
 import play.Play;
 import play.mvc.Http.Session;
+
+import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 
 /**
  * Provides the logged in user and additional methods. TODO: rework javadoc...
@@ -18,9 +21,27 @@ public class Authenticator {
 	 * Returns auth configuration from application conf file.
 	 * 
 	 * @return The {@link Configuration} instance.
+	 * @throws MissingConfigurationException
 	 */
-	public static Configuration config() {
-		return Play.application().configuration().getConfig(SETTING_KEY_AUTH);
+	public static Configuration config() throws MissingConfigurationException {
+		return config(Play.application());
+	}
+
+	/**
+	 * Returns auth configuration from application conf file.
+	 * 
+	 * @param app
+	 *          The play {@link Application} instance.
+	 * @return The {@link Configuration} instance.
+	 * @throws MissingConfigurationException
+	 */
+	public static Configuration config(Application app) throws MissingConfigurationException {
+		final Configuration config = app.configuration();
+		final Configuration authConfig = config.getConfig(SETTING_KEY_AUTH);
+		if (authConfig == null) {
+			throw new MissingConfigurationException(String.format("Missing setting key '%s' in application.conf", SETTING_KEY_AUTH));
+		}
+		return authConfig;
 	}
 
 	/**
