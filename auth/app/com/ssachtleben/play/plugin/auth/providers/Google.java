@@ -18,6 +18,9 @@ import com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo;
 
 /**
  * Provides authentication with Google oauth2 interface.
+ * <p>
+ * <b>Important:</b> This provider is untested and may not work properly...
+ * </p>
  * 
  * @author Sebastian Sachtleben
  */
