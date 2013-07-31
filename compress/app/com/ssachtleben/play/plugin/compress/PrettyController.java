@@ -44,11 +44,15 @@ public class PrettyController extends Controller {
 	 * @return The prettified content.
 	 */
 	private static String prettify(Content content) {
+		if (Play.isDev()) {
+			return content.body();
+		}
 		HtmlCompressor compressor = new HtmlCompressor();
 		String output = content.body().trim();
-		if (Play.isDev()) {
-			compressor.setPreserveLineBreaks(true);
-		}
+		compressor.setRemoveComments(true);
+		compressor.setCompressCss(true);
+		compressor.setCompressJavaScript(true);
+		compressor.setRemoveIntertagSpaces(true);
 		return compressor.compress(output);
 	}
 }
