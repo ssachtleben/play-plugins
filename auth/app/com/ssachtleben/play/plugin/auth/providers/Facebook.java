@@ -14,14 +14,13 @@ import play.Application;
 
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.FacebookAuthUser;
-import com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo;
 
 /**
  * Provides authentication with Facebook oauth2 interface.
  * 
  * @author Sebastian Sachtleben
  */
-public class Facebook extends OAuth2Provider<FacebookAuthUser, OAuthAuthInfo> {
+public class Facebook extends OAuth2Provider<FacebookAuthUser> {
 	public static final String KEY = "facebook";
 
 	/**
@@ -60,23 +59,11 @@ public class Facebook extends OAuth2Provider<FacebookAuthUser, OAuthAuthInfo> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#info(org.scribe .model.Token)
+	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#transform(org.scribe.model.Token)
 	 */
 	@Override
-	protected OAuthAuthInfo info(Token token) {
-		// TODO: Read data from facebook for creating new account or comparing
-		// current values.
-		return new OAuthAuthInfo(token);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#transform(com .ssachtleben.play.plugin.auth.models.OAuthAuthInfo)
-	 */
-	@Override
-	protected FacebookAuthUser transform(OAuthAuthInfo info) {
-		return new FacebookAuthUser(userId(info.token()), info.token());
+	protected FacebookAuthUser transform(Token token) {
+		return new FacebookAuthUser(userId(token), token);
 	}
 
 	/**

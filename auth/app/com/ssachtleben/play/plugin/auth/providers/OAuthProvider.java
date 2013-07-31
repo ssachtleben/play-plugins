@@ -19,7 +19,6 @@ import play.mvc.Http.Request;
 
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.AuthUser;
-import com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo;
 import com.ssachtleben.play.plugin.auth.models.OAuthAuthUser;
 
 /**
@@ -27,7 +26,7 @@ import com.ssachtleben.play.plugin.auth.models.OAuthAuthUser;
  * 
  * @author Sebastian Sachtleben
  */
-public abstract class OAuthProvider<U extends OAuthAuthUser, I extends OAuthAuthInfo> extends BaseProvider<U, I> {
+public abstract class OAuthProvider<U extends OAuthAuthUser> extends BaseProvider<U> {
 
 	/**
 	 * Contains all oauth setting keys provided by application.conf. All keys must be configurated and will be checked during startup via
@@ -92,22 +91,13 @@ public abstract class OAuthProvider<U extends OAuthAuthUser, I extends OAuthAuth
 	public abstract String authUrl();
 
 	/**
-	 * Creates {@link OAuthAuthInfo} based on the {@link Token}.
-	 * 
-	 * @param token
-	 *          The {@link Token} to set.
-	 * @return The {@link OAuthAuthInfo}.
-	 */
-	protected abstract I info(final Token token);
-
-	/**
 	 * Creates {@link OAuthAuthUser} based on the given {@link OAuthAuthInfo}.
 	 * 
 	 * @param info
 	 *          The {@link OAuthAuthInfo} to set.
 	 * @return The transformed {@link OAuthAuthUser}.
 	 */
-	protected abstract U transform(final I info);
+	protected abstract U transform(final Token token);
 
 	/**
 	 * Retrieves {@link Token} from {@link Request}.
@@ -116,7 +106,7 @@ public abstract class OAuthProvider<U extends OAuthAuthUser, I extends OAuthAuth
 	 *          The {@link Request} to check.
 	 * @return The {@link Token}.
 	 */
-	protected abstract Token retrieveTokenFromRequest(final Request request);
+	protected abstract Token tokenFromRequest(final Request request);
 
 	/**
 	 * Provides access {@link Token} for the current authentication process.
@@ -169,14 +159,8 @@ public abstract class OAuthProvider<U extends OAuthAuthUser, I extends OAuthAuth
 	 */
 	@Override
 	protected AuthUser handle(final Context context) {
-		final Token token = retrieveTokenFromRequest(context.request());
-		logger().debug("Found token: " + token.toString());
-		final I info = info(token);
-		if (info != null) {
-			logger().debug("Found info: " + info.toString());
-			return transform(info);
-		}
-		return null;
+		final Token token = tokenFromRequest(context.request());
+		return token != null ? transform(token) : null;
 	}
 
 	/*

@@ -7,7 +7,6 @@ import org.scribe.model.Token;
 import play.Application;
 
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
-import com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo;
 import com.ssachtleben.play.plugin.auth.models.TwitterAuthUser;
 
 /**
@@ -15,7 +14,7 @@ import com.ssachtleben.play.plugin.auth.models.TwitterAuthUser;
  * 
  * @author Sebastian Sachtleben
  */
-public class Twitter extends OAuth1Provider<TwitterAuthUser, OAuthAuthInfo> {
+public class Twitter extends OAuth1Provider<TwitterAuthUser> {
 	public static final String KEY = "twitter";
 
 	/**
@@ -54,21 +53,31 @@ public class Twitter extends OAuth1Provider<TwitterAuthUser, OAuthAuthInfo> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuth1Provider#info(org.scribe.model.Token)
+	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#transform(org.scribe.model.Token)
 	 */
 	@Override
-	protected OAuthAuthInfo info(Token token) {
+	protected TwitterAuthUser transform(Token token) {
 		// TODO: Read data from twitter for creating new account or comparing current values.
-		return new OAuthAuthInfo(token);
+		return new TwitterAuthUser(userId(token), token);
 	}
-
-	/*
-	 * (non-Javadoc)
+	
+	/**
+	 * Extracts user id from {@link Token}.
 	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuth1Provider#transform(com.ssachtleben.play.plugin.auth.models.OAuth1AuthInfo)
+	 * @param token
+	 *          The {@link Token} to set.
+	 * @return The user id.
 	 */
-	@Override
-	protected TwitterAuthUser transform(OAuthAuthInfo info) {
-		return new TwitterAuthUser(info.token());
+	private static String userId(Token token) {
+		String user_id = null;
+		String tmp = token.getRawResponse();
+		String[] array = tmp.split("&");
+
+		for (int i = 0; i < array.length; i++) {
+			if (array[i].startsWith("user_id")) {
+				user_id = (array[i].split("="))[1];
+			}
+		}
+		return user_id;
 	}
 }

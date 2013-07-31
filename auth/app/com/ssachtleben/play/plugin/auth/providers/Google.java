@@ -14,7 +14,6 @@ import play.Configuration;
 
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.GoogleAuthUser;
-import com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo;
 
 /**
  * Provides authentication with Google oauth2 interface.
@@ -24,7 +23,7 @@ import com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo;
  * 
  * @author Sebastian Sachtleben
  */
-public class Google extends OAuth2Provider<GoogleAuthUser, OAuthAuthInfo> {
+public class Google extends OAuth2Provider<GoogleAuthUser> {
 	public static final String KEY = "Google";
 
 	private static final String AUTHORIZE_URL = "https://www.google.com/accounts/OAuthAuthorizeToken?oauth_token=";
@@ -89,24 +88,12 @@ public class Google extends OAuth2Provider<GoogleAuthUser, OAuthAuthInfo> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#info(org.scribe .model.Token)
+	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#transform(org.scribe.model.Token)
 	 */
 	@Override
-	protected OAuthAuthInfo info(Token token) {
-		// TODO: Read data from facebook for creating new account or comparing
-		// current values.
-		return new OAuthAuthInfo(token);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#transform(com .ssachtleben.play.plugin.auth.models.OAuthAuthInfo)
-	 */
-	@Override
-	protected GoogleAuthUser transform(OAuthAuthInfo info) {
+	protected GoogleAuthUser transform(Token token) {
 		// TODO: Create proper google auth user...
-		return new GoogleAuthUser("123", info.token());
+		return new GoogleAuthUser("123", token);
 	}
 
 	/*

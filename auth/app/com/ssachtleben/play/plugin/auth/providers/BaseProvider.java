@@ -1,6 +1,7 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -20,15 +21,14 @@ import play.mvc.Results;
 
 import com.ssachtleben.play.plugin.auth.Auth;
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
-import com.ssachtleben.play.plugin.auth.models.AuthInfo;
 import com.ssachtleben.play.plugin.auth.models.AuthUser;
 
 /**
- * Registers provider as Play {@link Plugin}.
+ * Provides basic provider functionality and allows to use it as Play {@link Plugin}.
  * 
  * @author Sebastian Sachtleben
  */
-public abstract class BaseProvider<U extends AuthUser, I extends AuthInfo> extends Plugin {
+public abstract class BaseProvider<U extends AuthUser> extends Plugin {
 
 	/**
 	 * Contains all setting keys provided by application.conf.
@@ -269,7 +269,7 @@ public abstract class BaseProvider<U extends AuthUser, I extends AuthInfo> exten
 	 * @return List of setting keys.
 	 */
 	protected List<String> settingKeys() {
-		return null;
+		return Collections.emptyList();
 	}
 
 	/**

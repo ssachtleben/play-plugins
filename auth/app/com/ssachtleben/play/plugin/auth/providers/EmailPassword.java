@@ -6,7 +6,6 @@ import play.Application;
 import play.mvc.Http.Context;
 
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
-import com.ssachtleben.play.plugin.auth.models.AuthInfo;
 import com.ssachtleben.play.plugin.auth.models.AuthUser;
 import com.ssachtleben.play.plugin.auth.models.EmailPasswordAuthUser;
 
@@ -15,7 +14,7 @@ import com.ssachtleben.play.plugin.auth.models.EmailPasswordAuthUser;
  * 
  * @author Sebastian Sachtleben
  */
-public class EmailPassword extends BaseProvider<EmailPasswordAuthUser, AuthInfo> {
+public class EmailPassword extends BaseProvider<EmailPasswordAuthUser> {
 	public static final String KEY = "email";
 
 	/**

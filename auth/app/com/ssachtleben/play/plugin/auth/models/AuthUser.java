@@ -2,10 +2,16 @@ package com.ssachtleben.play.plugin.auth.models;
 
 import java.io.Serializable;
 
+import com.ssachtleben.play.plugin.auth.providers.BaseProvider;
+import com.ssachtleben.play.plugin.auth.service.AuthService;
+
 /**
- * The authenticated user. TODO: rework this javadoc...
+ * The {@link AuthUser} provides {@link #hashCode()}, {@link #equals(Object)} and {@link #toString()} method for all authenticated user
+ * exchange models. It will be used as exchange model for {@link AuthService} plugin to find the real user instance.
  * 
  * @author Sebastian Sachtleben
+ * @see Identity
+ * @see BaseProvider
  */
 @SuppressWarnings("serial")
 public abstract class AuthUser implements Identity, Serializable {

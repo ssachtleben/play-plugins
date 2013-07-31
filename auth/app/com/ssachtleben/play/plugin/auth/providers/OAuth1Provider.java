@@ -7,7 +7,6 @@ import play.Application;
 import play.mvc.Http.Request;
 
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
-import com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo;
 import com.ssachtleben.play.plugin.auth.models.OAuthAuthUser;
 
 /**
@@ -15,7 +14,7 @@ import com.ssachtleben.play.plugin.auth.models.OAuthAuthUser;
  * 
  * @author Sebastian Sachtleben
  */
-public abstract class OAuth1Provider<U extends OAuthAuthUser, I extends OAuthAuthInfo> extends OAuthProvider<U, I> {
+public abstract class OAuth1Provider<U extends OAuthAuthUser> extends OAuthProvider<U> {
 
 	/**
 	 * Contains all request parameter names.
@@ -53,10 +52,10 @@ public abstract class OAuth1Provider<U extends OAuthAuthUser, I extends OAuthAut
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#retrieveTokenFromRequest(play.mvc.Http.Request)
+	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#tokenFromRequest(play.mvc.Http.Request)
 	 */
 	@Override
-	protected Token retrieveTokenFromRequest(final Request request) {
+	protected Token tokenFromRequest(final Request request) {
 		final String oAuthToken = request.getQueryString(RequestParameter.OAUTH_TOKEN);
 		final String oAuthVerifier = request.getQueryString(RequestParameter.OAUTH_VERIFIER);
 		if (!StringUtils.isEmpty(oAuthToken) && !StringUtils.isEmpty(oAuthVerifier)) {
