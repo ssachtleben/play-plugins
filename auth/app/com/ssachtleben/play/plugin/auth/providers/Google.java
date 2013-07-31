@@ -6,6 +6,7 @@ import org.scribe.model.Token;
 
 import play.Application;
 
+import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.GoogleAuthUser;
 import com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo;
 
@@ -19,7 +20,15 @@ public class Google extends OAuth2Provider<GoogleAuthUser, OAuthAuthInfo> {
 
 	private static final String AUTHORIZE_URL = "https://www.google.com/accounts/OAuthAuthorizeToken?oauth_token=";
 
-	public Google(Application app) throws Exception {
+	/**
+	 * Default constructor for {@link Google} provider and will be invoked during application startup if the provider is registered as plugin.
+	 * 
+	 * @param app
+	 *          The {@link Application} instance.
+	 * @throws MissingConfigurationException
+	 *           The exception will be thrown for missing mandatory setting keys.
+	 */
+	public Google(Application app) throws MissingConfigurationException {
 		super(app);
 	}
 

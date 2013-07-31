@@ -4,29 +4,39 @@ import org.apache.commons.lang.StringUtils;
 import org.scribe.model.Token;
 
 import play.Application;
-import play.mvc.Http.Context;
-import play.mvc.Result;
-import play.mvc.Results;
+import play.mvc.Http.Request;
 
-import com.ssachtleben.play.plugin.auth.Auth;
+import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo;
 import com.ssachtleben.play.plugin.auth.models.OAuthAuthUser;
 
 /**
- * Handle authentication process with oauth 1.
+ * Handle authentication process with oauth1.
  * 
  * @author Sebastian Sachtleben
  */
 public abstract class OAuth1Provider<U extends OAuthAuthUser, I extends OAuthAuthInfo> extends OAuthProvider<U, I> {
 
 	/**
-	 * Creates new {@link OAuth1Provider} instance and validates setting keys in application.conf.
+	 * Contains all request parameter names.
+	 * 
+	 * @author Sebastian Sachtleben
+	 */
+	public static abstract class RequestParameter {
+		public static final String OAUTH_TOKEN = "oauth_token";
+		public static final String OAUTH_VERIFIER = "oauth_verifier";
+	}
+
+	/**
+	 * Default constructor for {@link OAuth1Provider} provider and will be invoked during application startup if the provider is registered as
+	 * plugin.
 	 * 
 	 * @param app
 	 *          The {@link Application} instance.
-	 * @throws Exception
+	 * @throws MissingConfigurationException
+	 *           The exception will be thrown for missing mandatory setting keys.
 	 */
-	public OAuth1Provider(final Application app) throws Exception {
+	public OAuth1Provider(final Application app) throws MissingConfigurationException {
 		super(app);
 	}
 
@@ -43,30 +53,15 @@ public abstract class OAuth1Provider<U extends OAuthAuthUser, I extends OAuthAut
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.BaseProvider#login()
+	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#retrieveTokenFromRequest(play.mvc.Http.Request)
 	 */
 	@Override
-	public Result login(final Context context) {
-		logger().info("login oauth1 ...");
-		final String oAuthToken = context.request().getQueryString("oauth_token");
-		final String oAuthVerifier = context.request().getQueryString("oauth_verifier");
-		if (StringUtils.isEmpty(oAuthToken) || StringUtils.isEmpty(oAuthVerifier)) {
-			return Results.ok(authUrl());
+	protected Token retrieveTokenFromRequest(final Request request) {
+		final String oAuthToken = request.getQueryString(RequestParameter.OAUTH_TOKEN);
+		final String oAuthVerifier = request.getQueryString(RequestParameter.OAUTH_VERIFIER);
+		if (!StringUtils.isEmpty(oAuthToken) && !StringUtils.isEmpty(oAuthVerifier)) {
+			return accessToken(oAuthToken, oAuthVerifier);
 		}
-		final Token token = accessToken(oAuthToken, oAuthVerifier);
-		logger().info("Found token: " + token.toString());
-		final I info = info(token);
-		logger().info("Found info: " + info.toString());
-		final U user = transform(info);
-		logger().info("Found identity: " + user.toString());
-		Object obj = Auth.service().find(user);
-		logger().info("User: " + obj);
-		;
-		if (obj != null) {
-			context.session().put(Auth.SESSION_USER_KEY, "" + obj);
-			String success = config().getString("success");
-			return success == null || "".equals(success) ? Results.ok() : Results.redirect(success);
-		}
-		return Results.badRequest();
+		return null;
 	}
 }

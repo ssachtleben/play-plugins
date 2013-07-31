@@ -12,6 +12,7 @@ import org.scribe.model.Verb;
 
 import play.Application;
 
+import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.FacebookAuthUser;
 import com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo;
 
@@ -23,7 +24,16 @@ import com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo;
 public class Facebook extends OAuth2Provider<FacebookAuthUser, OAuthAuthInfo> {
 	public static final String KEY = "facebook";
 
-	public Facebook(Application app) throws Exception {
+	/**
+	 * Default constructor for {@link Facebook} provider and will be invoked during application startup if the provider is registered as
+	 * plugin.
+	 * 
+	 * @param app
+	 *          The {@link Application} instance.
+	 * @throws MissingConfigurationException
+	 *           The exception will be thrown for missing mandatory setting keys.
+	 */
+	public Facebook(Application app) throws MissingConfigurationException {
 		super(app);
 	}
 

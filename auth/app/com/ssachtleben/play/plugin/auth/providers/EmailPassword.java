@@ -4,11 +4,10 @@ import java.util.Map;
 
 import play.Application;
 import play.mvc.Http.Context;
-import play.mvc.Result;
-import play.mvc.Results;
 
-import com.ssachtleben.play.plugin.auth.Auth;
+import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.AuthInfo;
+import com.ssachtleben.play.plugin.auth.models.AuthUser;
 import com.ssachtleben.play.plugin.auth.models.EmailPasswordAuthUser;
 
 /**
@@ -19,7 +18,16 @@ import com.ssachtleben.play.plugin.auth.models.EmailPasswordAuthUser;
 public class EmailPassword extends BaseProvider<EmailPasswordAuthUser, AuthInfo> {
 	public static final String KEY = "email";
 
-	public EmailPassword(Application app) {
+	/**
+	 * Default constructor for {@link EmailPassword} provider and will be invoked during application startup if the provider is registered as
+	 * plugin.
+	 * 
+	 * @param app
+	 *          The {@link Application} instance.
+	 * @throws MissingConfigurationException
+	 *           The exception will be thrown for missing mandatory setting keys.
+	 */
+	public EmailPassword(Application app) throws MissingConfigurationException {
 		super(app);
 	}
 
@@ -36,24 +44,14 @@ public class EmailPassword extends BaseProvider<EmailPasswordAuthUser, AuthInfo>
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.BaseProvider#login(play.mvc.Http.Context)
+	 * @see com.ssachtleben.play.plugin.auth.providers.BaseProvider#handle(play.mvc.Http.Context)
 	 */
 	@Override
-	public Result login(Context context) {
+	protected AuthUser handle(Context context) {
 		Map<String, String[]> params = context.request().body().asFormUrlEncoded();
 		if (params != null && params.containsKey("email") && params.containsKey("password")) {
-			String email = params.get("email")[0];
-			String password = params.get("password")[0];
-			EmailPasswordAuthUser user = new EmailPasswordAuthUser(email, password);
-			logger().info("Found identity: " + user.toString());
-			Object obj = Auth.service().find(user);
-			logger().info("User: " + obj);
-			if (obj != null) {
-				context.session().put(Auth.SESSION_USER_KEY, "" + obj);
-				String success = config().getString("success");
-				return success == null || "".equals(success) ? Results.ok() : Results.redirect(success);
-			}
+			return new EmailPasswordAuthUser(params.get("email")[0], params.get("password")[0]);
 		}
-		return Results.badRequest();
+		return null;
 	}
 }

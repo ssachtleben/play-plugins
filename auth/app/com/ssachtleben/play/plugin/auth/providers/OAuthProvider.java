@@ -1,10 +1,8 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.Api;
 import org.scribe.model.OAuthRequest;
@@ -16,29 +14,43 @@ import org.scribe.oauth.OAuthService;
 
 import play.Application;
 import play.Configuration;
+import play.mvc.Http.Context;
+import play.mvc.Http.Request;
 
-import com.ssachtleben.play.plugin.auth.Auth;
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
+import com.ssachtleben.play.plugin.auth.models.AuthUser;
 import com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo;
 import com.ssachtleben.play.plugin.auth.models.OAuthAuthUser;
 
 /**
- * Wrap the scribe library to handle the oAuth process. The tokens are saved and retrieved in the user session. When an access token is
- * acquired the stored session values removed.
+ * Provides access to authenticate with oauth interfaces via scribe.
  * 
  * @author Sebastian Sachtleben
  */
 public abstract class OAuthProvider<U extends OAuthAuthUser, I extends OAuthAuthInfo> extends BaseProvider<U, I> {
 
 	/**
-	 * Contains all setting keys provided by application.conf.
+	 * Contains all oauth setting keys provided by application.conf. All keys must be configurated and will be checked during startup via
+	 * {@link #validate()} and throws {@link MissingConfigurationException} if any setting key is missing.
 	 * 
 	 * @author Sebastian Sachtleben
 	 */
-	public static abstract class SettingKeys {
+	public static abstract class OAuthSettingKeys {
+
+		/**
+		 * The settings key for the public key.
+		 */
 		public static final String API_KEY = "key";
+
+		/**
+		 * The setting key for the secret key.
+		 */
 		public static final String API_SECRET = "secret";
-		public static final String API_CALLBACK = "callback";
+
+		/**
+		 * The setting key for the url back to our application called by the provider.
+		 */
+		public static final String CALLBACK = "callback";
 	}
 
 	/**
@@ -47,16 +59,18 @@ public abstract class OAuthProvider<U extends OAuthAuthUser, I extends OAuthAuth
 	protected OAuthService service;
 
 	/**
-	 * Creates new {@link OAuthProvider} instance and validates setting keys in application.conf.
+	 * Default constructor for {@link OAuthProvider} provider and will be invoked during application startup if the provider is registered as
+	 * plugin.
 	 * 
 	 * @param app
 	 *          The {@link Application} instance.
-	 * @throws Exception
+	 * @throws MissingConfigurationException
+	 *           The exception will be thrown for missing mandatory setting keys.
+	 * @see OAuth1Provider
+	 * @see OAuth2Provider
 	 */
-	public OAuthProvider(final Application app) throws Exception {
+	public OAuthProvider(final Application app) throws MissingConfigurationException {
 		super(app);
-		validate();
-		logger().info("Provider initialized");
 	}
 
 	/**
@@ -72,9 +86,6 @@ public abstract class OAuthProvider<U extends OAuthAuthUser, I extends OAuthAuth
 
 	/**
 	 * Provides authentication url for this login try.
-	 * <p>
-	 * This is step 1 of 4.
-	 * </p>
 	 * 
 	 * @return The url of the authentication provider.
 	 */
@@ -99,10 +110,16 @@ public abstract class OAuthProvider<U extends OAuthAuthUser, I extends OAuthAuth
 	protected abstract U transform(final I info);
 
 	/**
+	 * Retrieves {@link Token} from {@link Request}.
+	 * 
+	 * @param request
+	 *          The {@link Request} to check.
+	 * @return The {@link Token}.
+	 */
+	protected abstract Token retrieveTokenFromRequest(final Request request);
+
+	/**
 	 * Provides access {@link Token} for the current authentication process.
-	 * <p>
-	 * This is step 2 of 4.
-	 * </p>
 	 * 
 	 * @param token
 	 *          The token retrieved by provider.
@@ -110,13 +127,8 @@ public abstract class OAuthProvider<U extends OAuthAuthUser, I extends OAuthAuth
 	 *          The verifier retrieved by provider.
 	 * @return The {@link Token} instance.
 	 */
-	public Token accessToken(String token, String verifier) {
-		try {
-			return service().getAccessToken(token != null ? new Token(token, verifier) : null, new Verifier(verifier));
-		} catch (Exception e) {
-			logger().warn("Error retrieving access token", e);
-		}
-		return null;
+	public Token accessToken(final String token, final String verifier) {
+		return service().getAccessToken(token != null ? new Token(token, verifier) : null, new Verifier(verifier));
 	}
 
 	/**
@@ -130,9 +142,9 @@ public abstract class OAuthProvider<U extends OAuthAuthUser, I extends OAuthAuth
 	 *          The url to set.
 	 * @return The response with code and body.
 	 */
-	public Response request(Token accessToken, Verb verb, String url) {
+	public Response request(final Token accessToken, final Verb verb, final String url) {
 		OAuthRequest request = new OAuthRequest(verb, url);
-		service.signRequest(accessToken, request);
+		service().signRequest(accessToken, request);
 		return request.send();
 	}
 
@@ -144,42 +156,36 @@ public abstract class OAuthProvider<U extends OAuthAuthUser, I extends OAuthAuth
 	public OAuthService service() {
 		if (service == null) {
 			final Configuration config = config();
-			service = new ServiceBuilder().provider(provider()).apiKey(config.getString(SettingKeys.API_KEY))
-					.apiSecret(config.getString(SettingKeys.API_SECRET)).callback(config.getString(SettingKeys.API_CALLBACK)).build();
+			service = new ServiceBuilder().provider(provider()).apiKey(config.getString(OAuthSettingKeys.API_KEY))
+					.apiSecret(config.getString(OAuthSettingKeys.API_SECRET)).callback(config.getString(OAuthSettingKeys.CALLBACK)).build();
 		}
 		return service;
 	}
 
-	/**
-	 * List of setting keys which must be provided from the application.conf. These keys will be validated during application start.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @return List of setting keys.
+	 * @see com.ssachtleben.play.plugin.auth.providers.BaseProvider#handle(play.mvc.Http.Context)
 	 */
-	protected List<String> settingKeys() {
-		return Arrays.asList(new String[] { SettingKeys.API_KEY, SettingKeys.API_SECRET, SettingKeys.API_CALLBACK });
+	@Override
+	protected AuthUser handle(final Context context) {
+		final Token token = retrieveTokenFromRequest(context.request());
+		logger().debug("Found token: " + token.toString());
+		final I info = info(token);
+		if (info != null) {
+			logger().debug("Found info: " + info.toString());
+			return transform(info);
+		}
+		return null;
 	}
 
-	/**
-	 * Validates {@link OAuthProvider} during application start and checks if all setting keys properly set in application.conf.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @throws MissingConfigurationException
-	 *           The exception throws for missing setting keys in application.conf.
+	 * @see com.ssachtleben.play.plugin.auth.providers.BaseProvider#settingKeys()
 	 */
-	private void validate() throws MissingConfigurationException {
-		final List<String> settingKeys = settingKeys();
-		if (settingKeys.size() == 0) {
-			return;
-		}
-		final Configuration config = config();
-		Iterator<String> iter = settingKeys.iterator();
-		while (iter.hasNext()) {
-			String key = iter.next();
-			String value = config.getString(key);
-			if (StringUtils.isEmpty(value)) {
-				throw new MissingConfigurationException(String.format(
-						"Failed to initialize %s provider due missing settings key '%s.%s.%s' in application.conf", key(), Auth.SETTING_KEY_AUTH,
-						key(), key));
-			}
-		}
+	@Override
+	protected List<String> settingKeys() {
+		return Arrays.asList(new String[] { OAuthSettingKeys.API_KEY, OAuthSettingKeys.API_SECRET, OAuthSettingKeys.CALLBACK });
 	}
 }
