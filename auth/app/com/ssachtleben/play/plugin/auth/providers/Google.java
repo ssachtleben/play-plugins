@@ -5,7 +5,6 @@ import org.scribe.builder.api.GoogleApi;
 import org.scribe.model.Token;
 
 import play.Application;
-import play.api.templates.Html;
 
 import com.ssachtleben.play.plugin.auth.models.GoogleAuthUser;
 import com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo;
@@ -57,7 +56,7 @@ public class Google extends OAuth2Provider<GoogleAuthUser, OAuthAuthInfo> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#info(org.scribe.model.Token)
+	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#info(org.scribe .model.Token)
 	 */
 	@Override
 	protected OAuthAuthInfo info(Token token) {
@@ -68,21 +67,10 @@ public class Google extends OAuth2Provider<GoogleAuthUser, OAuthAuthInfo> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#transform(com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo)
+	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#transform(com .ssachtleben.play.plugin.auth.models.OAuthAuthInfo)
 	 */
 	@Override
 	protected GoogleAuthUser transform(OAuthAuthInfo info) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#popup()
-	 */
-	@Override
-	protected Html popup() {
 		// TODO Auto-generated method stub
 		return null;
 	}

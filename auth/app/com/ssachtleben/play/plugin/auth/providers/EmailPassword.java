@@ -50,7 +50,8 @@ public class EmailPassword extends BaseProvider<EmailPasswordAuthUser, AuthInfo>
 			logger().info("User: " + obj);
 			if (obj != null) {
 				context.session().put(Auth.SESSION_USER_KEY, "" + obj);
-				return Results.ok();
+				String success = config().getString("success");
+				return success == null || "".equals(success) ? Results.ok() : Results.redirect(success);
 			}
 		}
 		return Results.badRequest();

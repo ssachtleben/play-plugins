@@ -11,7 +11,7 @@ import com.ssachtleben.play.plugin.auth.models.Identity;
 public interface AuthService {
 
 	Object find(final Identity identity);
-	
+
 	void save(final AuthUser authUser);
 
 	void update(final AuthUser authUser);

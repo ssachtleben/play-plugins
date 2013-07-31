@@ -11,7 +11,6 @@ import org.scribe.model.Token;
 import org.scribe.model.Verb;
 
 import play.Application;
-import play.api.templates.Html;
 
 import com.ssachtleben.play.plugin.auth.models.FacebookAuthUser;
 import com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo;
@@ -51,32 +50,23 @@ public class Facebook extends OAuth2Provider<FacebookAuthUser, OAuthAuthInfo> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#info(org.scribe.model.Token)
+	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#info(org.scribe .model.Token)
 	 */
 	@Override
 	protected OAuthAuthInfo info(Token token) {
-		// TODO: Read data from facebook for creating new account or comparing current values.
+		// TODO: Read data from facebook for creating new account or comparing
+		// current values.
 		return new OAuthAuthInfo(token);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#transform(com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo)
+	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#transform(com .ssachtleben.play.plugin.auth.models.OAuthAuthInfo)
 	 */
 	@Override
 	protected FacebookAuthUser transform(OAuthAuthInfo info) {
 		return new FacebookAuthUser(userId(info.token()), info.token());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#popup()
-	 */
-	@Override
-	protected Html popup() {
-		return views.html.popups.facebook.render();
 	}
 
 	/**

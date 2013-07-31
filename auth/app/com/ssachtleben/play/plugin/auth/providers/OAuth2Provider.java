@@ -63,7 +63,8 @@ public abstract class OAuth2Provider<U extends OAuthAuthUser, I extends OAuthAut
 		logger().info("User: " + obj);
 		if (obj != null) {
 			context.session().put(Auth.SESSION_USER_KEY, "" + obj);
-			return Results.ok(popup());
+			String success = config().getString("success");
+			return success == null || "".equals(success) ? Results.ok() : Results.redirect(success);
 		}
 		return Results.badRequest();
 	}

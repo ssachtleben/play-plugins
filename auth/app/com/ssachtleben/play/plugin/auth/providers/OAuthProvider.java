@@ -16,7 +16,6 @@ import org.scribe.oauth.OAuthService;
 
 import play.Application;
 import play.Configuration;
-import play.api.templates.Html;
 
 import com.ssachtleben.play.plugin.auth.Auth;
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
@@ -67,7 +66,7 @@ public abstract class OAuthProvider<U extends OAuthAuthUser, I extends OAuthAuth
 	 * </p>
 	 * 
 	 * @return The {@link Api} implementation class for this provider.
-	 * @see https://github.com/fernandezpablo85/scribe-java/tree/master/src/main/java/org/scribe/builder/api
+	 * @see https ://github.com/fernandezpablo85/scribe-java/tree/master/src/main/ java/org/scribe/builder/api
 	 */
 	public abstract Class<? extends Api> provider();
 
@@ -98,8 +97,6 @@ public abstract class OAuthProvider<U extends OAuthAuthUser, I extends OAuthAuth
 	 * @return The transformed {@link OAuthAuthUser}.
 	 */
 	protected abstract U transform(final I info);
-
-	protected abstract Html popup();
 
 	/**
 	 * Provides access {@link Token} for the current authentication process.
@@ -180,8 +177,8 @@ public abstract class OAuthProvider<U extends OAuthAuthUser, I extends OAuthAuth
 			String value = config.getString(key);
 			if (StringUtils.isEmpty(value)) {
 				throw new MissingConfigurationException(String.format(
-						"Failed to initialize %s provider due missing settings key '%s.%s.%s' in application.conf", key(),
-						Auth.SETTING_KEY_AUTH, key(), key));
+						"Failed to initialize %s provider due missing settings key '%s.%s.%s' in application.conf", key(), Auth.SETTING_KEY_AUTH,
+						key(), key));
 			}
 		}
 	}

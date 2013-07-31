@@ -5,7 +5,6 @@ import org.scribe.builder.api.TwitterApi.Authenticate;
 import org.scribe.model.Token;
 
 import play.Application;
-import play.api.templates.Html;
 
 import com.ssachtleben.play.plugin.auth.models.OAuthAuthInfo;
 import com.ssachtleben.play.plugin.auth.models.TwitterAuthUser;
@@ -61,15 +60,5 @@ public class Twitter extends OAuth1Provider<TwitterAuthUser, OAuthAuthInfo> {
 	@Override
 	protected TwitterAuthUser transform(OAuthAuthInfo info) {
 		return new TwitterAuthUser(info.token());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#popup()
-	 */
-	@Override
-	protected Html popup() {
-		return views.html.popups.twitter.render();
 	}
 }
