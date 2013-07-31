@@ -12,13 +12,13 @@ public interface Identity {
 	 * 
 	 * @return The user id.
 	 */
-	String getId();
+	String id();
 
 	/**
 	 * The provider used during login, for example email, facebook, twitter etc.
 	 * 
 	 * @return The provider.
 	 */
-	String getProvider();
+	String provider();
 
 }

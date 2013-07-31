@@ -3,7 +3,7 @@ package com.ssachtleben.play.plugin.auth.controllers;
 import play.mvc.Controller;
 import play.mvc.Result;
 
-import com.ssachtleben.play.plugin.auth.Authenticator;
+import com.ssachtleben.play.plugin.auth.Auth;
 
 /**
  * Provides login and logout methods to handle authentication process. TODO: rework javadoc...
@@ -13,13 +13,11 @@ import com.ssachtleben.play.plugin.auth.Authenticator;
 public class Authenticate extends Controller {
 
 	public static Result login(final String provider) {
-		Authenticator.login(provider);
-		return ok();
+		return Auth.login(ctx(), provider);
 	}
 
 	public static Result logout() {
-		Authenticator.logout(session());
-		return ok();
+		return Auth.logout(session());
 	}
 
 }
