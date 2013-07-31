@@ -1,10 +1,16 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.GoogleApi;
 import org.scribe.model.Token;
+import org.scribe.oauth.OAuthService;
 
 import play.Application;
+import play.Configuration;
 
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.GoogleAuthUser;
@@ -19,6 +25,7 @@ public class Google extends OAuth2Provider<GoogleAuthUser, OAuthAuthInfo> {
 	public static final String KEY = "Google";
 
 	private static final String AUTHORIZE_URL = "https://www.google.com/accounts/OAuthAuthorizeToken?oauth_token=";
+	private static final String SCOPE = "https://docs.google.com/feeds/";
 
 	/**
 	 * Default constructor for {@link Google} provider and will be invoked during application startup if the provider is registered as plugin.
@@ -55,11 +62,25 @@ public class Google extends OAuth2Provider<GoogleAuthUser, OAuthAuthInfo> {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#service()
+	 */
+	public OAuthService service() {
+		if (service == null) {
+			final Configuration config = config();
+			service = new ServiceBuilder().provider(provider()).apiKey(config.getString(OAuthSettingKeys.API_KEY))
+					.apiSecret(config.getString(OAuthSettingKeys.API_SECRET)).scope(SCOPE).build();
+		}
+		return service;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#authUrl()
 	 */
 	@Override
 	public String authUrl() {
-		return AUTHORIZE_URL + service.getRequestToken();
+		return AUTHORIZE_URL + service().getRequestToken();
 	}
 
 	/*
@@ -69,8 +90,9 @@ public class Google extends OAuth2Provider<GoogleAuthUser, OAuthAuthInfo> {
 	 */
 	@Override
 	protected OAuthAuthInfo info(Token token) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO: Read data from facebook for creating new account or comparing
+		// current values.
+		return new OAuthAuthInfo(token);
 	}
 
 	/*
@@ -80,7 +102,17 @@ public class Google extends OAuth2Provider<GoogleAuthUser, OAuthAuthInfo> {
 	 */
 	@Override
 	protected GoogleAuthUser transform(OAuthAuthInfo info) {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO: Create proper google auth user...
+		return new GoogleAuthUser("123", info.token());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ssachtleben.play.plugin.auth.providers.BaseProvider#settingKeys()
+	 */
+	@Override
+	protected List<String> settingKeys() {
+		return Arrays.asList(new String[] { OAuthSettingKeys.API_KEY, OAuthSettingKeys.API_SECRET });
 	}
 }
