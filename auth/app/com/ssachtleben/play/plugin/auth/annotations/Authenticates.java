@@ -19,14 +19,14 @@ public @interface Authenticates {
 	/**
 	 * The AuthUser model which will be authenticated.
 	 * 
-	 * @return The cron pattern
+	 * @return The {@link AuthUser} model.
 	 */
-	Class<? extends AuthUser> role() default AuthUser.class;
+	Class<? extends AuthUser> type() default AuthUser.class;
 
 	/**
 	 * The active boolean decides if the authentication method check will be used.
 	 * 
-	 * @return The active boolean
+	 * @return The active boolean.
 	 */
 	boolean active() default true;
 
