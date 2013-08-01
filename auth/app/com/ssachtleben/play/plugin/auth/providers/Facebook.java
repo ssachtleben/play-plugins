@@ -3,10 +3,10 @@ package com.ssachtleben.play.plugin.auth.providers;
 import java.io.IOException;
 
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.FacebookApi;
+import org.scribe.model.Response;
 import org.scribe.model.Token;
 import org.scribe.model.Verb;
 
@@ -22,6 +22,10 @@ import com.ssachtleben.play.plugin.auth.models.FacebookAuthUser;
  */
 public class Facebook extends OAuth2Provider<FacebookAuthUser> {
 	public static final String KEY = "facebook";
+
+	public static abstract class FacebookSettingKeys {
+		public static final String FIELDS = "fields";
+	}
 
 	/**
 	 * Default constructor for {@link Facebook} provider and will be invoked during application startup if the provider is registered as
@@ -63,28 +67,39 @@ public class Facebook extends OAuth2Provider<FacebookAuthUser> {
 	 */
 	@Override
 	protected FacebookAuthUser transform(Token token) {
-		return new FacebookAuthUser(userId(token), token);
+		return new FacebookAuthUser(data(token), token);
 	}
 
 	/**
-	 * TODO: UGLY !!! UGLY !!! UGLY !!! UGLY !!!
+	 * Fetch data from Facebook Graph with {@link Token} from current authentication process.
 	 * 
 	 * @param token
-	 * @return
+	 *          The {@link Token} to set.
+	 * @return User data as {@link JsonNode} fetched from Facebook Graph.
 	 */
-	private String userId(Token token) {
-		// TODO: so ugly here :(
+	private JsonNode data(Token token) {
+		String fields = config().getString(FacebookSettingKeys.FIELDS, "id,name");
+		Response resp = request(token, Verb.GET, String.format("https://graph.facebook.com/me?fields=%s", fields));
+		logger().info(
+				String.format("Fetched data from Facebook Graph [success=%s, code=%d, content=%s]", resp.isSuccessful(), resp.getCode(),
+						resp.getBody()));
+		return toJson(resp.getBody());
+	}
+
+/**
+	 * Converts Facebook Graph data response into {@link JsonNode].
+	 * 
+	 * @param data
+	 *          The Facebook Graph data.
+	 * @return Generated {@link JsonNode}.
+	 */
+	private JsonNode toJson(String data) {
 		ObjectMapper mapper = new ObjectMapper();
-		JsonNode node = null;
 		try {
-			node = mapper.readTree(request(token, Verb.GET, "https://graph.facebook.com/me?fields=id").getBody());
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return mapper.readTree(data);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger().error("Failed to fetch data for facebook user", e);
 		}
-		return node.get("id").asText();
+		return null;
 	}
 }
