@@ -25,7 +25,7 @@ import com.ssachtleben.play.plugin.auth.models.GoogleAuthUser;
  * @author Sebastian Sachtleben
  */
 @Provider(type = GoogleAuthUser.class)
-public class Google extends OAuth2Provider<GoogleAuthUser> {
+public class Google extends BaseOAuth2Provider<GoogleAuthUser> {
 	
 	/**
 	 * The unique provider name for {@link Google} provider.

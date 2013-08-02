@@ -29,7 +29,7 @@ import com.ssachtleben.play.plugin.auth.models.OAuthAuthUser;
  * 
  * @author Sebastian Sachtleben
  */
-public abstract class OAuthProvider<U extends OAuthAuthUser> extends BaseProvider<U> {
+public abstract class BaseOAuthProvider<U extends OAuthAuthUser> extends BaseProvider<U> {
 
 	/**
 	 * Contains all oauth setting keys provided by application.conf. All keys must be configurated and will be checked during startup via
@@ -61,17 +61,17 @@ public abstract class OAuthProvider<U extends OAuthAuthUser> extends BaseProvide
 	protected OAuthService service;
 
 	/**
-	 * Default constructor for {@link OAuthProvider} provider and will be invoked during application startup if the provider is registered as
+	 * Default constructor for {@link BaseOAuthProvider} provider and will be invoked during application startup if the provider is registered as
 	 * plugin.
 	 * 
 	 * @param app
 	 *          The {@link Application} instance.
 	 * @throws MissingConfigurationException
 	 *           The exception will be thrown for missing mandatory setting keys.
-	 * @see OAuth1Provider
-	 * @see OAuth2Provider
+	 * @see BaseOAuth1Provider
+	 * @see BaseOAuth2Provider
 	 */
-	public OAuthProvider(final Application app) throws MissingConfigurationException {
+	public BaseOAuthProvider(final Application app) throws MissingConfigurationException {
 		super(app);
 	}
 

@@ -2,7 +2,7 @@ package com.ssachtleben.play.plugin.auth.models;
 
 import org.scribe.model.Token;
 
-import com.ssachtleben.play.plugin.auth.providers.OAuthProvider;
+import com.ssachtleben.play.plugin.auth.providers.BaseOAuthProvider;
 import com.ssachtleben.play.plugin.auth.service.AuthService;
 
 /**
@@ -13,7 +13,7 @@ import com.ssachtleben.play.plugin.auth.service.AuthService;
  * 
  * @author Sebastian Sachtleben
  * @see AuthUser
- * @see OAuthProvider
+ * @see BaseOAuthProvider
  */
 @SuppressWarnings("serial")
 public abstract class OAuthAuthUser extends AuthUser {

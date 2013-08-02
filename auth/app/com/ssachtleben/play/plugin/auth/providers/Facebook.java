@@ -17,7 +17,7 @@ import com.ssachtleben.play.plugin.auth.models.FacebookAuthUser;
  * @author Sebastian Sachtleben
  */
 @Provider(type = FacebookAuthUser.class)
-public class Facebook extends OAuth2Provider<FacebookAuthUser> {
+public class Facebook extends BaseOAuth2Provider<FacebookAuthUser> {
 
 	/**
 	 * The unique provider name for {@link Facebook} provider.

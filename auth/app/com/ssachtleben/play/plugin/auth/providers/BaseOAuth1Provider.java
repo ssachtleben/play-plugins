@@ -14,7 +14,7 @@ import com.ssachtleben.play.plugin.auth.models.OAuthAuthUser;
  * 
  * @author Sebastian Sachtleben
  */
-public abstract class OAuth1Provider<U extends OAuthAuthUser> extends OAuthProvider<U> {
+public abstract class BaseOAuth1Provider<U extends OAuthAuthUser> extends BaseOAuthProvider<U> {
 
 	/**
 	 * Contains all request parameter names.
@@ -27,7 +27,7 @@ public abstract class OAuth1Provider<U extends OAuthAuthUser> extends OAuthProvi
 	}
 
 	/**
-	 * Default constructor for {@link OAuth1Provider} provider and will be invoked during application startup if the provider is registered as
+	 * Default constructor for {@link BaseOAuth1Provider} provider and will be invoked during application startup if the provider is registered as
 	 * plugin.
 	 * 
 	 * @param app
@@ -35,7 +35,7 @@ public abstract class OAuth1Provider<U extends OAuthAuthUser> extends OAuthProvi
 	 * @throws MissingConfigurationException
 	 *           The exception will be thrown for missing mandatory setting keys.
 	 */
-	public OAuth1Provider(final Application app) throws MissingConfigurationException {
+	public BaseOAuth1Provider(final Application app) throws MissingConfigurationException {
 		super(app);
 	}
 

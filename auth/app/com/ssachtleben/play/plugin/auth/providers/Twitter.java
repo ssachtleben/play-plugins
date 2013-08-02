@@ -16,7 +16,7 @@ import com.ssachtleben.play.plugin.auth.models.TwitterAuthUser;
  * @author Sebastian Sachtleben
  */
 @Provider(type = TwitterAuthUser.class)
-public class Twitter extends OAuth1Provider<TwitterAuthUser> {
+public class Twitter extends BaseOAuth1Provider<TwitterAuthUser> {
 
 	/**
 	 * The unique provider name for {@link Twitter} provider.
