@@ -1,20 +1,14 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 
-import play.Application;
 import play.Configuration;
 import play.Logger;
-import play.Plugin;
 import play.mvc.Http.Context;
 import play.mvc.Result;
 import play.mvc.Results;
@@ -22,13 +16,14 @@ import play.mvc.Results;
 import com.ssachtleben.play.plugin.auth.Auth;
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.AuthUser;
+import com.ssachtleben.play.plugin.auth.models.Identity;
 
 /**
- * Provides basic provider functionality and allows to use it as Play {@link Plugin}.
+ * Provides basic provider functionality.
  * 
  * @author Sebastian Sachtleben
  */
-public abstract class BaseProvider<U extends AuthUser> extends Plugin {
+public abstract class BaseProvider<U extends Identity> {
 
 	/**
 	 * Contains all setting keys provided by application.conf.
@@ -41,141 +36,12 @@ public abstract class BaseProvider<U extends AuthUser> extends Plugin {
 	}
 
 	/**
-	 * The static {@link Providers} instance contains all provider instances registered during application startup.
-	 * 
-	 * @author Sebastian Sachtleben
-	 */
-	@SuppressWarnings("rawtypes")
-	public abstract static class Providers {
-		private static final Logger.ALogger log = Logger.of(Providers.class);
-
-		/**
-		 * Keeps list of all registered {@link BaseProvider} instances.
-		 */
-		private static Map<String, BaseProvider> cache = new HashMap<String, BaseProvider>();
-
-		/**
-		 * Registers new {@link BaseProvider} for a specific key.
-		 * 
-		 * @param key
-		 *          The provider key.
-		 * @param provider
-		 *          The {@link BaseProvider} instance.
-		 */
-		public static void register(final String key, final BaseProvider provider) {
-			final Object previous = cache.put(key, provider);
-			if (previous != null) {
-				log.warn(String.format("There are multiple auth providers registered for key '%s'", key));
-			}
-		}
-
-		/**
-		 * Unregisters a {@link BaseProvider} for a specific key.
-		 * 
-		 * @param key
-		 *          The provider key.
-		 */
-		public static void unregister(final String key) {
-			cache.remove(key);
-		}
-
-		/**
-		 * Returns instance of {@link BaseProvider} for a specific key.
-		 * 
-		 * @param key
-		 *          The provider key.
-		 * @return The {@link BaseProvider} instance.
-		 */
-		public static BaseProvider get(final String key) {
-			return cache.get(key);
-		}
-
-		/**
-		 * Checks if {@link BaseProvider} with specific key is registered.
-		 * 
-		 * @param key
-		 *          The provider key.
-		 * @return Success boolean.
-		 */
-		public static boolean has(final String name) {
-			return cache.containsKey(name);
-		}
-
-		/**
-		 * Provides a set of provider keys of all registered {@link BaseProvider} instances.
-		 * 
-		 * @return Set of provider keys.
-		 */
-		public static Set<String> keys() {
-			return cache.keySet();
-		}
-
-		/**
-		 * Provides the registered {@link BaseProvider} instances as collection.
-		 * 
-		 * @return Collection of registered {@link BaseProvider}.
-		 */
-		public static Collection<BaseProvider> list() {
-			return cache.values();
-		}
-	}
-
-	/**
-	 * Keeps {@link Application} instance.
-	 */
-	private Application app;
-
-	/**
-	 * Default constructor for {@link BaseProvider} and will be invoked during application startup if the provider is registered as plugin.
-	 * 
-	 * @param app
-	 *          The {@link Application} instance.
-	 * @throws MissingConfigurationException
-	 *           The exception will be thrown for missing mandatory setting keys.
-	 */
-	public BaseProvider(final Application app) throws MissingConfigurationException {
-		this.app = app;
-		validate();
-	}
-
-	/**
-	 * Provides the current {@link Application} instance.
-	 * 
-	 * @return The {@link Application} instance.
-	 */
-	protected Application app() {
-		return app;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see play.Plugin#onStart()
-	 */
-	@Override
-	public void onStart() {
-		logger().info(String.format("Register %s provider", key()));
-		Providers.register(key(), this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see play.Plugin#onStop()
-	 */
-	@Override
-	public void onStop() {
-		logger().info(String.format("Unregister %s provider", key()));
-		Providers.unregister(key());
-	}
-
-	/**
 	 * Provides access to settings from application.conf.
 	 * 
 	 * @return The provider {@link Configuration}.
 	 */
 	protected Configuration config() {
-		final Configuration config = Auth.config(app());
+		final Configuration config = Auth.config();
 		if (config != null) {
 			return config.getConfig(key());
 		}
@@ -269,7 +135,7 @@ public abstract class BaseProvider<U extends AuthUser> extends Plugin {
 	 * @return List of setting keys.
 	 */
 	protected List<String> settingKeys() {
-		return Collections.emptyList();
+		return Collections.<String> emptyList();
 	}
 
 	/**
@@ -279,12 +145,13 @@ public abstract class BaseProvider<U extends AuthUser> extends Plugin {
 	 * @throws MissingConfigurationException
 	 *           The exception throws for missing setting keys in application.conf.
 	 */
-	private void validate() throws MissingConfigurationException {
+	public void validate() throws MissingConfigurationException {
 		final List<String> settingKeys = settingKeys();
 		if (settingKeys != null && settingKeys.size() >= 0) {
 			final Configuration config = config();
 			if (config == null && settingKeys.size() > 0) {
-				throw new MissingConfigurationException(String.format("Creating provider %s failed due missing conf '%s.%s'", key(),
+				throw new MissingConfigurationException(String.format("Creating %s provider failed due missing conf '%s.%s'",
+						WordUtils.capitalize(key()),
 						Auth.SettingKeys.AUTH, key()));
 			}
 			Iterator<String> iter = settingKeys.iterator();
@@ -292,11 +159,21 @@ public abstract class BaseProvider<U extends AuthUser> extends Plugin {
 				String key = iter.next();
 				String value = config.getString(key);
 				if (StringUtils.isEmpty(value)) {
-					throw new MissingConfigurationException(String.format("Creating provider %s failed due missing conf settings key '%s.%s.%s'",
-							key(), Auth.SettingKeys.AUTH, key(), key));
+					throw new MissingConfigurationException(String.format("Creating %s provider failed due missing conf settings key '%s.%s.%s'",
+							WordUtils.capitalize(key()), Auth.SettingKeys.AUTH, key(), key));
 				}
 			}
 
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.format("%s Provider", WordUtils.capitalize(key()));
 	}
 }

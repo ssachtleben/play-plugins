@@ -4,10 +4,7 @@ import org.scribe.builder.api.Api;
 import org.scribe.builder.api.TwitterApi.Authenticate;
 import org.scribe.model.Token;
 
-import play.Application;
-
 import com.ssachtleben.play.plugin.auth.annotations.Provider;
-import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.TwitterAuthUser;
 
 /**
@@ -22,19 +19,6 @@ public class Twitter extends BaseOAuth1Provider<TwitterAuthUser> {
 	 * The unique provider name for {@link Twitter} provider.
 	 */
 	public static final String KEY = "twitter";
-
-	/**
-	 * Default constructor for {@link Twitter} provider and will be invoked during application startup if the provider is registered as
-	 * plugin.
-	 * 
-	 * @param app
-	 *          The {@link Application} instance.
-	 * @throws MissingConfigurationException
-	 *           The exception will be thrown for missing mandatory setting keys.
-	 */
-	public Twitter(Application app) throws MissingConfigurationException {
-		super(app);
-	}
 
 	/*
 	 * (non-Javadoc)

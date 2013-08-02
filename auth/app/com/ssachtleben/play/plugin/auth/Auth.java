@@ -9,7 +9,6 @@ import play.mvc.Http.Session;
 import play.mvc.Result;
 import play.mvc.Results;
 
-import com.ssachtleben.play.plugin.auth.providers.BaseProvider.Providers;
 import com.ssachtleben.play.plugin.auth.service.AuthService;
 
 /**

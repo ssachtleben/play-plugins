@@ -15,7 +15,6 @@ import org.scribe.model.Verb;
 import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
 
-import play.Application;
 import play.Configuration;
 import play.mvc.Http.Context;
 import play.mvc.Http.Request;
@@ -59,21 +58,6 @@ public abstract class BaseOAuthProvider<U extends OAuthAuthUser> extends BasePro
 	 * Keeps {@link OAuthService} instance.
 	 */
 	protected OAuthService service;
-
-	/**
-	 * Default constructor for {@link BaseOAuthProvider} provider and will be invoked during application startup if the provider is registered as
-	 * plugin.
-	 * 
-	 * @param app
-	 *          The {@link Application} instance.
-	 * @throws MissingConfigurationException
-	 *           The exception will be thrown for missing mandatory setting keys.
-	 * @see BaseOAuth1Provider
-	 * @see BaseOAuth2Provider
-	 */
-	public BaseOAuthProvider(final Application app) throws MissingConfigurationException {
-		super(app);
-	}
 
 	/**
 	 * Returns the scribe provider class for {@link ServiceBuilder}.

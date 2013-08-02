@@ -5,10 +5,7 @@ import org.scribe.builder.api.Api;
 import org.scribe.builder.api.FacebookApi;
 import org.scribe.model.Token;
 
-import play.Application;
-
 import com.ssachtleben.play.plugin.auth.annotations.Provider;
-import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.FacebookAuthUser;
 
 /**
@@ -26,19 +23,6 @@ public class Facebook extends BaseOAuth2Provider<FacebookAuthUser> {
 
 	public static abstract class FacebookSettingKeys {
 		public static final String FIELDS = "fields";
-	}
-
-	/**
-	 * Default constructor for {@link Facebook} provider and will be invoked during application startup if the provider is registered as
-	 * plugin.
-	 * 
-	 * @param app
-	 *          The {@link Application} instance.
-	 * @throws MissingConfigurationException
-	 *           The exception will be thrown for missing mandatory setting keys.
-	 */
-	public Facebook(Application app) throws MissingConfigurationException {
-		super(app);
 	}
 
 	/*

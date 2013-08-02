@@ -9,11 +9,9 @@ import org.scribe.builder.api.GoogleApi;
 import org.scribe.model.Token;
 import org.scribe.oauth.OAuthService;
 
-import play.Application;
 import play.Configuration;
 
 import com.ssachtleben.play.plugin.auth.annotations.Provider;
-import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.GoogleAuthUser;
 
 /**
@@ -30,22 +28,10 @@ public class Google extends BaseOAuth2Provider<GoogleAuthUser> {
 	/**
 	 * The unique provider name for {@link Google} provider.
 	 */
-	public static final String KEY = "Google";
+	public static final String KEY = "google";
 
 	private static final String AUTHORIZE_URL = "https://www.google.com/accounts/OAuthAuthorizeToken?oauth_token=";
 	private static final String SCOPE = "https://docs.google.com/feeds/";
-
-	/**
-	 * Default constructor for {@link Google} provider and will be invoked during application startup if the provider is registered as plugin.
-	 * 
-	 * @param app
-	 *          The {@link Application} instance.
-	 * @throws MissingConfigurationException
-	 *           The exception will be thrown for missing mandatory setting keys.
-	 */
-	public Google(Application app) throws MissingConfigurationException {
-		super(app);
-	}
 
 	/*
 	 * (non-Javadoc)

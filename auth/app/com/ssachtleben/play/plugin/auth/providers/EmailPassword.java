@@ -2,11 +2,9 @@ package com.ssachtleben.play.plugin.auth.providers;
 
 import java.util.Map;
 
-import play.Application;
 import play.mvc.Http.Context;
 
 import com.ssachtleben.play.plugin.auth.annotations.Provider;
-import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.AuthUser;
 import com.ssachtleben.play.plugin.auth.models.EmailPasswordAuthUser;
 
@@ -17,24 +15,11 @@ import com.ssachtleben.play.plugin.auth.models.EmailPasswordAuthUser;
  */
 @Provider(type = EmailPasswordAuthUser.class)
 public class EmailPassword extends BaseProvider<EmailPasswordAuthUser> {
-	
+
 	/**
 	 * The unique provider name for {@link EmailPassword} provider.
 	 */
 	public static final String KEY = "email";
-
-	/**
-	 * Default constructor for {@link EmailPassword} provider and will be invoked during application startup if the provider is registered as
-	 * plugin.
-	 * 
-	 * @param app
-	 *          The {@link Application} instance.
-	 * @throws MissingConfigurationException
-	 *           The exception will be thrown for missing mandatory setting keys.
-	 */
-	public EmailPassword(Application app) throws MissingConfigurationException {
-		super(app);
-	}
 
 	/*
 	 * (non-Javadoc)
