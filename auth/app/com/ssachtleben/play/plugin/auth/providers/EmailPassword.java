@@ -5,6 +5,7 @@ import java.util.Map;
 import play.Application;
 import play.mvc.Http.Context;
 
+import com.ssachtleben.play.plugin.auth.annotations.Provider;
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.AuthUser;
 import com.ssachtleben.play.plugin.auth.models.EmailPasswordAuthUser;
@@ -14,7 +15,12 @@ import com.ssachtleben.play.plugin.auth.models.EmailPasswordAuthUser;
  * 
  * @author Sebastian Sachtleben
  */
+@Provider(type = EmailPasswordAuthUser.class)
 public class EmailPassword extends BaseProvider<EmailPasswordAuthUser> {
+	
+	/**
+	 * The unique provider name for {@link EmailPassword} provider.
+	 */
 	public static final String KEY = "email";
 
 	/**

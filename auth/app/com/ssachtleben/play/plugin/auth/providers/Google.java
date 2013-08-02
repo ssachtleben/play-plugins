@@ -12,6 +12,7 @@ import org.scribe.oauth.OAuthService;
 import play.Application;
 import play.Configuration;
 
+import com.ssachtleben.play.plugin.auth.annotations.Provider;
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.GoogleAuthUser;
 
@@ -23,7 +24,12 @@ import com.ssachtleben.play.plugin.auth.models.GoogleAuthUser;
  * 
  * @author Sebastian Sachtleben
  */
+@Provider(type = GoogleAuthUser.class)
 public class Google extends OAuth2Provider<GoogleAuthUser> {
+	
+	/**
+	 * The unique provider name for {@link Google} provider.
+	 */
 	public static final String KEY = "Google";
 
 	private static final String AUTHORIZE_URL = "https://www.google.com/accounts/OAuthAuthorizeToken?oauth_token=";

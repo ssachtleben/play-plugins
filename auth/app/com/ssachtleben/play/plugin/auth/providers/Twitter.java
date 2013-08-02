@@ -6,6 +6,7 @@ import org.scribe.model.Token;
 
 import play.Application;
 
+import com.ssachtleben.play.plugin.auth.annotations.Provider;
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.TwitterAuthUser;
 
@@ -14,7 +15,12 @@ import com.ssachtleben.play.plugin.auth.models.TwitterAuthUser;
  * 
  * @author Sebastian Sachtleben
  */
+@Provider(type = TwitterAuthUser.class)
 public class Twitter extends OAuth1Provider<TwitterAuthUser> {
+
+	/**
+	 * The unique provider name for {@link Twitter} provider.
+	 */
 	public static final String KEY = "twitter";
 
 	/**
@@ -60,7 +66,7 @@ public class Twitter extends OAuth1Provider<TwitterAuthUser> {
 		// TODO: Read data from twitter for creating new account or comparing current values.
 		return new TwitterAuthUser(userId(token), token);
 	}
-	
+
 	/**
 	 * Extracts user id from {@link Token}.
 	 * 

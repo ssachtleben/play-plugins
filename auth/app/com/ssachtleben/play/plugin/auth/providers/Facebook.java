@@ -12,6 +12,7 @@ import org.scribe.model.Verb;
 
 import play.Application;
 
+import com.ssachtleben.play.plugin.auth.annotations.Provider;
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.FacebookAuthUser;
 
@@ -20,7 +21,12 @@ import com.ssachtleben.play.plugin.auth.models.FacebookAuthUser;
  * 
  * @author Sebastian Sachtleben
  */
+@Provider(type = FacebookAuthUser.class)
 public class Facebook extends OAuth2Provider<FacebookAuthUser> {
+
+	/**
+	 * The unique provider name for {@link Facebook} provider.
+	 */
 	public static final String KEY = "facebook";
 
 	public static abstract class FacebookSettingKeys {
