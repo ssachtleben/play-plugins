@@ -18,6 +18,10 @@ import com.ssachtleben.play.plugin.auth.service.AuthService;
  * @author Sebastian Sachtleben
  */
 public class Auth {
+	
+	/**
+	 * The logger for {@link Auth} class.
+	 */
 	private static final Logger.ALogger log = Logger.of(Auth.class);
 
 	/**
@@ -30,6 +34,9 @@ public class Auth {
 	 */
 	public static final String SETTING_KEY_AUTH = "auth";
 
+	/**
+	 * The {@link AuthService} instance provided by the application.
+	 */
 	private static AuthService authService;
 
 	/**
@@ -101,6 +108,7 @@ public class Auth {
 	 * Returns the current {@link AuthService} instance.
 	 * 
 	 * @return The {@link AuthService} instance.
+	 * @see AuthService
 	 */
 	public static AuthService service() {
 		if (authService == null) {

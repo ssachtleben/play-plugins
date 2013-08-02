@@ -7,11 +7,18 @@ import play.Plugin;
 import com.ssachtleben.play.plugin.auth.Auth;
 
 /**
- * Provides the interface between abstract authentication layer and application model layer.
+ * Provides the interface between auth plugin and application model layer.
+ * <p>
+ * The application needs a registered {@link Plugin} which extends {@link AuthServicePlugin} in order to provide authentication
+ * functionality.
  * 
  * @author Sebastian Sachtleben
  */
 public abstract class AuthServicePlugin extends Plugin implements AuthService {
+
+	/**
+	 * The logger for {@link AuthServicePlugin} class.
+	 */
 	private static final Logger.ALogger log = Logger.of(AuthServicePlugin.class);
 
 	/**

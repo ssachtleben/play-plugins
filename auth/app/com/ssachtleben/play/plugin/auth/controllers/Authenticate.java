@@ -27,7 +27,7 @@ public class Authenticate extends Controller {
 	}
 
 	/**
-	 * Logout the current logged in user.
+	 * Logout the current identity.
 	 * 
 	 * @return Play {@link Result} object.
 	 */

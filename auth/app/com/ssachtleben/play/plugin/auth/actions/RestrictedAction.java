@@ -21,8 +21,15 @@ import com.ssachtleben.play.plugin.auth.annotations.Restricts;
  * @author Sebastian Sachtleben
  */
 public class RestrictedAction extends Action<Simple> {
+
+	/**
+	 * The logger for {@link RestrictedAction} class.
+	 */
 	private static final Logger.ALogger log = Logger.of(RestrictedAction.class);
 
+	/**
+	 * The action {@link Method} to invoke after restriction check.s
+	 */
 	private Method actionMethod;
 
 	/**
