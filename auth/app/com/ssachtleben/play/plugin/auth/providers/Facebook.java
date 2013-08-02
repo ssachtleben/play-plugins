@@ -1,14 +1,9 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
-import java.io.IOException;
-
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.FacebookApi;
-import org.scribe.model.Response;
 import org.scribe.model.Token;
-import org.scribe.model.Verb;
 
 import play.Application;
 
@@ -73,39 +68,20 @@ public class Facebook extends OAuth2Provider<FacebookAuthUser> {
 	 */
 	@Override
 	protected FacebookAuthUser transform(Token token) {
-		return new FacebookAuthUser(data(token), token);
+		String fields = config().getString(FacebookSettingKeys.FIELDS, "id,name");
+		return new FacebookAuthUser(me(token, fields), token);
 	}
 
 	/**
-	 * Fetch data from Facebook Graph with {@link Token} from current authentication process.
+	 * Fetch data from Facebook Graph with {@link Token} and comma seperated list of properties in {@code fields}.
 	 * 
 	 * @param token
 	 *          The {@link Token} to set.
+	 * @param fields
+	 *          The fields to set
 	 * @return User data as {@link JsonNode} fetched from Facebook Graph.
 	 */
-	private JsonNode data(Token token) {
-		String fields = config().getString(FacebookSettingKeys.FIELDS, "id,name");
-		Response resp = request(token, Verb.GET, String.format("https://graph.facebook.com/me?fields=%s", fields));
-		logger().info(
-				String.format("Fetched data from Facebook Graph [success=%s, code=%d, content=%s]", resp.isSuccessful(), resp.getCode(),
-						resp.getBody()));
-		return toJson(resp.getBody());
-	}
-
-/**
-	 * Converts Facebook Graph data response into {@link JsonNode].
-	 * 
-	 * @param data
-	 *          The Facebook Graph data.
-	 * @return Generated {@link JsonNode}.
-	 */
-	private JsonNode toJson(String data) {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			return mapper.readTree(data);
-		} catch (IOException e) {
-			logger().error("Failed to fetch data for facebook user", e);
-		}
-		return null;
+	private JsonNode me(Token token, String fields) {
+		return data(token, String.format("https://graph.facebook.com/me?fields=%s", fields));
 	}
 }

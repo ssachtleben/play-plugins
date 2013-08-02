@@ -1,8 +1,11 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.Api;
 import org.scribe.model.OAuthRequest;
@@ -150,6 +153,37 @@ public abstract class OAuthProvider<U extends OAuthAuthUser> extends BaseProvide
 					.apiSecret(config.getString(OAuthSettingKeys.API_SECRET)).callback(config.getString(OAuthSettingKeys.CALLBACK)).build();
 		}
 		return service;
+	}
+
+	/**
+	 * Fetch data from OAuth interface with {@link Token} from current authentication process.
+	 * 
+	 * @param token
+	 *          The {@link Token} to set.
+	 * @return Fetched response data as {@link JsonNode}.
+	 */
+	protected JsonNode data(Token token, String url) {
+		Response resp = request(token, Verb.GET, url);
+		logger().info(
+				String.format("Fetched response data [success=%s, code=%d, content=%s]", resp.isSuccessful(), resp.getCode(), resp.getBody()));
+		return toJson(resp.getBody());
+	}
+
+/**
+	 * Converts OAuth response data into {@link JsonNode].
+	 * 
+	 * @param data
+	 *          The OAuth response data.
+	 * @return Generated {@link JsonNode}.
+	 */
+	protected JsonNode toJson(String data) {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.readTree(data);
+		} catch (IOException e) {
+			logger().error("Failed to fetch data", e);
+		}
+		return null;
 	}
 
 	/*
