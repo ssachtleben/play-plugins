@@ -18,21 +18,29 @@ import com.ssachtleben.play.plugin.auth.service.AuthService;
  * @author Sebastian Sachtleben
  */
 public class Auth {
-	
+
 	/**
 	 * The logger for {@link Auth} class.
 	 */
 	private static final Logger.ALogger log = Logger.of(Auth.class);
 
 	/**
+	 * Contains all setting keys provided by application.conf.
+	 * 
+	 * @author Sebastian Sachtleben
+	 */
+	public static abstract class SettingKeys {
+
+		/**
+		 * The setting key for all auth configuration properties in application.cof.
+		 */
+		public static final String AUTH = "auth";
+	}
+
+	/**
 	 * The session cookie key to identify authenticated identities.
 	 */
 	public static final String SESSION_USER_KEY = "u";
-
-	/**
-	 * The setting key for all auth configuration properties in application.cof.
-	 */
-	public static final String SETTING_KEY_AUTH = "auth";
 
 	/**
 	 * The {@link AuthService} instance provided by the application.
@@ -145,7 +153,7 @@ public class Auth {
 	public static Configuration config(final Application app) {
 		final Configuration config = app.configuration();
 		if (config != null) {
-			return config.getConfig(SETTING_KEY_AUTH);
+			return config.getConfig(SettingKeys.AUTH);
 		}
 		return null;
 	}

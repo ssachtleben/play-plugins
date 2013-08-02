@@ -154,7 +154,7 @@ public abstract class BaseProvider<U extends AuthUser> extends Plugin {
 	 */
 	@Override
 	public void onStart() {
-		logger().info("Register auth plugin");
+		logger().info(String.format("Register %s provider", key()));
 		Providers.register(key(), this);
 	}
 
@@ -165,7 +165,7 @@ public abstract class BaseProvider<U extends AuthUser> extends Plugin {
 	 */
 	@Override
 	public void onStop() {
-		logger().info("Unregister auth plugin");
+		logger().info(String.format("Unregister %s provider", key()));
 		Providers.unregister(key());
 	}
 
@@ -283,23 +283,20 @@ public abstract class BaseProvider<U extends AuthUser> extends Plugin {
 		final List<String> settingKeys = settingKeys();
 		if (settingKeys != null && settingKeys.size() >= 0) {
 			final Configuration config = config();
-			
-			if(config == null && settingKeys.size() > 0){
-				throw new MissingConfigurationException(String.format(
-						"Failed to initialize %s provider due missing configuration '%s.%s' in application.conf", key(), Auth.SETTING_KEY_AUTH,
-						key()));
+			if (config == null && settingKeys.size() > 0) {
+				throw new MissingConfigurationException(String.format("Creating provider %s failed due missing conf '%s.%s'", key(),
+						Auth.SettingKeys.AUTH, key()));
 			}
 			Iterator<String> iter = settingKeys.iterator();
 			while (iter.hasNext()) {
 				String key = iter.next();
 				String value = config.getString(key);
 				if (StringUtils.isEmpty(value)) {
-					throw new MissingConfigurationException(String.format(
-							"Failed to initialize %s provider due missing settings key '%s.%s.%s' in application.conf", key(), Auth.SETTING_KEY_AUTH,
-							key(), key));
+					throw new MissingConfigurationException(String.format("Creating provider %s failed due missing conf settings key '%s.%s.%s'",
+							key(), Auth.SettingKeys.AUTH, key(), key));
 				}
 			}
-			
+
 		}
 	}
 }
