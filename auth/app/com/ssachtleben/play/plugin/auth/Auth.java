@@ -134,7 +134,7 @@ public class Auth {
 	 *          The play {@link Application} instance.
 	 * @return The {@link Configuration} instance.
 	 */
-	public static Configuration config(Application app) {
+	public static Configuration config(final Application app) {
 		final Configuration config = app.configuration();
 		if (config != null) {
 			return config.getConfig(SETTING_KEY_AUTH);

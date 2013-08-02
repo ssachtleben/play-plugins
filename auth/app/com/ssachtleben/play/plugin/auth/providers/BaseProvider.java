@@ -283,6 +283,12 @@ public abstract class BaseProvider<U extends AuthUser> extends Plugin {
 		final List<String> settingKeys = settingKeys();
 		if (settingKeys != null && settingKeys.size() >= 0) {
 			final Configuration config = config();
+			
+			if(config == null && settingKeys.size() > 0){
+				throw new MissingConfigurationException(String.format(
+						"Failed to initialize %s provider due missing configuration '%s.%s' in application.conf", key(), Auth.SETTING_KEY_AUTH,
+						key()));
+			}
 			Iterator<String> iter = settingKeys.iterator();
 			while (iter.hasNext()) {
 				String key = iter.next();
@@ -293,6 +299,7 @@ public abstract class BaseProvider<U extends AuthUser> extends Plugin {
 							key(), key));
 				}
 			}
+			
 		}
 	}
 }
