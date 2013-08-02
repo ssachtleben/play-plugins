@@ -20,8 +20,15 @@ import com.ssachtleben.play.plugin.auth.service.AuthService;
 public class Auth {
 	private static final Logger.ALogger log = Logger.of(Auth.class);
 
-	public static final String SESSION_USER_KEY = "u";
-	public static final String SETTING_KEY_AUTH = "auth";
+	/**
+	 * The session cookie key to identify authenticated identities.
+	 */
+	protected static final String SESSION_USER_KEY = "u";
+
+	/**
+	 * The setting key for all auth configuration properties in application.cof.
+	 */
+	protected static final String SETTING_KEY_AUTH = "auth";
 
 	private static AuthService authService;
 
