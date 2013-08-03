@@ -6,20 +6,30 @@ import play.mvc.Http.Context;
 
 import com.ssachtleben.play.plugin.auth.annotations.Provider;
 import com.ssachtleben.play.plugin.auth.models.AuthUser;
-import com.ssachtleben.play.plugin.auth.models.EmailPasswordAuthUser;
+import com.ssachtleben.play.plugin.auth.models.PasswordEmailAuthUser;
 
 /**
  * Provides authentication with email and password.
  * 
  * @author Sebastian Sachtleben
  */
-@Provider(type = EmailPasswordAuthUser.class)
-public class EmailPassword extends BaseProvider<EmailPasswordAuthUser> {
+@Provider(type = PasswordEmailAuthUser.class)
+public class PasswordEmail extends BaseProvider<PasswordEmailAuthUser> {
 
 	/**
-	 * The unique provider name for {@link EmailPassword} provider.
+	 * The unique provider name for {@link PasswordEmail} provider.
 	 */
 	public static final String KEY = "email";
+
+	/**
+	 * Contains all request parameter names.
+	 * 
+	 * @author Sebastian Sachtleben
+	 */
+	public static abstract class RequestParameter {
+		public static final String EMAIL = "email";
+		public static final String PASSWORD = "password";
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -39,8 +49,8 @@ public class EmailPassword extends BaseProvider<EmailPasswordAuthUser> {
 	@Override
 	protected AuthUser handle(Context context) {
 		Map<String, String[]> params = context.request().body().asFormUrlEncoded();
-		if (params != null && params.containsKey("email") && params.containsKey("password")) {
-			return new EmailPasswordAuthUser(params.get("email")[0], params.get("password")[0]);
+		if (params != null && params.containsKey(RequestParameter.EMAIL) && params.containsKey(RequestParameter.PASSWORD)) {
+			return new PasswordEmailAuthUser(params.get(RequestParameter.EMAIL)[0], params.get(RequestParameter.PASSWORD)[0]);
 		}
 		return null;
 	}

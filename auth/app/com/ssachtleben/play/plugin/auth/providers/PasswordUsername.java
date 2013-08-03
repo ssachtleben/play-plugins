@@ -6,20 +6,30 @@ import play.mvc.Http.Context;
 
 import com.ssachtleben.play.plugin.auth.annotations.Provider;
 import com.ssachtleben.play.plugin.auth.models.AuthUser;
-import com.ssachtleben.play.plugin.auth.models.UsernamePasswordAuthUser;
+import com.ssachtleben.play.plugin.auth.models.PasswordUsernameAuthUser;
 
 /**
  * Provides authentication with username and password.
  * 
  * @author Sebastian Sachtleben
  */
-@Provider(type = UsernamePasswordAuthUser.class)
-public class UsernamePassword extends BaseProvider<UsernamePasswordAuthUser> {
+@Provider(type = PasswordUsernameAuthUser.class)
+public class PasswordUsername extends BaseProvider<PasswordUsernameAuthUser> {
 
 	/**
-	 * The unique provider name for {@link UsernamePassword} provider.
+	 * The unique provider name for {@link PasswordUsername} provider.
 	 */
 	public static final String KEY = "username";
+
+	/**
+	 * Contains all request parameter names.
+	 * 
+	 * @author Sebastian Sachtleben
+	 */
+	public static abstract class RequestParameter {
+		public static final String USERNAME = "username";
+		public static final String PASSWORD = "password";
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -39,8 +49,8 @@ public class UsernamePassword extends BaseProvider<UsernamePasswordAuthUser> {
 	@Override
 	protected AuthUser handle(Context context) {
 		Map<String, String[]> params = context.request().body().asFormUrlEncoded();
-		if (params != null && params.containsKey("username") && params.containsKey("password")) {
-			return new UsernamePasswordAuthUser(params.get("username")[0], params.get("password")[0]);
+		if (params != null && params.containsKey(RequestParameter.USERNAME) && params.containsKey(RequestParameter.PASSWORD)) {
+			return new PasswordUsernameAuthUser(params.get(RequestParameter.USERNAME)[0], params.get(RequestParameter.PASSWORD)[0]);
 		}
 		return null;
 	}
