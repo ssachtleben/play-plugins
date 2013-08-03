@@ -53,7 +53,9 @@ public class Facebook extends BaseOAuth2Provider<FacebookAuthUser> {
 	@Override
 	protected FacebookAuthUser transform(Token token) {
 		String fields = config().getString(FacebookSettingKeys.FIELDS, "id,name");
-		return new FacebookAuthUser(me(token, fields), token);
+		JsonNode data = me(token, fields);
+		logger().info("Retrieved: " + data.toString());
+		return new FacebookAuthUser(token, data);
 	}
 
 	/**

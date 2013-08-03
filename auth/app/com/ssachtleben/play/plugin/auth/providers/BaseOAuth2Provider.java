@@ -31,7 +31,7 @@ public abstract class BaseOAuth2Provider<U extends OAuthAuthUser> extends BaseOA
 	 */
 	@Override
 	public String authUrl() {
-		return service().getAuthorizationUrl(null);
+		return service().getAuthorizationUrl(EMPTY_TOKEN);
 	}
 
 	/*

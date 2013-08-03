@@ -1,5 +1,6 @@
 package com.ssachtleben.play.plugin.auth.models;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.scribe.model.Token;
 
 import com.ssachtleben.play.plugin.auth.providers.Facebook;
@@ -28,7 +29,7 @@ public class TwitterAuthUser extends OAuthAuthUser {
 	 *          The token to set
 	 */
 	public TwitterAuthUser(final String id, final Token token) {
-		super(id, token);
+		super(id, token, new ObjectMapper().createObjectNode());
 	}
 
 	/*

@@ -1,17 +1,15 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
-import java.util.Arrays;
-import java.util.List;
-
+import org.codehaus.jackson.JsonNode;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.Api;
-import org.scribe.builder.api.GoogleApi;
 import org.scribe.model.Token;
 import org.scribe.oauth.OAuthService;
 
 import play.Configuration;
 
 import com.ssachtleben.play.plugin.auth.annotations.Provider;
+import com.ssachtleben.play.plugin.auth.builders.Google2Api;
 import com.ssachtleben.play.plugin.auth.models.GoogleAuthUser;
 
 /**
@@ -24,14 +22,13 @@ import com.ssachtleben.play.plugin.auth.models.GoogleAuthUser;
  */
 @Provider(type = GoogleAuthUser.class)
 public class Google extends BaseOAuth2Provider<GoogleAuthUser> {
-	
+
 	/**
 	 * The unique provider name for {@link Google} provider.
 	 */
 	public static final String KEY = "google";
 
-	private static final String AUTHORIZE_URL = "https://www.google.com/accounts/OAuthAuthorizeToken?oauth_token=";
-	private static final String SCOPE = "https://docs.google.com/feeds/";
+	private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
 
 	/*
 	 * (non-Javadoc)
@@ -50,7 +47,7 @@ public class Google extends BaseOAuth2Provider<GoogleAuthUser> {
 	 */
 	@Override
 	public Class<? extends Api> provider() {
-		return GoogleApi.class;
+		return Google2Api.class;
 	}
 
 	/*
@@ -62,19 +59,10 @@ public class Google extends BaseOAuth2Provider<GoogleAuthUser> {
 		if (service == null) {
 			final Configuration config = config();
 			service = new ServiceBuilder().provider(provider()).apiKey(config.getString(OAuthSettingKeys.API_KEY))
-					.apiSecret(config.getString(OAuthSettingKeys.API_SECRET)).scope(SCOPE).build();
+					.apiSecret(config.getString(OAuthSettingKeys.API_SECRET)).callback(config.getString(OAuthSettingKeys.CALLBACK)).scope(SCOPE)
+					.build();
 		}
 		return service;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#authUrl()
-	 */
-	@Override
-	public String authUrl() {
-		return AUTHORIZE_URL + service().getRequestToken();
 	}
 
 	/*
@@ -84,17 +72,8 @@ public class Google extends BaseOAuth2Provider<GoogleAuthUser> {
 	 */
 	@Override
 	protected GoogleAuthUser transform(Token token) {
-		// TODO: Create proper google auth user...
-		return new GoogleAuthUser("123", token);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.BaseProvider#settingKeys()
-	 */
-	@Override
-	protected List<String> settingKeys() {
-		return Arrays.asList(new String[] { OAuthSettingKeys.API_KEY, OAuthSettingKeys.API_SECRET });
+		JsonNode data = data(token, "https://www.googleapis.com/oauth2/v3/userinfo?alt=json");
+		logger().info("Retrieved: " + data.toString());
+		return new GoogleAuthUser(token, data);
 	}
 }

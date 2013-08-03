@@ -1,5 +1,6 @@
 package com.ssachtleben.play.plugin.auth;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +28,29 @@ public class Providers {
 	private static Map<String, BaseProvider<?>> cache = new HashMap<String, BaseProvider<?>>();
 
 	/**
+	 * Keeps list of all authenticate {@link Method}.
+	 */
+	private static Map<String, Method> methods = new HashMap<String, Method>();
+
+	/**
+	 * Registers new {@link BaseProvider} for a specific key.
+	 * 
+	 * @param key
+	 *          The provider key.
+	 * @param provider
+	 *          The {@link BaseProvider} instance.
+	 * @param method
+	 *          The {@link Method} for authentication
+	 */
+	public static boolean register(final String key, final BaseProvider<?> provider, final Method method) {
+		final boolean success = register(key, provider);
+		if (success && method != null) {
+			methods.put(key, method);
+		}
+		return success;
+	}
+
+	/**
 	 * Registers new {@link BaseProvider} for a specific key.
 	 * 
 	 * @param key
@@ -34,7 +58,7 @@ public class Providers {
 	 * @param provider
 	 *          The {@link BaseProvider} instance.
 	 */
-	public static void register(final String key, final BaseProvider<?> provider) {
+	public static boolean register(final String key, final BaseProvider<?> provider) {
 		log.info(String.format("Register %s provider", WordUtils.capitalize(key)));
 		try {
 			provider.validate();
@@ -42,10 +66,11 @@ public class Providers {
 			if (previous != null) {
 				log.warn(String.format("There are multiple auth providers registered for key '%s'", key));
 			}
+			return true;
 		} catch (MissingConfigurationException e) {
 			log.error(String.format("Failed to register %s provider", key), e);
 		}
-
+		return false;
 	}
 
 	/**
@@ -68,6 +93,17 @@ public class Providers {
 	 */
 	public static BaseProvider<?> get(final String key) {
 		return cache.get(key);
+	}
+
+	/**
+	 * Returns auth method for a specific key.
+	 * 
+	 * @param key
+	 *          The provider key.
+	 * @return The {@link BaseProvider} instance.
+	 */
+	public static Method getMethod(final String key) {
+		return methods.get(key);
 	}
 
 	/**

@@ -1,5 +1,7 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -14,6 +16,7 @@ import play.mvc.Result;
 import play.mvc.Results;
 
 import com.ssachtleben.play.plugin.auth.Auth;
+import com.ssachtleben.play.plugin.auth.Providers;
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.AuthUser;
 import com.ssachtleben.play.plugin.auth.models.Identity;
@@ -67,7 +70,19 @@ public abstract class BaseProvider<U extends Identity> {
 	public Result login(final Context ctx) {
 		AuthUser authUser = handle(ctx);
 		if (authUser != null) {
-			Object user = Auth.service().find(authUser);
+			Object user = null;
+			Method authMethod = Providers.getMethod(key());
+			if (authMethod != null) {
+				logger().info(String.format("Using custom auth method for %s provider", key()));
+				try {
+					user = authMethod.invoke(null, ctx, authUser);
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					logger().error(String.format("Failed to invoke authenticate method for %s provider", key()), e);
+				}
+			} else {
+				logger().info("Using default auth service ... (maybe deprecated soon)");
+				user = Auth.service().find(authUser);
+			}
 			logger().debug("User: " + user);
 			if (user != null) {
 				ctx.session().put(Auth.SESSION_USER_KEY, user.toString());
@@ -151,8 +166,7 @@ public abstract class BaseProvider<U extends Identity> {
 			final Configuration config = config();
 			if (config == null && settingKeys.size() > 0) {
 				throw new MissingConfigurationException(String.format("Creating %s provider failed due missing conf '%s.%s'",
-						WordUtils.capitalize(key()),
-						Auth.SettingKeys.AUTH, key()));
+						WordUtils.capitalize(key()), Auth.SettingKeys.AUTH, key()));
 			}
 			Iterator<String> iter = settingKeys.iterator();
 			while (iter.hasNext()) {

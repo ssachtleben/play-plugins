@@ -1,5 +1,6 @@
 package com.ssachtleben.play.plugin.auth.models;
 
+import org.codehaus.jackson.JsonNode;
 import org.scribe.model.Token;
 
 import com.ssachtleben.play.plugin.auth.providers.Google;
@@ -21,13 +22,13 @@ public class GoogleAuthUser extends OAuthAuthUser {
 	/**
 	 * Default constructor for {@link GoogleAuthUser}.
 	 * 
-	 * @param id
-	 *          The id to set
 	 * @param token
 	 *          The token to set
+	 * @param data
+	 *          The data to set
 	 */
-	public GoogleAuthUser(String id, Token token) {
-		super(id, token);
+	public GoogleAuthUser(Token token, JsonNode data) {
+		super("123", token, data);
 	}
 
 	/*

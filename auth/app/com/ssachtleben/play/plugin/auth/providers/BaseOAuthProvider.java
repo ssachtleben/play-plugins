@@ -31,6 +31,11 @@ import com.ssachtleben.play.plugin.auth.models.OAuthAuthUser;
 public abstract class BaseOAuthProvider<U extends OAuthAuthUser> extends BaseProvider<U> {
 
 	/**
+	 * New empty token used by some providers.
+	 */
+	protected static final Token EMPTY_TOKEN = null;
+
+	/**
 	 * Contains all oauth setting keys provided by application.conf. All keys must be configurated and will be checked during startup via
 	 * {@link #validate()} and throws {@link MissingConfigurationException} if any setting key is missing.
 	 * 

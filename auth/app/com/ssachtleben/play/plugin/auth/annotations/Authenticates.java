@@ -5,10 +5,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.ssachtleben.play.plugin.auth.models.Identity;
+import com.ssachtleben.play.plugin.auth.providers.BaseProvider;
 
 /**
- * Authenticates specific {@link Identity} model.
+ * Authenticates specific {@link BaseProvider} provider.
  * 
  * @author Sebastian Sachtleben
  */
@@ -17,11 +17,11 @@ import com.ssachtleben.play.plugin.auth.models.Identity;
 public @interface Authenticates {
 
 	/**
-	 * The Identity model which will be authenticated.
+	 * The Provider which will be authenticated.
 	 * 
-	 * @return The {@link Identity} model.
+	 * @return The {@link BaseProvider} key.
 	 */
-	Class<? extends Identity> type() default Identity.class;
+	String provider();
 
 	/**
 	 * The active boolean decides if the authentication method check will be used.
