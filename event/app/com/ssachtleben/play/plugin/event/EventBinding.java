@@ -1,6 +1,11 @@
 package com.ssachtleben.play.plugin.event;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import play.Logger;
 
 /**
  * Provides event bindings for subscriptions. TODO: improve javadoc here...
@@ -8,6 +13,7 @@ import java.lang.reflect.Method;
  * @author Sebastian Sachtleben
  */
 public class EventBinding {
+	private static final Logger.ALogger log = Logger.of(EventBinding.class);
 
 	/**
 	 * Contains the bound {@link Method}.
@@ -37,12 +43,22 @@ public class EventBinding {
 
 	public boolean matches(Object... params) {
 		Class<?>[] parameterTypes = method().getParameterTypes();
+		List<Class<?>> paramClasses = new ArrayList<Class<?>>();
+		for (Object param : params) {
+			paramClasses.add(param.getClass());
+		}
+		log.info(String.format("method=%s", Arrays.toString(paramClasses.toArray(new Class<?>[0]))));
+		log.info(String.format("params=%s", Arrays.toString(parameterTypes)));
 		if (parameterTypes.length != params.length) {
+			log.info(String.format("length not match"));
 			return false;
 		}
 		for (int i = 0; i < parameterTypes.length; i++) {
 			if (!parameterTypes[i].isAssignableFrom(params[i].getClass())) {
+				log.info(String.format("NOT assignable %s %s", parameterTypes[i], params[i]));
 				return false;
+			} else {
+				log.info(String.format("is assignable %s %s", parameterTypes[i], params[i]));
 			}
 		}
 		return true;

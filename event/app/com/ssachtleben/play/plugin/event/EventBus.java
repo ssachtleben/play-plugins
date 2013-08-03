@@ -71,13 +71,13 @@ public class EventBus implements EventService {
 	@Override
 	public EventResult publish(final Object payload) {
 		log.info(String.format("Publish %s", payload));
-		return subscribers.containsKey(EMPTY_TOPIC) ? publish(subscribers.get(EMPTY_TOPIC), payload) : new EventResult();
+		return subscribers.containsKey(EMPTY_TOPIC) ? publish(subscribers.get(EMPTY_TOPIC), false, payload) : new EventResult();
 	}
 
 	@Override
 	public EventResult publish(final String topic, final Object... payload) {
 		log.info(String.format("Publish to '%s': %s", topic, Arrays.toString(payload)));
-		return subscribers.containsKey(topic) ? publish(subscribers.get(topic), payload) : new EventResult();
+		return subscribers.containsKey(topic) ? publish(subscribers.get(topic), false, payload) : new EventResult();
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class EventBus implements EventService {
 	public void publishAsync(final Object payload) {
 		log.info(String.format("Publish async %s", payload));
 		if (subscribers.containsKey(EMPTY_TOPIC)) {
-			publishAsync(subscribers.get(EMPTY_TOPIC), payload);
+			publish(subscribers.get(EMPTY_TOPIC), true, payload);
 		}
 	}
 
@@ -98,7 +98,7 @@ public class EventBus implements EventService {
 	public void publishAsync(final String topic, final Object... payload) {
 		log.info(String.format("Publish async to '%s': %s", topic, Arrays.toString(payload)));
 		if (subscribers.containsKey(topic)) {
-			publishAsync(subscribers.get(topic), payload);
+			publish(subscribers.get(topic), true, payload);
 		}
 	}
 
@@ -195,8 +195,8 @@ public class EventBus implements EventService {
 		return binding;
 	}
 
-	private EventResult publish(final List<EventBinding> receivers, final Object payload) {
-		return publish(receivers, new Object[] { payload });
+	private EventResult publish(final List<EventBinding> receivers, final boolean async, final Object payload) {
+		return publish(receivers, async, new Object[] { payload });
 	}
 
 	/**
@@ -207,7 +207,7 @@ public class EventBus implements EventService {
 	 * @param event
 	 *          The event to publish.
 	 */
-	private EventResult publish(final List<EventBinding> receivers, final Object... payload) {
+	private EventResult publish(final List<EventBinding> receivers, final boolean async, final Object... payload) {
 		EventResult result = new EventResult();
 		Iterator<EventBinding> iter = receivers.iterator();
 		boolean published = false;
@@ -219,60 +219,36 @@ public class EventBus implements EventService {
 				continue;
 			}
 			log.info(String.format("Does match"));
-			try {
-				binding.method().invoke(null, payload);
-				result.getReceivers().add(binding);
-				if (!published) {
-					published = true;
-					result.setPublished(true);
+			if (async) {
+				log.info(String.format("Send sync"));
+				try {
+					ActorRef eventActor = system.actorOf(new Props(EventActor.class));
+					EventDeliveryRequest request = new EventDeliveryRequest(binding.method(), payload);
+					system.scheduler().scheduleOnce(Duration.create(50, TimeUnit.MILLISECONDS), eventActor, request, system.dispatcher());
+					if (!published) {
+						published = true;
+					}
+				} catch (IllegalArgumentException e) {
+					log.error("Failed to schedule async event delivery request for " + binding.method(), e);
 				}
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				log.error("Failed to invoke " + binding.method(), e);
+			} else {
+				log.info(String.format("Send async"));
+				try {
+					binding.method().invoke(null, payload);
+					result.getReceivers().add(binding);
+					if (!published) {
+						published = true;
+						result.setPublished(true);
+					}
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					log.error("Failed to invoke " + binding.method(), e);
+				}
 			}
 		}
 		if (!published && !(payload[0] instanceof DeadEvent)) {
 			return publish(new DeadEvent(this, payload[0]));
 		}
 		return result;
-	}
-
-	private EventResult publishAsync(final List<EventBinding> receivers, final Object payload) {
-		return publish(receivers, new Object[] { payload });
-	}
-
-	/**
-	 * Publishes asynchronously a event to a list of recievers. It means the methods will be invoked with the given event.
-	 * 
-	 * @param receivers
-	 *          A list of method.
-	 * @param event
-	 *          The event to publish.
-	 */
-	private void publishAsync(final List<EventBinding> receivers, final Object... payload) {
-		Iterator<EventBinding> iter = receivers.iterator();
-		boolean published = false;
-		while (iter.hasNext()) {
-			EventBinding binding = iter.next();
-			log.info(String.format("Found subscriber: %s", binding.method()));
-			if (!binding.matches(payload)) {
-				log.info(String.format("Does not match"));
-				continue;
-			}
-			log.info(String.format("Does match"));
-			try {
-				ActorRef eventActor = system.actorOf(new Props(EventActor.class));
-				EventDeliveryRequest request = new EventDeliveryRequest(binding.method(), payload);
-				system.scheduler().scheduleOnce(Duration.create(50, TimeUnit.MILLISECONDS), eventActor, request, system.dispatcher());
-				if (!published) {
-					published = true;
-				}
-			} catch (IllegalArgumentException e) {
-				log.error("Failed to schedule async event delivery request for " + binding.method(), e);
-			}
-		}
-		if (!published && !(payload[0] instanceof DeadEvent)) {
-			publishAsync(new DeadEvent(this, payload[0]));
-		}
 	}
 
 	/**
@@ -292,7 +268,7 @@ public class EventBus implements EventService {
 	public static class EventDeliveryRequest {
 
 		private Method method;
-		private Object event;
+		private Object[] event;
 
 		/**
 		 * The constructor with given method and event.
@@ -302,7 +278,7 @@ public class EventBus implements EventService {
 		 * @param event
 		 *          The event to pass
 		 */
-		public EventDeliveryRequest(Method method, Object event) {
+		public EventDeliveryRequest(Method method, Object... event) {
 			this.method = method;
 			this.event = event;
 		}
@@ -319,7 +295,7 @@ public class EventBus implements EventService {
 			return event;
 		}
 
-		public void setEvent(Object event) {
+		public void setEvent(Object... event) {
 			this.event = event;
 		}
 	}
