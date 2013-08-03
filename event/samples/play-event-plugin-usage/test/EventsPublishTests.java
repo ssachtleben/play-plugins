@@ -79,11 +79,23 @@ public class EventsPublishTests extends EventsTest {
 		assertThat(result.getReceivers()).hasSize(0);
 	}
 
-	// @Test
+	@Test
 	public void publishTopicEventWeakReference() throws NoSuchMethodException, SecurityException {
 		events().unregisterAll();
 		events().register(TEST_TOPIC, getObserver("observeWeakReference", Integer.class, Long.class, String.class));
 		EventResult result = events().publish(TEST_TOPIC, 1, "Test", "Test");
+		assertThat(result.isPublished()).isTrue();
+		assertThat(result.getReceivers()).hasSize(1);
+	}
+
+	@Test
+	public void publishTopicEventStrongReference() throws NoSuchMethodException, SecurityException {
+		events().unregisterAll();
+		events().register(TEST_TOPIC, getObserver("observeStrongReference", Integer.class, Long.class, String.class));
+		EventResult result = events().publish(TEST_TOPIC, 1, "Test", "Test");
+		assertThat(result.isPublished()).isFalse();
+		assertThat(result.getReceivers()).hasSize(0);
+		result = events().publish(TEST_TOPIC, 1, 10l, "Test");
 		assertThat(result.isPublished()).isTrue();
 		assertThat(result.getReceivers()).hasSize(1);
 	}
