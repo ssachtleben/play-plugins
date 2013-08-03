@@ -3,8 +3,10 @@ package com.ssachtleben.play.plugin.auth.providers;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
@@ -100,7 +102,7 @@ public abstract class BaseProvider<U extends Identity> {
 	 * @return Play {@link Result} object.
 	 */
 	protected Result onSuccess(final Context context) {
-		return handleRedirect(config().getString(SettingKeys.SUCCESS), Results.ok());
+		return handleRedirect(SettingKeys.SUCCESS, Results.ok());
 	}
 
 	/**
@@ -111,7 +113,7 @@ public abstract class BaseProvider<U extends Identity> {
 	 * @return Play {@link Result} object.
 	 */
 	protected Result onError(final Context context) {
-		return handleRedirect(config().getString(SettingKeys.ERROR), Results.badRequest());
+		return handleRedirect(SettingKeys.ERROR, Results.badRequest());
 	}
 
 	/**
@@ -121,9 +123,11 @@ public abstract class BaseProvider<U extends Identity> {
 	 *          The url to set.
 	 * @return Play {@link Result} object.
 	 */
-	protected Result handleRedirect(final String url, final Result result) {
-		if (url != null && !"".equals(url)) {
-			return Results.redirect(url);
+	protected Result handleRedirect(final String settingKey, final Result result) {
+		final Configuration config = config();
+		final Set<String> configKeys = config != null ? config.keys() : new HashSet<String>();
+		if (configKeys.size() > 0 && configKeys.contains(settingKey)) {
+			return Results.redirect(config.getString(settingKey));
 		}
 		return result;
 	}
