@@ -1,9 +1,8 @@
 import static org.fest.assertions.Assertions.assertThat;
 
-import java.lang.reflect.Method;
-
 import org.junit.Test;
 
+import com.ssachtleben.play.plugin.event.EventBinding;
 import com.ssachtleben.play.plugin.event.EventBus;
 
 /**
@@ -22,16 +21,14 @@ public class EventsUnregisterTests extends EventTest {
 	@Test
 	public void unregisterObject() throws NoSuchMethodException, SecurityException {
 		unregisterAll();
-		Method method1 = getObserver("observeString", String.class);
-		events().register(method1);
-		Method method2 = getObserver("observeString2", String.class);
-		events().register(method2);
+		EventBinding binding1 = events().register(getObserver("observeString", String.class));
+		EventBinding binding2 = events().register(getObserver("observeString2", String.class));
 		assertThat(events().getSubscribers()).hasSize(1);
 		assertThat(events().getSubscribers().get(EventBus.EMPTY_TOPIC)).hasSize(2);
-		events().unregister(method1);
+		events().unregister(binding1.method());
 		assertThat(events().getSubscribers().get(EventBus.EMPTY_TOPIC)).hasSize(1);
-		assertThat(events().getSubscribers().get(EventBus.EMPTY_TOPIC).contains(method1)).isFalse();
-		assertThat(events().getSubscribers().get(EventBus.EMPTY_TOPIC).contains(method2)).isTrue();
+		assertThat(events().getSubscribers().get(EventBus.EMPTY_TOPIC).contains(binding1)).isFalse();
+		assertThat(events().getSubscribers().get(EventBus.EMPTY_TOPIC).contains(binding2)).isTrue();
 	}
 
 	/**

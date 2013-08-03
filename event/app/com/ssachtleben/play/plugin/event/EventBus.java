@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,7 +39,7 @@ public class EventBus implements EventService {
 	/**
 	 * The map contains of several method lists grouped by topic.
 	 */
-	protected ConcurrentHashMap<String, List<Method>> subscribers = new ConcurrentHashMap<String, List<Method>>();
+	protected ConcurrentHashMap<String, List<EventBinding>> subscribers = new ConcurrentHashMap<String, List<EventBinding>>();
 
 	/**
 	 * Create a akka ActorSystem for asyncronous events.
@@ -68,73 +69,102 @@ public class EventBus implements EventService {
 	}
 
 	@Override
-	public void publish(Object event) {
-		log.info(String.format("Publish %s", event));
-		if (subscribers.containsKey(EMPTY_TOPIC)) {
-			publish(subscribers.get(EMPTY_TOPIC), event);
-		}
+	public EventResult publish(final Object payload) {
+		log.info(String.format("Publish %s", payload));
+		return subscribers.containsKey(EMPTY_TOPIC) ? publish(subscribers.get(EMPTY_TOPIC), payload) : new EventResult();
 	}
 
 	@Override
-	public void publish(String topic, Object event) {
-		log.info(String.format("Publish to %s %s", topic, event));
-		if (subscribers.containsKey(topic)) {
-			publish(subscribers.get(topic), event);
-		}
+	public EventResult publish(final String topic, final Object... payload) {
+		log.info(String.format("Publish to '%s': %s", topic, Arrays.toString(payload)));
+		return subscribers.containsKey(topic) ? publish(subscribers.get(topic), payload) : new EventResult();
 	}
 
 	@Override
-	public void publish(Type genericType, Object event) {
+	public EventResult publish(final Type genericType, final Object... payload) {
 		log.warn("publish(Type, Object) is not implemented yet");
+		return new EventResult();
 	}
 
 	@Override
-	public void publishAsync(Object event) {
-		log.info(String.format("Publish async %s", event));
+	public void publishAsync(final Object payload) {
+		log.info(String.format("Publish async %s", payload));
 		if (subscribers.containsKey(EMPTY_TOPIC)) {
-			publishAsync(subscribers.get(EMPTY_TOPIC), event);
+			publishAsync(subscribers.get(EMPTY_TOPIC), payload);
 		}
 	}
 
 	@Override
-	public void publishAsync(String topic, Object event) {
-		log.info(String.format("Publish async to %s %s", topic, event));
+	public void publishAsync(final String topic, final Object... payload) {
+		log.info(String.format("Publish async to '%s': %s", topic, payload));
 		if (subscribers.containsKey(topic)) {
-			publishAsync(subscribers.get(topic), event);
+			publishAsync(subscribers.get(topic), payload);
 		}
 	}
 
 	@Override
-	public void publishAsync(Type genericType, Object event) {
+	public void publishAsync(final Type genericType, final Object... payload) {
 		log.warn("publishAsync(Type, Object) is not implemented yet");
 	}
 
 	@Override
-	public void register(Object object) {
+	public EventBinding register(final Object object) {
 		log.info(String.format("Register %s", object));
-		add(EMPTY_TOPIC, object);
+		return add(EMPTY_TOPIC, object);
 	}
 
 	@Override
-	public void register(String topic, Object object) {
+	public EventBinding register(final String topic, final Object object) {
 		log.info(String.format("Register %s %s", topic, object));
-		add(topic, object);
+		return add(topic, object);
 	}
 
 	@Override
-	public void unregister(Object object) {
+	public boolean unregister(final Object object) {
 		log.info(String.format("Unregister %s", object));
 		if (subscribers.containsKey(EMPTY_TOPIC)) {
-			subscribers.get(EMPTY_TOPIC).remove(object);
+			Iterator<EventBinding> iter = subscribers.get(EMPTY_TOPIC).iterator();
+			while (iter.hasNext()) {
+				EventBinding binding = iter.next();
+				if (binding.method().equals(object)) {
+					return unregister(binding);
+				}
+			}
 		}
+		return false;
 	}
 
 	@Override
-	public void unregister(String topic, Object object) {
+	public boolean unregister(final EventBinding binding) {
+		if (subscribers.get(EMPTY_TOPIC).contains(binding)) {
+			subscribers.get(EMPTY_TOPIC).remove(binding);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean unregister(final String topic, final Object object) {
 		log.info(String.format("Unregister %s %s", topic, object));
 		if (subscribers.containsKey(topic)) {
-			subscribers.get(topic).remove(object);
+			Iterator<EventBinding> iter = subscribers.get(topic).iterator();
+			while (iter.hasNext()) {
+				EventBinding binding = iter.next();
+				if (binding.method().equals(object)) {
+					return unregister(topic, binding);
+				}
+			}
 		}
+		return false;
+	}
+
+	@Override
+	public boolean unregister(final String topic, final EventBinding binding) {
+		if (subscribers.get(topic).contains(binding)) {
+			subscribers.get(topic).remove(binding);
+			return true;
+		}
+		return false;
 	}
 
 	@Override
@@ -151,16 +181,18 @@ public class EventBus implements EventService {
 	 * @param object
 	 *          The subcriber object.
 	 */
-	private void add(String topic, Object object) {
+	private EventBinding add(final String topic, final Object object) {
 		if (!(object instanceof Method)) {
 			log.warn("Currently only methods can be registered as subscribers");
-			return;
+			return null;
 		}
 		Method method = (Method) object;
 		if (!subscribers.containsKey(topic)) {
-			subscribers.put(topic, new ArrayList<Method>());
+			subscribers.put(topic, new ArrayList<EventBinding>());
 		}
-		subscribers.get(topic).add(method);
+		EventBinding binding = new EventBinding(method);
+		subscribers.get(topic).add(binding);
+		return binding;
 	}
 
 	/**
@@ -171,23 +203,27 @@ public class EventBus implements EventService {
 	 * @param event
 	 *          The event to publish.
 	 */
-	private void publish(List<Method> receivers, Object event) {
-		Iterator<Method> iter = receivers.iterator();
+	private EventResult publish(final List<EventBinding> receivers, final Object... params) {
+		EventResult result = new EventResult();
+		Iterator<EventBinding> iter = receivers.iterator();
 		boolean published = false;
 		while (iter.hasNext()) {
-			Method method = iter.next();
+			EventBinding binding = iter.next();
 			try {
-				method.invoke(null, event);
+				binding.method().invoke(null, params);
+				result.getReceivers().add(binding);
 				if (!published) {
 					published = true;
+					result.setPublished(true);
 				}
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				log.error("Failed to invoke " + method, e);
+				log.error("Failed to invoke " + binding.method(), e);
 			}
 		}
-		if (!published && !(event instanceof DeadEvent)) {
-			publish(new DeadEvent(this, event));
+		if (!published && !(params[0] instanceof DeadEvent)) {
+			return publish(new DeadEvent(this, params[0]));
 		}
+		return result;
 	}
 
 	/**
@@ -198,20 +234,20 @@ public class EventBus implements EventService {
 	 * @param event
 	 *          The event to publish.
 	 */
-	private void publishAsync(List<Method> receivers, Object event) {
-		Iterator<Method> iter = receivers.iterator();
+	private void publishAsync(final List<EventBinding> receivers, final Object event) {
+		Iterator<EventBinding> iter = receivers.iterator();
 		boolean published = false;
 		while (iter.hasNext()) {
-			Method method = iter.next();
+			EventBinding binding = iter.next();
 			try {
 				ActorRef eventActor = system.actorOf(new Props(EventActor.class));
-				EventDeliveryRequest request = new EventDeliveryRequest(method, event);
+				EventDeliveryRequest request = new EventDeliveryRequest(binding.method(), event);
 				system.scheduler().scheduleOnce(Duration.create(50, TimeUnit.MILLISECONDS), eventActor, request, system.dispatcher());
 				if (!published) {
 					published = true;
 				}
 			} catch (IllegalArgumentException e) {
-				log.error("Failed to schedule async event delivery request for " + method, e);
+				log.error("Failed to schedule async event delivery request for " + binding.method(), e);
 			}
 		}
 		if (!published && !(event instanceof DeadEvent)) {
@@ -224,7 +260,7 @@ public class EventBus implements EventService {
 	 * 
 	 * @return the subscribers
 	 */
-	public ConcurrentHashMap<String, List<Method>> getSubscribers() {
+	public ConcurrentHashMap<String, List<EventBinding>> getSubscribers() {
 		return subscribers;
 	}
 

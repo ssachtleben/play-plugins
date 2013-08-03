@@ -2,6 +2,8 @@ import static org.fest.assertions.Assertions.assertThat;
 
 import org.junit.Test;
 
+import com.ssachtleben.play.plugin.event.EventResult;
+
 /**
  * Checks all eventbus publish functionality.
  * 
@@ -10,9 +12,12 @@ import org.junit.Test;
 public class EventsPublishTests extends EventTest {
 
 	@Test
-	public void publishObjectEvent() {
-		// TODO: Implement publish async events tests...
-		assertThat(true).isTrue();
+	public void publishObjectEvent() throws NoSuchMethodException, SecurityException {
+		events().unregisterAll();
+		events().register(getObserver("observeString", String.class));
+		EventResult result = events().publish("Test");
+		assertThat(result.isPublished()).isTrue();
+		assertThat(result.getReceivers()).hasSize(1);
 	}
 
 	/**
@@ -21,6 +26,8 @@ public class EventsPublishTests extends EventTest {
 	@Test
 	public void publishWithoutSubscriber() {
 		events().unregisterAll();
-		events().publish("Test");
+		EventResult result = events().publish("Test");
+		assertThat(result.isPublished()).isFalse();
+		assertThat(result.getReceivers()).hasSize(0);
 	}
 }

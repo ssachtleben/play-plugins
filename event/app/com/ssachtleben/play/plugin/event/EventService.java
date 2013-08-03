@@ -1,5 +1,6 @@
 package com.ssachtleben.play.plugin.event;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
 /**
@@ -21,7 +22,7 @@ public interface EventService {
 	 * @param event
 	 *          The event object to publish.
 	 */
-	void publish(Object event);
+	EventResult publish(final Object event);
 
 	/**
 	 * Publishes an {@code event} synchronously on a {@code topic} and all registered subscribers to that name will be notified. The call is
@@ -32,7 +33,7 @@ public interface EventService {
 	 * @param event
 	 *          The event object to publish.
 	 */
-	void publish(String topic, Object event);
+	EventResult publish(final String topic, final Object... event);
 
 	/**
 	 * Publishes an {@code event} synchronously to all registered subscribers of the {@code genericType}. The call is blocked until every
@@ -41,7 +42,7 @@ public interface EventService {
 	 * @param genericType
 	 * @param event
 	 */
-	void publish(Type genericType, Object event);
+	EventResult publish(final Type genericType, final Object... event);
 
 	/**
 	 * Publishes an {@code event} asynchronously and all registered subscribers will be notified if they subscribed to the {@code event}, one
@@ -50,7 +51,7 @@ public interface EventService {
 	 * @param event
 	 *          The event object to publish.
 	 */
-	void publishAsync(Object event);
+	void publishAsync(final Object event);
 
 	/**
 	 * Publishes an {@code event} asynchronously on a {@code topic} and all registered subscribers to that name will be notified.
@@ -60,7 +61,7 @@ public interface EventService {
 	 * @param event
 	 *          The event object to publish.
 	 */
-	void publishAsync(String topic, Object event);
+	void publishAsync(final String topic, final Object... event);
 
 	/**
 	 * Publishes an {@code event} asynchronously to all registered subscribers of the {@code genericType}.
@@ -68,7 +69,7 @@ public interface EventService {
 	 * @param genericType
 	 * @param event
 	 */
-	void publishAsync(Type genericType, Object event);
+	void publishAsync(final Type genericType, final Object... event);
 
 	/**
 	 * Register new subscriber to the EventService. The given {@code object} could be a class, so we check for annotated methods, or it could
@@ -77,7 +78,7 @@ public interface EventService {
 	 * @param object
 	 *          The subscriber object.
 	 */
-	void register(Object object);
+	EventBinding register(final Object object);
 
 	/**
 	 * Register new subscriber to the EventService for publication of a specific {@code topic}. The given {@code object} could be a class, so
@@ -89,16 +90,26 @@ public interface EventService {
 	 * @param object
 	 *          The subscriber object.
 	 */
-	void register(String topic, Object object);
+	EventBinding register(final String topic, final Object object);
 
 	/**
 	 * Unregister subscriber from EventService. The given {@code object} could be a class, so we check for annotated methods, or it could be
 	 * directly a method which will be registered without checking other methods from the same class.
 	 * 
 	 * @param object
-	 *          he subscribed object.
+	 *          The subscribed object.
 	 */
-	void unregister(Object object);
+	boolean unregister(final Object object);
+
+	/**
+	 * Unregister {@link EventBinding} from EventService.
+	 * <p>
+	 * Each subscription register returns a event binding. The EventService can much faster remove them as the origin {@link Method}.
+	 * 
+	 * @param binding
+	 *          The subscribed binding.
+	 */
+	boolean unregister(final EventBinding binding);
 
 	/**
 	 * Unregister subscriber for a specific {@code topic} from EventService. The given {@code object} could be a class, so we check for
@@ -109,7 +120,19 @@ public interface EventService {
 	 * @param object
 	 *          The subscribed object.
 	 */
-	void unregister(String topic, Object object);
+	boolean unregister(final String topic, final Object object);
+
+	/**
+	 * Unregister {@link EventBinding} from EventService for a specific topic.
+	 * <p>
+	 * Each subscription register returns a event binding. The EventService can much faster remove them as the origin {@link Method}.
+	 * 
+	 * @param topic
+	 *          The topic name to subscribe.
+	 * @param binding
+	 *          The subscribed binding.
+	 */
+	boolean unregister(final String topic, final EventBinding binding);
 
 	/**
 	 * Unregisters all subscriber from EventService.
