@@ -32,7 +32,7 @@ public class EventBinding {
 	 */
 	public EventBinding(final Method method) {
 		this.method = method;
-		this.strengthReference = method().getAnnotation(Observer.class).strength();
+		this.strengthReference = method().getAnnotation(Observer.class).referenceStrength();
 	}
 
 	/**

@@ -35,6 +35,6 @@ public @interface Observer {
 	/**
 	 * @return The ReferenceStrength.
 	 */
-	ReferenceStrength strength() default ReferenceStrength.WEAK;
+	ReferenceStrength referenceStrength() default ReferenceStrength.WEAK;
 
 }
