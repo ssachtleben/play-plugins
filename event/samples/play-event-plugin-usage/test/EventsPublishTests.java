@@ -7,10 +7,20 @@ import org.junit.Test;
  * 
  * @author Sebastian Sachtleben
  */
-public class EventsPublishTests {
+public class EventsPublishTests extends EventTest {
 
 	@Test
-	public void publishObjectEvent() throws NoSuchMethodException, SecurityException {
+	public void publishObjectEvent() {
+		// TODO: Implement publish async events tests...
 		assertThat(true).isTrue();
+	}
+
+	/**
+	 * Publishes an event without any subscriber...
+	 */
+	@Test
+	public void publishWithoutSubscriber() {
+		events().unregisterAll();
+		events().publish("Test");
 	}
 }
