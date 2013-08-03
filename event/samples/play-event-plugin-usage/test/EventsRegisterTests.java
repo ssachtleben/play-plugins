@@ -9,20 +9,20 @@ import com.ssachtleben.play.plugin.event.Events;
 import com.ssachtleben.play.plugin.event.annotations.Observer;
 
 /**
- * Checks all eventbus functionality and keeps secure that everything is working as excepted.
+ * Checks all eventbus register functionality.
  * 
  * @author Sebastian Sachtleben
  */
-public class ApplicationTest {
+public class EventsRegisterTests {
 
 	/**
-	 * Adds new subscriber, unregister all subscribers and check the subscribers amount which should be 0.
+	 * Register new subscriber and check subscriber map if entry is available.
 	 * 
-	 * @throws SecurityException
 	 * @throws NoSuchMethodException
+	 * @throws SecurityException
 	 */
 	@Test
-	public void checkUnregisterAll() throws NoSuchMethodException, SecurityException {
+	public void registerObject() throws NoSuchMethodException, SecurityException {
 		assertThat(Events.instance()).isInstanceOf(EventBus.class);
 		EventBus events = (EventBus) Events.instance();
 		events.unregisterAll();
@@ -30,16 +30,11 @@ public class ApplicationTest {
 		Method method = this.getClass().getMethod("observeString", String.class);
 		assertThat(method).isNotNull();
 		events.register(method);
-		assertThat(events.getSubscribers().isEmpty()).isFalse();
-	}
-
-	/**
-	 * Publishes an event without any subscriber...
-	 */
-	@Test
-	public void publishWithoutSubscriber() {
-		Events.instance().unregisterAll();
-		Events.instance().publish("Test");
+		assertThat(events.getSubscribers().get(EventBus.EMPTY_TOPIC)).hasSize(1);
+		Method method2 = this.getClass().getMethod("observeString2", String.class);
+		assertThat(method2).isNotNull();
+		events.register(method2);
+		assertThat(events.getSubscribers().get(EventBus.EMPTY_TOPIC)).hasSize(2);
 	}
 
 	@Observer
@@ -47,4 +42,8 @@ public class ApplicationTest {
 		assertThat(val).isEqualTo("Test");
 	}
 
+	@Observer
+	public static void observeString2(String val) {
+		assertThat(val).isEqualTo("Test");
+	}
 }

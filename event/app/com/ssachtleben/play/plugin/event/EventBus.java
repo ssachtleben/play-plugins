@@ -33,6 +33,8 @@ import akka.actor.UntypedActor;
 public class EventBus implements EventService {
 	private static final Logger.ALogger log = Logger.of(EventBus.class);
 
+	public static String EMPTY_TOPIC = "";
+
 	/**
 	 * The map contains of several method lists grouped by topic.
 	 */
@@ -68,8 +70,8 @@ public class EventBus implements EventService {
 	@Override
 	public void publish(Object event) {
 		log.info(String.format("Publish %s", event));
-		if (subscribers.containsKey("")) {
-			publish(subscribers.get(""), event);
+		if (subscribers.containsKey(EMPTY_TOPIC)) {
+			publish(subscribers.get(EMPTY_TOPIC), event);
 		}
 	}
 
@@ -89,8 +91,8 @@ public class EventBus implements EventService {
 	@Override
 	public void publishAsync(Object event) {
 		log.info(String.format("Publish async %s", event));
-		if (subscribers.containsKey("")) {
-			publishAsync(subscribers.get(""), event);
+		if (subscribers.containsKey(EMPTY_TOPIC)) {
+			publishAsync(subscribers.get(EMPTY_TOPIC), event);
 		}
 	}
 
@@ -109,8 +111,8 @@ public class EventBus implements EventService {
 
 	@Override
 	public void register(Object object) {
-		log.info("Register " + object);
-		add("", object);
+		log.info(String.format("Register %s", object));
+		add(EMPTY_TOPIC, object);
 	}
 
 	@Override
@@ -121,12 +123,18 @@ public class EventBus implements EventService {
 
 	@Override
 	public void unregister(Object object) {
-		log.warn("Unregister is not implemented yet");
+		log.info(String.format("Unregister %s", object));
+		if (subscribers.containsKey(EMPTY_TOPIC)) {
+			subscribers.get(EMPTY_TOPIC).remove(object);
+		}
 	}
 
 	@Override
 	public void unregister(String topic, Object object) {
-		log.warn("Unregister is not implemented yet");
+		log.info(String.format("Unregister %s %s", topic, object));
+		if (subscribers.containsKey(topic)) {
+			subscribers.get(topic).remove(object);
+		}
 	}
 
 	@Override
@@ -149,7 +157,7 @@ public class EventBus implements EventService {
 			return;
 		}
 		Method method = (Method) object;
-		if (!subscribers.contains(topic)) {
+		if (!subscribers.containsKey(topic)) {
 			subscribers.put(topic, new ArrayList<Method>());
 		}
 		subscribers.get(topic).add(method);
