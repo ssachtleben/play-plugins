@@ -1,0 +1,16 @@
+/.settings
+/.target
+/project/project
+/project/target
+/target
+/auth
+/compress
+/cron
+/event
+/json
+.classpath
+.project
+play_eclipse.bat
+play_publish-local.bat
+play_release.bat
+README.md
