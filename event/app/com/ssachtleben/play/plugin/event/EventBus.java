@@ -270,14 +270,10 @@ public class EventBus implements EventService {
 		private Method method;
 		private Object[] event;
 
-		/**
-		 * The constructor with given method and event.
-		 * 
-		 * @param method
-		 *          The method to invoke
-		 * @param event
-		 *          The event to pass
-		 */
+		public EventDeliveryRequest(Method method, Object event) {
+			this(method, new Object[] { event });
+		}
+
 		public EventDeliveryRequest(Method method, Object... event) {
 			this.method = method;
 			this.event = event;
@@ -291,7 +287,7 @@ public class EventBus implements EventService {
 			this.method = method;
 		}
 
-		public Object getEvent() {
+		public Object[] getEvent() {
 			return event;
 		}
 
