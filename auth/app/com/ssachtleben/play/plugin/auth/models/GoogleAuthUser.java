@@ -28,7 +28,7 @@ public class GoogleAuthUser extends OAuthAuthUser {
 	 *          The data to set
 	 */
 	public GoogleAuthUser(Token token, JsonNode data) {
-		super("123", token, data);
+		super(data.get("sub").asText(), token, data);
 	}
 
 	/*
