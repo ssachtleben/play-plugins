@@ -32,7 +32,7 @@ public class EventPlugin extends Plugin {
 	 * @param app
 	 *          The app to set
 	 */
-	public EventPlugin(Application app) {
+	public EventPlugin(final Application app) {
 		log.debug("Plugin created");
 		this.app = app;
 	}
@@ -55,6 +55,17 @@ public class EventPlugin extends Plugin {
 			}
 		}
 		super.onStart();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see play.Plugin#onStop()
+	 */
+	@Override
+	public void onStop() {
+		log.debug("Plugin stopped");
+		Events.instance().unregisterAll();
 	}
 
 }
