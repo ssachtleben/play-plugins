@@ -43,6 +43,16 @@ public class Twitter extends BaseOAuth1Provider<TwitterAuthUser> {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#defaultScope()
+	 */
+	@Override
+	protected String defaultScope() {
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#transform(org.scribe.model.Token)
 	 */
 	@Override

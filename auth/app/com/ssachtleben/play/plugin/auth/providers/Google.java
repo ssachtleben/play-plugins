@@ -1,12 +1,8 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
 import org.codehaus.jackson.JsonNode;
-import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.Api;
 import org.scribe.model.Token;
-import org.scribe.oauth.OAuthService;
-
-import play.Configuration;
 
 import com.ssachtleben.play.plugin.auth.annotations.Provider;
 import com.ssachtleben.play.plugin.auth.builders.Google2Api;
@@ -28,7 +24,15 @@ public class Google extends BaseOAuth2Provider<GoogleAuthUser> {
 	 */
 	public static final String KEY = "google";
 
-	private static final String SCOPE = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
+	/**
+	 * The default scope for {@link Google} oauth provider. TODO: this should be used if no scope is set in application.conf...
+	 */
+	public static final String DEFAULT_SCOPE = "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile";
+
+	/**
+	 * The userinfo url to fetch user data during authentication process.
+	 */
+	private static final String URL_USERINFO = "https://www.googleapis.com/oauth2/v3/userinfo?alt=json";
 
 	/*
 	 * (non-Javadoc)
@@ -53,16 +57,11 @@ public class Google extends BaseOAuth2Provider<GoogleAuthUser> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#service()
+	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#defaultScope()
 	 */
-	public OAuthService service() {
-		if (service == null) {
-			final Configuration config = config();
-			service = new ServiceBuilder().provider(provider()).apiKey(config.getString(OAuthSettingKeys.API_KEY))
-					.apiSecret(config.getString(OAuthSettingKeys.API_SECRET)).callback(config.getString(OAuthSettingKeys.CALLBACK)).scope(SCOPE)
-					.build();
-		}
-		return service;
+	@Override
+	protected String defaultScope() {
+		return DEFAULT_SCOPE;
 	}
 
 	/*
@@ -72,7 +71,7 @@ public class Google extends BaseOAuth2Provider<GoogleAuthUser> {
 	 */
 	@Override
 	protected GoogleAuthUser transform(Token token) {
-		JsonNode data = data(token, "https://www.googleapis.com/oauth2/v3/userinfo?alt=json");
+		JsonNode data = data(token, URL_USERINFO);
 		logger().info("Retrieved: " + data.toString());
 		return new GoogleAuthUser(token, data);
 	}

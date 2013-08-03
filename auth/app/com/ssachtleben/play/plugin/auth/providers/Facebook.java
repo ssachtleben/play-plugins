@@ -1,6 +1,7 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
 import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.FacebookApi;
 import org.scribe.model.Token;
@@ -21,8 +22,42 @@ public class Facebook extends BaseOAuth2Provider<FacebookAuthUser> {
 	 */
 	public static final String KEY = "facebook";
 
+	/**
+	 * The Facebook Graph url.
+	 */
+	public static final String GRAPH_URL = "https://graph.facebook.com";
+
+	/**
+	 * Provides setting keys for {@link Facebook} provider.
+	 * 
+	 * @author Sebastian Sachtleben
+	 */
 	public static abstract class FacebookSettingKeys {
+
+		/**
+		 * The fields fetched from graph during authentication.
+		 */
 		public static final String FIELDS = "fields";
+
+	}
+
+	/**
+	 * Provides default values for settings keys of {@link Facebook} provider.
+	 * 
+	 * @author Sebastian Sachtleben
+	 */
+	public static abstract class FacebookSettingDefault {
+
+		/**
+		 * The default scope for {@link Facebook} oauth provider.
+		 */
+		public static final String SCOPE = "email";
+
+		/**
+		 * The default fields for {@link Facebook} oauth provider.
+		 */
+		public static final String FIELDS = "id,name,email";
+
 	}
 
 	/*
@@ -48,12 +83,27 @@ public class Facebook extends BaseOAuth2Provider<FacebookAuthUser> {
 	/*
 	 * (non-Javadoc)
 	 * 
+	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#defaultScope()
+	 */
+	@Override
+	protected String defaultScope() {
+		return FacebookSettingDefault.SCOPE;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#transform(org.scribe.model.Token)
 	 */
 	@Override
 	protected FacebookAuthUser transform(Token token) {
-		String fields = config().getString(FacebookSettingKeys.FIELDS, "id,name");
-		JsonNode data = me(token, fields);
+		String fields = config().getString(FacebookSettingKeys.FIELDS, FacebookSettingDefault.FIELDS);
+		JsonNode data = null;
+		if (fields == null || !"".equals(fields)) {
+			data = me(token, fields);
+		} else {
+			data = new ObjectMapper().createObjectNode();
+		}
 		logger().info("Retrieved: " + data.toString());
 		return new FacebookAuthUser(token, data);
 	}
@@ -68,6 +118,6 @@ public class Facebook extends BaseOAuth2Provider<FacebookAuthUser> {
 	 * @return User data as {@link JsonNode} fetched from Facebook Graph.
 	 */
 	private JsonNode me(Token token, String fields) {
-		return data(token, String.format("https://graph.facebook.com/me?fields=%s", fields));
+		return data(token, String.format("%s/me?fields=%s", GRAPH_URL, fields));
 	}
 }

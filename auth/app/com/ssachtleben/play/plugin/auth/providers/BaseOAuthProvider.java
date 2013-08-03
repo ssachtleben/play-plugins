@@ -3,6 +3,7 @@ package com.ssachtleben.play.plugin.auth.providers;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -57,6 +58,11 @@ public abstract class BaseOAuthProvider<U extends OAuthAuthUser> extends BasePro
 		 * The setting key for the url back to our application called by the provider.
 		 */
 		public static final String CALLBACK = "callback";
+
+		/**
+		 * The setting key for the scope.
+		 */
+		public static final String SCOPE = "scope";
 	}
 
 	/**
@@ -74,6 +80,11 @@ public abstract class BaseOAuthProvider<U extends OAuthAuthUser> extends BasePro
 	 * @see https ://github.com/fernandezpablo85/scribe-java/tree/master/src/main/ java/org/scribe/builder/api
 	 */
 	public abstract Class<? extends Api> provider();
+
+	/**
+	 * @return Provides the scope for this provider.
+	 */
+	protected abstract String defaultScope();
 
 	/**
 	 * Provides authentication url for this login try.
@@ -138,8 +149,22 @@ public abstract class BaseOAuthProvider<U extends OAuthAuthUser> extends BasePro
 	public OAuthService service() {
 		if (service == null) {
 			final Configuration config = config();
-			service = new ServiceBuilder().provider(provider()).apiKey(config.getString(OAuthSettingKeys.API_KEY))
-					.apiSecret(config.getString(OAuthSettingKeys.API_SECRET)).callback(config.getString(OAuthSettingKeys.CALLBACK)).build();
+			final Set<String> configKeys = config.keys();
+			ServiceBuilder sb = new ServiceBuilder().provider(provider());
+			if (configKeys.contains(OAuthSettingKeys.API_KEY)) {
+				sb.apiKey(config.getString(OAuthSettingKeys.API_KEY));
+			}
+			if (configKeys.contains(OAuthSettingKeys.API_SECRET)) {
+				sb.apiSecret(config.getString(OAuthSettingKeys.API_SECRET));
+			}
+			if (configKeys.contains(OAuthSettingKeys.CALLBACK)) {
+				sb.callback(config.getString(OAuthSettingKeys.CALLBACK));
+			}
+			if (configKeys.contains(OAuthSettingKeys.SCOPE) || defaultScope() != null) {
+				String scope = configKeys.contains(OAuthSettingKeys.SCOPE) ? config.getString(OAuthSettingKeys.SCOPE) : defaultScope();
+				sb.scope(scope);
+			}
+			service = sb.build();
 		}
 		return service;
 	}
