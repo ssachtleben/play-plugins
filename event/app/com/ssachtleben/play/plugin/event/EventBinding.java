@@ -55,25 +55,27 @@ public class EventBinding {
 		log.info(String.format("strength=%s", strengthReference));
 		log.info(String.format("method=%s", Arrays.toString(paramClasses.toArray(new Class<?>[0]))));
 		log.info(String.format("params=%s", Arrays.toString(parameterTypes)));
-		if (!isWeakReference() && parameterTypes.length != params.length) {
+		if (parameterTypes.length != params.length) {
 			log.info(String.format("Length not match for strong reference"));
 			return false;
 		}
 		for (int i = 0; i < parameterTypes.length; i++) {
-			if (!parameterTypes[i].isAssignableFrom(params[i].getClass())) {
-				log.info(String.format("Value NOT assignable %s %s", parameterTypes[i], params[i]));
-				if (isWeakReference()) {
-					if (parameterTypes[i].isPrimitive()) {
-						log.info("Cannot assign null value to primitive");
+			if (i < params.length) {
+				if (!parameterTypes[i].isAssignableFrom(params[i].getClass())) {
+					log.info(String.format("Value NOT assignable %s %s", parameterTypes[i], params[i]));
+					if (isWeakReference()) {
+						if (parameterTypes[i].isPrimitive()) {
+							log.info("Cannot assign null value to primitive");
+							return false;
+						}
+						log.info("Set value to null and keep weak reference");
+						params[i] = null;
+					} else {
 						return false;
 					}
-					log.info("Set value to null and keep weak reference");
-					params[i] = null;
 				} else {
-					return false;
+					log.info(String.format("Value is assignable %s %s", parameterTypes[i], params[i]));
 				}
-			} else {
-				log.info(String.format("Value is assignable %s %s", parameterTypes[i], params[i]));
 			}
 		}
 		return true;

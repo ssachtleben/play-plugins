@@ -6,6 +6,7 @@ import org.apache.commons.lang.RandomStringUtils;
 
 import com.ssachtleben.play.plugin.event.EventBus;
 import com.ssachtleben.play.plugin.event.Events;
+import com.ssachtleben.play.plugin.event.ReferenceStrength;
 import com.ssachtleben.play.plugin.event.annotations.Observer;
 
 /**
@@ -37,12 +38,12 @@ public abstract class EventsTest {
 		return method;
 	}
 
-	@Observer
+	@Observer(strength = ReferenceStrength.STRONG)
 	public static void observeString(String val) {
 		assertThat(val).isEqualTo("Test");
 	}
 
-	@Observer
+	@Observer(strength = ReferenceStrength.STRONG)
 	public static void observeString2(String val) {
 		assertThat(val).isEqualTo("Test");
 	}

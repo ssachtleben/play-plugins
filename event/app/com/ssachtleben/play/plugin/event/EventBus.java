@@ -228,7 +228,7 @@ public class EventBus implements EventService {
 			}
 			log.info(String.format("Publish to %s", binding));
 			if (async) {
-				log.info(String.format("Send sync"));
+				log.info(String.format("Send async"));
 				try {
 					ActorRef eventActor = system.actorOf(new Props(EventActor.class));
 					EventDeliveryRequest request = new EventDeliveryRequest(binding.method(), payload);
@@ -240,7 +240,7 @@ public class EventBus implements EventService {
 					log.error("Failed to schedule async event delivery request for " + binding.method(), e);
 				}
 			} else {
-				log.info(String.format("Send async"));
+				log.info(String.format("Send sync"));
 				try {
 					binding.method().invoke(null, payload);
 					result.getReceivers().add(binding);

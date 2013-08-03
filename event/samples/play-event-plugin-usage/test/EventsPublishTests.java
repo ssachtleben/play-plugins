@@ -3,6 +3,7 @@ import static org.fest.assertions.Assertions.assertThat;
 import org.junit.Test;
 
 import com.ssachtleben.play.plugin.event.EventResult;
+import com.ssachtleben.play.plugin.event.ReferenceStrength;
 import com.ssachtleben.play.plugin.event.annotations.Observer;
 
 /**
@@ -78,6 +79,15 @@ public class EventsPublishTests extends EventsTest {
 		assertThat(result.getReceivers()).hasSize(0);
 	}
 
+	// @Test
+	public void publishTopicEventWeakReference() throws NoSuchMethodException, SecurityException {
+		events().unregisterAll();
+		events().register(TEST_TOPIC, getObserver("observeWeakReference", Integer.class, Long.class, String.class));
+		EventResult result = events().publish(TEST_TOPIC, 1, "Test", "Test");
+		assertThat(result.isPublished()).isTrue();
+		assertThat(result.getReceivers()).hasSize(1);
+	}
+
 	/**
 	 * Publishes an event without any subscriber...
 	 */
@@ -109,6 +119,20 @@ public class EventsPublishTests extends EventsTest {
 
 	@Observer
 	public static void observeIntLongString2(Integer i, Long l, String s) {
+		assertThat(i).isEqualTo(1);
+		assertThat(l).isEqualTo(10l);
+		assertThat(s).isEqualTo("Test");
+	}
+
+	@Observer(strength = ReferenceStrength.WEAK)
+	public static void observeWeakReference(Integer i, Long l, String s) {
+		assertThat(i).isEqualTo(1);
+		assertThat(l).isEqualTo(null);
+		assertThat(s).isEqualTo("Test");
+	}
+
+	@Observer(strength = ReferenceStrength.STRONG)
+	public static void observeStrongReference(Integer i, Long l, String s) {
 		assertThat(i).isEqualTo(1);
 		assertThat(l).isEqualTo(10l);
 		assertThat(s).isEqualTo("Test");
