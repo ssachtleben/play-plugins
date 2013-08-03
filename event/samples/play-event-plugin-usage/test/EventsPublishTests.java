@@ -136,14 +136,14 @@ public class EventsPublishTests extends EventsTest {
 		assertThat(s).isEqualTo("Test");
 	}
 
-	@Observer(strength = ReferenceStrength.WEAK)
+	@Observer(referenceStrength = ReferenceStrength.WEAK)
 	public static void observeWeakReference(Integer i, Long l, String s) {
 		assertThat(i).isEqualTo(1);
 		assertThat(l).isEqualTo(null);
 		assertThat(s).isEqualTo("Test");
 	}
 
-	@Observer(strength = ReferenceStrength.STRONG)
+	@Observer(referenceStrength = ReferenceStrength.STRONG)
 	public static void observeStrongReference(Integer i, Long l, String s) {
 		assertThat(i).isEqualTo(1);
 		assertThat(l).isEqualTo(10l);

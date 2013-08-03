@@ -38,12 +38,12 @@ public abstract class EventsTest {
 		return method;
 	}
 
-	@Observer(strength = ReferenceStrength.STRONG)
+	@Observer(referenceStrength = ReferenceStrength.STRONG)
 	public static void observeString(String val) {
 		assertThat(val).isEqualTo("Test");
 	}
 
-	@Observer(strength = ReferenceStrength.STRONG)
+	@Observer(referenceStrength = ReferenceStrength.STRONG)
 	public static void observeString2(String val) {
 		assertThat(val).isEqualTo("Test");
 	}
