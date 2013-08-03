@@ -7,6 +7,8 @@ import java.util.List;
 
 import play.Logger;
 
+import com.ssachtleben.play.plugin.event.annotations.Observer;
+
 /**
  * Provides event bindings for subscriptions. TODO: improve javadoc here...
  * 
@@ -20,6 +22,8 @@ public class EventBinding {
 	 */
 	private Method method;
 
+	private ReferenceStrength strengthReference;
+
 	/**
 	 * Default constructor takes {@link Method} parameter.
 	 * 
@@ -28,6 +32,7 @@ public class EventBinding {
 	 */
 	public EventBinding(final Method method) {
 		this.method = method;
+		this.strengthReference = method().getAnnotation(Observer.class).strength();
 	}
 
 	/**
@@ -47,21 +52,35 @@ public class EventBinding {
 		for (Object param : params) {
 			paramClasses.add(param.getClass());
 		}
+		log.info(String.format("strength=%s", strengthReference));
 		log.info(String.format("method=%s", Arrays.toString(paramClasses.toArray(new Class<?>[0]))));
 		log.info(String.format("params=%s", Arrays.toString(parameterTypes)));
-		if (parameterTypes.length != params.length) {
-			log.info(String.format("length not match"));
+		if (!isWeakReference() && parameterTypes.length != params.length) {
+			log.info(String.format("Length not match for strong reference"));
 			return false;
 		}
 		for (int i = 0; i < parameterTypes.length; i++) {
 			if (!parameterTypes[i].isAssignableFrom(params[i].getClass())) {
-				log.info(String.format("NOT assignable %s %s", parameterTypes[i], params[i]));
-				return false;
+				log.info(String.format("Value NOT assignable %s %s", parameterTypes[i], params[i]));
+				if (isWeakReference()) {
+					if (parameterTypes[i].isPrimitive()) {
+						log.info("Cannot assign null value to primitive");
+						return false;
+					}
+					log.info("Set value to null and keep weak reference");
+					params[i] = null;
+				} else {
+					return false;
+				}
 			} else {
-				log.info(String.format("is assignable %s %s", parameterTypes[i], params[i]));
+				log.info(String.format("Value is assignable %s %s", parameterTypes[i], params[i]));
 			}
 		}
 		return true;
+	}
+
+	private boolean isWeakReference() {
+		return ReferenceStrength.WEAK.equals(strengthReference);
 	}
 
 	/*

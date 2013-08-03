@@ -195,6 +195,14 @@ public class EventBus implements EventService {
 		return binding;
 	}
 
+	/**
+	 * Publishes synchronously a event to a list of recievers. It means the methods will be invoked with the given event.
+	 * 
+	 * @param receivers
+	 *          A list of method.
+	 * @param event
+	 *          The event to publish.
+	 */
 	private EventResult publish(final List<EventBinding> receivers, final boolean async, final Object payload) {
 		return publish(receivers, async, new Object[] { payload });
 	}
@@ -215,10 +223,10 @@ public class EventBus implements EventService {
 			EventBinding binding = iter.next();
 			log.info(String.format("Found subscriber: %s", binding.method()));
 			if (!binding.matches(payload)) {
-				log.info(String.format("Does not match"));
+				log.info(String.format("Ignore %s", binding));
 				continue;
 			}
-			log.info(String.format("Does match"));
+			log.info(String.format("Publish to %s", binding));
 			if (async) {
 				log.info(String.format("Send sync"));
 				try {
