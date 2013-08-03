@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
-	<info organisation="com.ssachtleben" module="play-auth-plugin_2.10" revision="0.1-SNAPSHOT" status="integration" publication="20130802230744">
+	<info organisation="com.ssachtleben" module="play-auth-plugin_2.10" revision="0.1-SNAPSHOT" status="integration" publication="20130803042918">
 		<description>
 		play-auth-plugin
 		</description>
