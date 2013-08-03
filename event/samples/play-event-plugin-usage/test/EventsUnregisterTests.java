@@ -10,7 +10,7 @@ import com.ssachtleben.play.plugin.event.EventBus;
  * 
  * @author Sebastian Sachtleben
  */
-public class EventsUnregisterTests extends EventTest {
+public class EventsUnregisterTests extends EventsTest {
 
 	/**
 	 * Adds two new subscriber, unregister one and check if one subscriber is left.

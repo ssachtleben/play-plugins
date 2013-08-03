@@ -195,6 +195,10 @@ public class EventBus implements EventService {
 		return binding;
 	}
 
+	private EventResult publish(final List<EventBinding> receivers, final Object params) {
+		return publish(receivers, new Object[] { params });
+	}
+
 	/**
 	 * Publishes synchronously a event to a list of recievers. It means the methods will be invoked with the given event.
 	 * 
@@ -209,6 +213,9 @@ public class EventBus implements EventService {
 		boolean published = false;
 		while (iter.hasNext()) {
 			EventBinding binding = iter.next();
+			if (!binding.matches(params)) {
+				continue;
+			}
 			try {
 				binding.method().invoke(null, params);
 				result.getReceivers().add(binding);

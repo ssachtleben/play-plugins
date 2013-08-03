@@ -9,7 +9,7 @@ import com.ssachtleben.play.plugin.event.EventBus;
  * 
  * @author Sebastian Sachtleben
  */
-public class EventsRegisterTests extends EventTest {
+public class EventsRegisterTests extends EventsTest {
 
 	/**
 	 * Register new subscriber and check subscriber map if entry is available.

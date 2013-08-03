@@ -7,7 +7,7 @@ import org.junit.Test;
  * 
  * @author Sebastian Sachtleben
  */
-public class EventsPublishAsyncTests extends EventTest {
+public class EventsPublishAsyncTests extends EventsTest {
 
 	@Test
 	public void publishObjectAsyncEvent() {

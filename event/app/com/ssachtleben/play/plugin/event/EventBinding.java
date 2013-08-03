@@ -31,15 +31,21 @@ public class EventBinding {
 		return method;
 	}
 
-	/**
-	 * Checks is this EventBinding has the same parameter types.
-	 * 
-	 * @param other
-	 *          The other {@link Method}.
-	 * @return Success boolean.
-	 */
-	public boolean matches(Method other) {
-		return method().getParameterTypes().equals(other.getParameterTypes());
+	public boolean matches(Object param) {
+		return matches(new Object[] { param });
+	}
+
+	public boolean matches(Object... params) {
+		Class<?>[] parameterTypes = method().getParameterTypes();
+		if (parameterTypes.length != params.length) {
+			return false;
+		}
+		for (int i = 0; i < parameterTypes.length; i++) {
+			if (!parameterTypes[i].isInstance(params[i])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/*
