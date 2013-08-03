@@ -14,37 +14,36 @@ import org.reflections.util.ConfigurationBuilder;
 import play.Logger;
 
 /**
- * The EventUtils provides methods to find @Observer annotated classes in the
- * classpath via reflection.
+ * The EventUtils provides methods to find @Observer annotated classes in the classpath via reflection.
  * 
  * @author Sebastian Sachtleben
  */
 public class EventUtils {
-  private static final Logger.ALogger log = Logger.of(EventUtils.class);
+	private static final Logger.ALogger log = Logger.of(EventUtils.class);
 
-  /**
-   * Suppresses default constructor, ensuring non-instantiability.
-   */
-  private EventUtils() {
+	/**
+	 * Suppresses default constructor, ensuring non-instantiability.
+	 */
+	private EventUtils() {
 
-  }
+	}
 
-  /**
-   * Searches in all via {@link ClassLoader} provided classes for methods
-   * annotated by {@code annotation} and returns a set of matching methods.
-   * 
-   * @param annotation
-   *          The annotation to search for.
-   * @return A set of methods.
-   */
-  public static final Set<Method> findAnnotatedMethods(Class<? extends Annotation> annotation) {
-    long nanos = System.nanoTime();
-    log.info("Start searching for methods with annotation @" + annotation.getSimpleName());
-    URL[] urls = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
-    Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(urls).setScanners(new MethodAnnotationsScanner()));
-    Set<Method> results = reflections.getMethodsAnnotatedWith(annotation);
-    long elapsed = Math.round((double) (System.nanoTime() - nanos) / 1000000.0);
-    log.info("Found " + results.size() + " methods in " + elapsed + " ms : " + Arrays.toString(results.toArray(new Object[0])));
-    return results;
-  }
+	/**
+	 * Searches in all via {@link ClassLoader} provided classes for methods annotated by {@code annotation} and returns a set of matching
+	 * methods.
+	 * 
+	 * @param annotation
+	 *          The annotation to search for.
+	 * @return A set of methods.
+	 */
+	public static final Set<Method> findAnnotatedMethods(Class<? extends Annotation> annotation) {
+		long nanos = System.nanoTime();
+		log.info("Start searching for methods with annotation @" + annotation.getSimpleName());
+		URL[] urls = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
+		Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(urls).setScanners(new MethodAnnotationsScanner()));
+		Set<Method> results = reflections.getMethodsAnnotatedWith(annotation);
+		long elapsed = Math.round((double) (System.nanoTime() - nanos) / 1000000.0);
+		log.info("Found " + results.size() + " methods in " + elapsed + " ms : " + Arrays.toString(results.toArray(new Object[0])));
+		return results;
+	}
 }
