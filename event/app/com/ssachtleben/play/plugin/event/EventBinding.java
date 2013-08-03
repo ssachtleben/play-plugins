@@ -41,7 +41,7 @@ public class EventBinding {
 			return false;
 		}
 		for (int i = 0; i < parameterTypes.length; i++) {
-			if (!parameterTypes[i].isInstance(params[i])) {
+			if (!parameterTypes[i].isAssignableFrom(params[i].getClass())) {
 				return false;
 			}
 		}

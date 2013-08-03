@@ -22,6 +22,7 @@ import com.ssachtleben.play.plugin.auth.Providers;
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.AuthUser;
 import com.ssachtleben.play.plugin.auth.models.Identity;
+import com.ssachtleben.play.plugin.event.Events;
 
 /**
  * Provides basic provider functionality.
@@ -38,6 +39,29 @@ public abstract class BaseProvider<U extends Identity> {
 	public static abstract class SettingKeys {
 		public static final String SUCCESS = "success";
 		public static final String ERROR = "error";
+	}
+
+	/**
+	 * Contains all event keys to execute custom code during authentication.
+	 * 
+	 * @author Sebastian Sachtleben
+	 */
+	public static abstract class EventKeys {
+
+		/**
+		 * Fired sync event before authentication process starts. Parameters are provider string and context.
+		 */
+		public static final String AUTHENTICATION_BEFORE = "authenticationBefore";
+
+		/**
+		 * Fired async event after successful authentication. Parameters are provider string and auth user.
+		 */
+		public static final String AUTHENTICATION_SUCCESSFUL = "authenticationSuccessful";
+
+		/**
+		 * Fired async event after failed authentication. Parameters are provider string and context.
+		 */
+		public static final String AUTHENTICATION_FAILED = "authenticationFailed";
 	}
 
 	/**
@@ -70,6 +94,7 @@ public abstract class BaseProvider<U extends Identity> {
 	 * @return Play {@link Result} object.
 	 */
 	public Result login(final Context ctx) {
+		Events.instance().publish(EventKeys.AUTHENTICATION_BEFORE, key(), ctx);
 		AuthUser authUser = handle(ctx);
 		if (authUser != null) {
 			Object user = null;
@@ -88,9 +113,11 @@ public abstract class BaseProvider<U extends Identity> {
 			logger().debug("User: " + user);
 			if (user != null) {
 				ctx.session().put(Auth.SESSION_USER_KEY, user.toString());
+				Events.instance().publishAsync(EventKeys.AUTHENTICATION_SUCCESSFUL, key(), user);
 				return onSuccess(ctx);
 			}
 		}
+		Events.instance().publishAsync(EventKeys.AUTHENTICATION_FAILED, key(), ctx);
 		return onError(ctx);
 	}
 

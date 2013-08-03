@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 import com.ssachtleben.play.plugin.event.EventPlugin;
 import com.ssachtleben.play.plugin.event.EventService;
+import com.ssachtleben.play.plugin.event.ReferenceStrength;
 
 /**
  * Marks the annotated method as potential subscriber for the class-based or topic-based, if the topic name is changed, event publication
@@ -30,5 +31,10 @@ public @interface Observer {
 	 * @return The topic.
 	 */
 	String topic() default "";
+
+	/**
+	 * @return The ReferenceStrength.
+	 */
+	ReferenceStrength strength() default ReferenceStrength.WEAK;
 
 }
