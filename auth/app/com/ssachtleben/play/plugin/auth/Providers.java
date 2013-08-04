@@ -85,6 +85,13 @@ public class Providers {
 	}
 
 	/**
+	 * Removes all of the mappings from this map (optional operation). The map will be empty after this call returns.
+	 */
+	public static void clear() {
+		cache.clear();
+	}
+
+	/**
 	 * Returns instance of {@link BaseProvider} for a specific key.
 	 * 
 	 * @param key
@@ -134,5 +141,4 @@ public class Providers {
 	public static Collection<BaseProvider<?>> list() {
 		return cache.values();
 	}
-
 }

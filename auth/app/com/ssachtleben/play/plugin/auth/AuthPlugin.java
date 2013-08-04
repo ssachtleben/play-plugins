@@ -3,10 +3,12 @@ package com.ssachtleben.play.plugin.auth;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import play.Application;
 import play.Logger;
 import play.Plugin;
+import play.libs.Akka;
 
 import com.ssachtleben.play.plugin.auth.annotations.Authenticates;
 import com.ssachtleben.play.plugin.auth.models.Identity;
@@ -36,6 +38,7 @@ public class AuthPlugin extends Plugin {
 	 *          The {@link Application} instance.
 	 */
 	public AuthPlugin(final Application app) {
+		log.debug("Plugin created");
 		this.app = app;
 	}
 
@@ -53,7 +56,38 @@ public class AuthPlugin extends Plugin {
 	 */
 	@Override
 	public void onStart() {
-		log.info(String.format("Starting %s for %s", this.getClass().getSimpleName(), app().toString()));
+		log.debug("Start Plugin");
+		if (!app.configuration().getBoolean("auth.scanner.active", Boolean.TRUE)) {
+			return;
+		}
+		if (app.configuration().getBoolean("auth.scanner.async", Boolean.TRUE)) {
+			Akka.future(new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					findProviders();
+					return null;
+				}
+			});
+		} else {
+			findProviders();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see play.Plugin#onStop()
+	 */
+	@Override
+	public void onStop() {
+		log.debug("Stop Plugin");
+		Providers.clear();
+	}
+
+	/**
+	 * Find Providers and auth methods.
+	 */
+	private void findProviders() {
 		final Set<BaseProvider<Identity>> providers = AuthUtils.findProviders();
 		final Set<Method> authMethods = AuthUtils.findAuthMethods();
 		Iterator<BaseProvider<Identity>> iter = providers.iterator();

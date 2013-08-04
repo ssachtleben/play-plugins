@@ -2,10 +2,12 @@ package com.ssachtleben.play.plugin.event;
 
 import java.lang.reflect.Method;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import play.Application;
 import play.Logger;
 import play.Plugin;
+import play.libs.Akka;
 
 import com.ssachtleben.play.plugin.event.annotations.Observer;
 
@@ -42,7 +44,35 @@ public class EventPlugin extends Plugin {
 	 */
 	@Override
 	public void onStart() {
-		log.debug("Plugin started");
+		log.debug("Start Plugin");
+		if (!app.configuration().getBoolean("event.scanner.active", Boolean.TRUE)) {
+			return;
+		}
+		if (app.configuration().getBoolean("event.scanner.async", Boolean.TRUE)) {
+			Akka.future(new Callable<Void>() {
+				@Override
+				public Void call() throws Exception {
+					scan();
+					return null;
+				}
+			});
+		} else {
+			scan();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see play.Plugin#onStop()
+	 */
+	@Override
+	public void onStop() {
+		log.debug("Stop Plugin");
+		Events.instance().unregisterAll();
+	}
+
+	private void scan() {
 		Set<Method> annotatedMethods = EventUtils.findAnnotatedMethods(Observer.class);
 		for (Method method : annotatedMethods) {
 			Observer observer = method.getAnnotation(Observer.class);
@@ -54,18 +84,6 @@ public class EventPlugin extends Plugin {
 				Events.instance().register(observer.topic(), (Object) method);
 			}
 		}
-		super.onStart();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see play.Plugin#onStop()
-	 */
-	@Override
-	public void onStop() {
-		log.debug("Plugin stopped");
-		Events.instance().unregisterAll();
 	}
 
 }

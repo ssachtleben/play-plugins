@@ -53,7 +53,7 @@ public class CronPlugin extends Plugin {
 	 * @param app
 	 *          The app to set
 	 */
-	public CronPlugin(Application app) {
+	public CronPlugin(final Application app) {
 		log.debug("Plugin created");
 		this.app = app;
 	}
@@ -64,7 +64,10 @@ public class CronPlugin extends Plugin {
 	 */
 	@Override
 	public void onStart() {
-		log.debug("Plugin started");
+		log.debug("Start Plugin");
+		if (!app.configuration().getBoolean("cron.scanner.active", Boolean.TRUE)) {
+			return;
+		}
 		if (app.configuration().getBoolean("cron.scanner.async", Boolean.TRUE)) {
 			Akka.future(new Callable<Void>() {
 				@Override
@@ -76,7 +79,6 @@ public class CronPlugin extends Plugin {
 		} else {
 			findJobs();
 		}
-		super.onStart();
 	}
 
 	/**
@@ -84,9 +86,8 @@ public class CronPlugin extends Plugin {
 	 */
 	@Override
 	public void onStop() {
-		log.debug("Plugin stopped");
+		log.debug("Stop Plugin");
 		system.shutdown();
-		super.onStop();
 	}
 
 	/**

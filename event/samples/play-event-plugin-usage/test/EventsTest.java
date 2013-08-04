@@ -28,11 +28,11 @@ public abstract class EventsTest {
 		return events;
 	}
 
-	protected Method getObserver(String name, Class<?> params) throws NoSuchMethodException, SecurityException {
+	protected Object getObserver(String name, Class<?> params) throws NoSuchMethodException, SecurityException {
 		return getObserver(name, new Class<?>[] { params });
 	}
 
-	protected Method getObserver(String name, Class<?>... params) throws NoSuchMethodException, SecurityException {
+	protected Object getObserver(String name, Class<?>... params) throws NoSuchMethodException, SecurityException {
 		Method method = this.getClass().getMethod(name, params);
 		assertThat(method).isNotNull();
 		return method;
