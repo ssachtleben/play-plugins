@@ -133,28 +133,12 @@ public class EventBus implements EventService {
 
 	@Override
 	public boolean unregister(final Object object) {
-		log.info(String.format("Unregister %s", object));
-		if (subscribers.containsKey(EMPTY_TOPIC)) {
-			Iterator<EventBinding> iter = subscribers.get(EMPTY_TOPIC).iterator();
-			while (iter.hasNext()) {
-				EventBinding binding = iter.next();
-				if (binding.method().equals(object)) {
-					return unregister(binding);
-				}
-			}
-		}
-		return false;
+		return unregister(EMPTY_TOPIC, object);
 	}
 
 	@Override
 	public boolean unregister(final EventBinding binding) {
-		if (subscribers.get(EMPTY_TOPIC).contains(binding)) {
-			synchronized (subscribers) {
-				subscribers.get(EMPTY_TOPIC).remove(binding);
-			}
-			return true;
-		}
-		return false;
+		return unregister(EMPTY_TOPIC, binding);
 	}
 
 	@Override
@@ -174,7 +158,7 @@ public class EventBus implements EventService {
 
 	@Override
 	public boolean unregister(final String topic, final EventBinding binding) {
-		if (subscribers.get(topic).contains(binding)) {
+		if (subscribers.containsKey(topic) && subscribers.get(topic).contains(binding)) {
 			synchronized (subscribers) {
 				subscribers.get(topic).remove(binding);
 			}

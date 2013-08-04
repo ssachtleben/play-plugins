@@ -74,41 +74,41 @@ public class EventBinding {
 		return proxy;
 	}
 
-	public boolean matches(Object param) {
-		return matches(new Object[] { param });
+	public boolean matches(Object payload) {
+		return matches(new Object[] { payload });
 	}
 
-	public boolean matches(Object... params) {
+	public boolean matches(Object... payload) {
 		Class<?>[] parameterTypes = method().getParameterTypes();
-		List<Class<?>> paramClasses = new ArrayList<Class<?>>();
-		for (Object param : params) {
-			paramClasses.add(param.getClass());
+		List<Class<?>> payloadTypes = new ArrayList<Class<?>>();
+		for (Object param : payload) {
+			payloadTypes.add(param.getClass());
 		}
-		log.info(String.format("strength=%s", strengthReference));
-		log.info(String.format("method=%s", Arrays.toString(paramClasses.toArray(new Class<?>[0]))));
-		log.info(String.format("params=%s", Arrays.toString(parameterTypes)));
-		if (parameterTypes.length != params.length) {
+		log.info(String.format("strength = %s", strengthReference));
+		log.info(String.format("method   = %s", Arrays.toString(payloadTypes.toArray(new Class<?>[0]))));
+		log.info(String.format("payload  = %s", Arrays.toString(parameterTypes)));
+		if (parameterTypes.length != payload.length) {
 			log.info(String.format("Length not match for strong reference"));
 			return false;
 		}
 		int notAssignable = 0;
 		for (int i = 0; i < parameterTypes.length; i++) {
-			if (i < params.length) {
-				if (!parameterTypes[i].isAssignableFrom(params[i].getClass())) {
-					log.info(String.format("Value NOT assignable %s %s", parameterTypes[i], params[i]));
+			if (i < payload.length) {
+				if (!parameterTypes[i].isAssignableFrom(payload[i].getClass())) {
+					log.info(String.format("Value NOT assignable %s %s", parameterTypes[i], payload[i]));
 					if (isWeakReference()) {
 						if (parameterTypes[i].isPrimitive()) {
 							log.info("Cannot assign null value to primitive");
 							return false;
 						}
 						log.info("Set value to null and keep weak reference");
-						params[i] = null;
+						payload[i] = null;
 						notAssignable++;
 					} else {
 						return false;
 					}
 				} else {
-					log.info(String.format("Value is assignable %s %s", parameterTypes[i], params[i]));
+					log.info(String.format("Value is assignable %s %s", parameterTypes[i], payload[i]));
 				}
 			}
 		}
