@@ -231,6 +231,7 @@ public class EventBus implements EventService {
 		while (iter.hasNext()) {
 			EventBinding binding = iter.next();
 			log.info(String.format("Found subscriber: %s", binding.method()));
+			log.info(String.format("Use proxy: %s", binding.proxy()));
 			if (!binding.matches(payload)) {
 				log.info(String.format("Ignore %s", binding));
 				continue;

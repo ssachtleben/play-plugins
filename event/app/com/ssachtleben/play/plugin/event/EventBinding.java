@@ -1,6 +1,7 @@
 package com.ssachtleben.play.plugin.event;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +25,8 @@ public class EventBinding {
 
 	private ReferenceStrength strengthReference;
 
+	private boolean proxy;
+
 	/**
 	 * Default constructor takes {@link Method} parameter.
 	 * 
@@ -33,6 +36,7 @@ public class EventBinding {
 	public EventBinding(final Method method) {
 		this.method = method;
 		this.strengthReference = method().getAnnotation(Observer.class).referenceStrength();
+		this.proxy = !Modifier.isStatic(method.getModifiers());
 	}
 
 	/**
@@ -40,6 +44,13 @@ public class EventBinding {
 	 */
 	public Method method() {
 		return method;
+	}
+
+	/**
+	 * @return the proxy
+	 */
+	public boolean proxy() {
+		return proxy;
 	}
 
 	public boolean matches(Object param) {
