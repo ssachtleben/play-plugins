@@ -110,13 +110,25 @@ public class EventBus implements EventService {
 	@Override
 	public EventBinding register(final Object object) {
 		log.info(String.format("Register %s", object));
-		return add(EMPTY_TOPIC, object);
+		return add(EMPTY_TOPIC, null, object);
+	}
+
+	@Override
+	public EventBinding register(Object target, Method method) {
+		log.info(String.format("Register %s %s", target, method));
+		return add(EMPTY_TOPIC, target, method);
 	}
 
 	@Override
 	public EventBinding register(final String topic, final Object object) {
 		log.info(String.format("Register %s %s", topic, object));
-		return add(topic, object);
+		return add(topic, null, object);
+	}
+
+	@Override
+	public EventBinding register(String topic, Object target, Method method) {
+		log.info(String.format("Register %s %s %s", topic, target, method));
+		return add(topic, target, method);
 	}
 
 	@Override
@@ -187,18 +199,18 @@ public class EventBus implements EventService {
 	 * @param object
 	 *          The subcriber object.
 	 */
-	private EventBinding add(final String topic, final Object object) {
-		if (!(object instanceof Method)) {
+	private EventBinding add(final String topic, final Object target, final Object method) {
+		if (!(method instanceof Method)) {
 			log.warn("Currently only methods can be registered as subscribers");
 			return null;
 		}
-		Method method = (Method) object;
+		Method m = (Method) method;
 		EventBinding binding = null;
 		synchronized (subscribers) {
 			if (!subscribers.containsKey(topic)) {
 				subscribers.put(topic, new ArrayList<EventBinding>());
 			}
-			binding = new EventBinding(method);
+			binding = new EventBinding(target, m);
 			subscribers.get(topic).add(binding);
 		}
 		return binding;
@@ -252,7 +264,7 @@ public class EventBus implements EventService {
 			} else {
 				log.info(String.format("Send sync"));
 				try {
-					binding.method().invoke(null, payload);
+					binding.method().invoke(binding.target(), payload);
 					result.getReceivers().add(binding);
 					if (!published) {
 						published = true;

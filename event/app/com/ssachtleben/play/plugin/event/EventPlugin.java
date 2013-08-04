@@ -51,7 +51,7 @@ public class EventPlugin extends Plugin {
 				Events.instance().register(method);
 			} else {
 				log.info(String.format("Register on topic '%s': %s", observer.topic(), method));
-				Events.instance().register(observer.topic(), method);
+				Events.instance().register(observer.topic(), (Object) method);
 			}
 		}
 		super.onStart();

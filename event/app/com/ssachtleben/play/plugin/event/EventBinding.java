@@ -18,14 +18,26 @@ import com.ssachtleben.play.plugin.event.annotations.Observer;
 public class EventBinding {
 	private static final Logger.ALogger log = Logger.of(EventBinding.class);
 
-	/**
-	 * Contains the bound {@link Method}.
-	 */
-	private Method method;
+	private Object target = null;
+
+	private Method method = null;
 
 	private ReferenceStrength strengthReference;
 
 	private boolean proxy;
+
+	/**
+	 * Default constructor takes {@link Object} target and {@link Method} parameter.
+	 * 
+	 * @param target
+	 *          The bound {@link Object}.
+	 * @param method
+	 *          The bound {@link Method}.
+	 */
+	public EventBinding(final Object target, final Method method) {
+		this(method);
+		this.target = target;
+	}
 
 	/**
 	 * Default constructor takes {@link Method} parameter.
@@ -37,6 +49,13 @@ public class EventBinding {
 		this.method = method;
 		this.strengthReference = method().getAnnotation(Observer.class).referenceStrength();
 		this.proxy = !Modifier.isStatic(method.getModifiers());
+	}
+
+	/**
+	 * @return the target
+	 */
+	public Object target() {
+		return target;
 	}
 
 	/**

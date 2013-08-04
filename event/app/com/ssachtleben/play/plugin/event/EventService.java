@@ -80,6 +80,8 @@ public interface EventService {
 	 */
 	EventBinding register(final Object object);
 
+	EventBinding register(final Object target, final Method method);
+
 	/**
 	 * Register new subscriber to the EventService for publication of a specific {@code topic}. The given {@code object} could be a class, so
 	 * we check for annotated methods, or it could be directly a method which will be registered without checking other methods from the same
@@ -91,6 +93,8 @@ public interface EventService {
 	 *          The subscriber object.
 	 */
 	EventBinding register(final String topic, final Object object);
+
+	EventBinding register(final String topic, final Object target, final Method method);
 
 	/**
 	 * Unregister subscriber from EventService. The given {@code object} could be a class, so we check for annotated methods, or it could be
