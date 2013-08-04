@@ -11,7 +11,7 @@ import com.ssachtleben.play.plugin.event.ReferenceStrength;
 @Target(ElementType.METHOD)
 public @interface RuntimeObserver {
 
-	String topicMethodName() default "";
+	String methodName() default "";
 
 	ReferenceStrength referenceStrength() default ReferenceStrength.WEAK;
 

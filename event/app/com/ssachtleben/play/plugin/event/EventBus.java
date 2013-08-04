@@ -137,7 +137,9 @@ public class EventBus implements EventService {
 	@Override
 	public boolean unregister(final EventBinding binding) {
 		if (subscribers.get(EMPTY_TOPIC).contains(binding)) {
-			subscribers.get(EMPTY_TOPIC).remove(binding);
+			synchronized (subscribers) {
+				subscribers.get(EMPTY_TOPIC).remove(binding);
+			}
 			return true;
 		}
 		return false;
@@ -161,7 +163,9 @@ public class EventBus implements EventService {
 	@Override
 	public boolean unregister(final String topic, final EventBinding binding) {
 		if (subscribers.get(topic).contains(binding)) {
-			subscribers.get(topic).remove(binding);
+			synchronized (subscribers) {
+				subscribers.get(topic).remove(binding);
+			}
 			return true;
 		}
 		return false;
@@ -170,7 +174,9 @@ public class EventBus implements EventService {
 	@Override
 	public void unregisterAll() {
 		log.info("Unregisters all subscribers");
-		subscribers.clear();
+		synchronized (subscribers) {
+			subscribers.clear();
+		}
 	}
 
 	/**
@@ -187,11 +193,14 @@ public class EventBus implements EventService {
 			return null;
 		}
 		Method method = (Method) object;
-		if (!subscribers.containsKey(topic)) {
-			subscribers.put(topic, new ArrayList<EventBinding>());
+		EventBinding binding = null;
+		synchronized (subscribers) {
+			if (!subscribers.containsKey(topic)) {
+				subscribers.put(topic, new ArrayList<EventBinding>());
+			}
+			binding = new EventBinding(method);
+			subscribers.get(topic).add(binding);
 		}
-		EventBinding binding = new EventBinding(method);
-		subscribers.get(topic).add(binding);
 		return binding;
 	}
 
