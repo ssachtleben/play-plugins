@@ -22,7 +22,7 @@ public class EventBinding {
 
 	private Method method = null;
 
-	private ReferenceStrength strengthReference;
+	private ReferenceStrength strengthReference = ReferenceStrength.WEAK;
 
 	private boolean proxy;
 
@@ -47,7 +47,9 @@ public class EventBinding {
 	 */
 	public EventBinding(final Method method) {
 		this.method = method;
-		this.strengthReference = method().getAnnotation(Observer.class).referenceStrength();
+		if (method().isAnnotationPresent(Observer.class)) {
+			this.strengthReference = method().getAnnotation(Observer.class).referenceStrength();
+		}
 		this.proxy = !Modifier.isStatic(method.getModifiers());
 	}
 
