@@ -51,5 +51,11 @@
             <url>http://repo.typesafe.com/typesafe/snapshots/</url>
             <layout>default</layout>
         </repository>
+        <repository>
+            <id>Theatrusrepository</id>
+            <name>Theatr.us repository</name>
+            <url>http://repo.theatr.us/</url>
+            <layout>default</layout>
+        </repository>
     </repositories>
 </project>
