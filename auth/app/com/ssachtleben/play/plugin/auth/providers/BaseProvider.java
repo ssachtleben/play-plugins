@@ -83,7 +83,7 @@ public abstract class BaseProvider<U extends Identity> {
 	 * @return The {@link Logger.ALogger} instance.
 	 */
 	protected Logger.ALogger logger() {
-		return Logger.of(WordUtils.capitalize(String.format("%s.class", key())));
+		return Logger.of(getClass());
 	}
 
 	/**
