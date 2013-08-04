@@ -14,30 +14,30 @@ import javax.persistence.Id;
 @Entity
 public class ModelJPA {
 
-  @Id
-  @GeneratedValue
-  private Long id;
+	@Id
+	@GeneratedValue
+	private Long id;
 
-  private Date date = new Date();
+	private Date date = new Date();
 
-  public Long getId() {
-    return id;
-  }
+	public Long getId() {
+		return id;
+	}
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-  public Date getDate() {
-    return date;
-  }
+	public Date getDate() {
+		return date;
+	}
 
-  public void setDate(Date date) {
-    this.date = date;
-  }
+	public void setDate(Date date) {
+		this.date = date;
+	}
 
-  @Override
-  public String toString() {
-    return "ModelJPA [id=" + id + ", date=" + date + "]";
-  }
+	@Override
+	public String toString() {
+		return "ModelJPA [id=" + id + ", date=" + date + "]";
+	}
 }

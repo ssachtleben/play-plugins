@@ -16,18 +16,18 @@ import play.db.ebean.Model;
 @SuppressWarnings("serial")
 public class ModelEbean extends Model {
 
-  @Id
-  public Long id;
+	@Id
+	public Long id;
 
-  public Date date = new Date();
+	public Date date = new Date();
 
-  /**
-   * Generic ebean query helper for model ExampleModel.
-   */
-  public static Finder<Long, ModelEbean> find = new Finder<Long, ModelEbean>(Long.class, ModelEbean.class);
+	/**
+	 * Generic ebean query helper for model ExampleModel.
+	 */
+	public static Finder<Long, ModelEbean> find = new Finder<Long, ModelEbean>(Long.class, ModelEbean.class);
 
-  @Override
-  public String toString() {
-    return "ModelEbean [id=" + id + ", date=" + date + "]";
-  }
+	@Override
+	public String toString() {
+		return "ModelEbean [id=" + id + ", date=" + date + "]";
+	}
 }

@@ -2,7 +2,7 @@ package com.ssachtleben.play.plugin.cron.usage.jobs;
 
 import play.Logger;
 
-import com.ssachtleben.play.plugin.cron.annotations.Cronjob;
+import com.ssachtleben.play.plugin.cron.annotations.CronJob;
 import com.ssachtleben.play.plugin.cron.jobs.Job;
 
 /**
@@ -10,12 +10,12 @@ import com.ssachtleben.play.plugin.cron.jobs.Job;
  * 
  * @author Sebastian Sachtleben
  */
-@Cronjob(pattern = "0 * * * * ?")
+@CronJob(pattern = "0 * * * * ?")
 public class LoggingJob implements Job {
-  private static final Logger.ALogger log = Logger.of(LoggingJob.class);
+	private static final Logger.ALogger log = Logger.of(LoggingJob.class);
 
-  @Override
-  public void run() {
-    log.info(this.getClass().getSimpleName() + " executed");
-  }
+	@Override
+	public void run() {
+		log.info(this.getClass().getSimpleName() + " executed");
+	}
 }
