@@ -47,36 +47,21 @@ public class EventBus implements EventService {
 	protected ActorSystem system = ActorSystem.create("events");
 
 	/**
-	 * The name of the EventBus instance.
+	 * Creates new {@link EventBus} instance. Get the instance via {@link Events#instance()}.
 	 */
-	protected String name;
-
-	/**
-	 * Creates a EventBus instance named "default". Get the instance via {@link Events#instance()}.
-	 */
-	private EventBus() {
-		this("default");
-	}
-
-	/**
-	 * Creates a EventBus instance with the given {@code name}. Get the instance via {@link Events#instance()}.
-	 * 
-	 * @param name
-	 *          The EventBus name should be a valid java identifier.
-	 */
-	private EventBus(String name) {
-		this.name = name;
+	protected EventBus() {
+		// empty
 	}
 
 	@Override
 	public EventResult publish(final Object payload) {
-		log.info(String.format("Publish %s", payload));
+		log.debug(String.format("Publish %s", payload));
 		return subscribers.containsKey(EMPTY_TOPIC) ? publish(subscribers.get(EMPTY_TOPIC), false, payload) : new EventResult();
 	}
 
 	@Override
 	public EventResult publish(final String topic, final Object... payload) {
-		log.info(String.format("Publish to '%s': %s", topic, Arrays.toString(payload)));
+		log.debug(String.format("Publish to '%s': %s", topic, Arrays.toString(payload)));
 		return subscribers.containsKey(topic) ? publish(subscribers.get(topic), false, payload) : new EventResult();
 	}
 
@@ -88,7 +73,7 @@ public class EventBus implements EventService {
 
 	@Override
 	public void publishAsync(final Object payload) {
-		log.info(String.format("Publish async %s", payload));
+		log.debug(String.format("Publish async %s", payload));
 		if (subscribers.containsKey(EMPTY_TOPIC)) {
 			publish(subscribers.get(EMPTY_TOPIC), true, payload);
 		}
@@ -96,7 +81,7 @@ public class EventBus implements EventService {
 
 	@Override
 	public void publishAsync(final String topic, final Object... payload) {
-		log.info(String.format("Publish async to '%s': %s", topic, Arrays.toString(payload)));
+		log.debug(String.format("Publish async to '%s': %s", topic, Arrays.toString(payload)));
 		if (subscribers.containsKey(topic)) {
 			publish(subscribers.get(topic), true, payload);
 		}
@@ -109,25 +94,25 @@ public class EventBus implements EventService {
 
 	@Override
 	public EventBinding register(final Object object) {
-		log.info(String.format("Register %s", object));
+		log.debug(String.format("Register %s", object));
 		return add(EMPTY_TOPIC, null, object);
 	}
 
 	@Override
-	public EventBinding register(Object target, Method method) {
-		log.info(String.format("Register %s %s", target, method));
+	public EventBinding register(final Object target, final Method method) {
+		log.debug(String.format("Register %s %s", target, method));
 		return add(EMPTY_TOPIC, target, method);
 	}
 
 	@Override
 	public EventBinding register(final String topic, final Object object) {
-		log.info(String.format("Register %s %s", topic, object));
+		log.debug(String.format("Register %s %s", topic, object));
 		return add(topic, null, object);
 	}
 
 	@Override
-	public EventBinding register(String topic, Object target, Method method) {
-		log.info(String.format("Register %s %s %s", topic, target, method));
+	public EventBinding register(final String topic, final Object target, final Method method) {
+		log.debug(String.format("Register %s %s %s", topic, target, method));
 		return add(topic, target, method);
 	}
 
@@ -143,7 +128,7 @@ public class EventBus implements EventService {
 
 	@Override
 	public boolean unregister(final String topic, final Object object) {
-		log.info(String.format("Unregister %s %s", topic, object));
+		log.debug(String.format("Unregister %s %s", topic, object));
 		if (subscribers.containsKey(topic)) {
 			Iterator<EventBinding> iter = subscribers.get(topic).iterator();
 			while (iter.hasNext()) {
@@ -226,15 +211,15 @@ public class EventBus implements EventService {
 		boolean published = false;
 		while (iter.hasNext()) {
 			EventBinding binding = iter.next();
-			log.info(String.format("Found subscriber: %s", binding.method()));
-			log.info(String.format("Use proxy: %s", binding.proxy()));
+			log.debug(String.format("Found subscriber: %s", binding.method()));
+			log.debug(String.format("Use proxy: %s", binding.proxy()));
 			if (!binding.matches(payload)) {
-				log.info(String.format("Ignore %s", binding));
+				log.debug(String.format("Ignore %s", binding));
 				continue;
 			}
-			log.info(String.format("Publish to %s", binding));
+			log.debug(String.format("Publish to %s", binding));
 			if (async) {
-				log.info(String.format("Send async"));
+				log.debug(String.format("Send async"));
 				try {
 					ActorRef eventActor = system.actorOf(new Props(EventActor.class));
 					EventDeliveryRequest request = new EventDeliveryRequest(binding.method(), payload);
@@ -246,7 +231,7 @@ public class EventBus implements EventService {
 					log.error("Failed to schedule async event delivery request for " + binding.method(), e);
 				}
 			} else {
-				log.info(String.format("Send sync"));
+				log.debug(String.format("Send sync"));
 				try {
 					binding.method().invoke(binding.target(), payload);
 					result.getReceivers().add(binding);

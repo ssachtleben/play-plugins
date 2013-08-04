@@ -3,6 +3,8 @@ package com.ssachtleben.play.plugin.event;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import play.Play;
+
 /**
  * Provides via {@link #instance()} the current used {@link EventService} implementation which allows to publishing events, register new and
  * unregister existing subscribers.
@@ -27,7 +29,7 @@ public class Events {
 	 */
 	public static EventService instance() {
 		if (instance == null) {
-			instance = createInstance();
+			instance = createService();
 		}
 		return instance;
 	}
@@ -38,16 +40,28 @@ public class Events {
 	 * 
 	 * @return New instance of {@link EventBus}.
 	 */
-	private static EventBus createInstance() {
-		Class<EventBus> clazz = EventBus.class;
+	private static EventService createService() {
+		String eventService = Play.application().configuration().getString("eventService", EventBus.class.getName());
+		Class<?> clazz = null;
 		try {
-			Constructor<EventBus> c = clazz.getDeclaredConstructor((Class[]) null);
+
+			clazz = Class.forName(eventService, true, Thread.currentThread().getContextClassLoader());
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(String.format("Could not find event service class: %s", eventService));
+		}
+		Object service;
+		try {
+			Constructor<?> c = clazz.getDeclaredConstructor((Class[]) null);
 			c.setAccessible(true); // hack
-			return c.newInstance((Object[]) null);
+			service = c.newInstance((Object[]) null);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
 				| SecurityException e) {
-			e.printStackTrace();
+			throw new RuntimeException(String.format("Failed to invoke constructor of %s", eventService));
 		}
-		return null;
+		try {
+			return (EventService) service;
+		} catch (ClassCastException e) {
+			throw new RuntimeException(String.format("ClassCastException during casting %s to %s", eventService, EventService.class));
+		}
 	}
 }

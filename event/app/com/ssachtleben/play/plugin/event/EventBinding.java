@@ -84,36 +84,36 @@ public class EventBinding {
 		for (Object param : payload) {
 			payloadTypes.add(param.getClass());
 		}
-		log.info(String.format("strength = %s", strengthReference));
-		log.info(String.format("method   = %s", Arrays.toString(payloadTypes.toArray(new Class<?>[0]))));
-		log.info(String.format("payload  = %s", Arrays.toString(parameterTypes)));
+		log.debug(String.format("strength = %s", strengthReference));
+		log.debug(String.format("method   = %s", Arrays.toString(payloadTypes.toArray(new Class<?>[0]))));
+		log.debug(String.format("payload  = %s", Arrays.toString(parameterTypes)));
 		if (parameterTypes.length != payload.length) {
-			log.info(String.format("Length not match for strong reference"));
+			log.debug(String.format("Length not match for strong reference"));
 			return false;
 		}
 		int notAssignable = 0;
 		for (int i = 0; i < parameterTypes.length; i++) {
 			if (i < payload.length) {
 				if (!parameterTypes[i].isAssignableFrom(payload[i].getClass())) {
-					log.info(String.format("Value NOT assignable %s %s", parameterTypes[i], payload[i]));
+					log.debug(String.format("Value NOT assignable %s %s", parameterTypes[i], payload[i]));
 					if (isWeakReference()) {
 						if (parameterTypes[i].isPrimitive()) {
-							log.info("Cannot assign null value to primitive");
+							log.debug("Cannot assign null value to primitive");
 							return false;
 						}
-						log.info("Set value to null and keep weak reference");
+						log.debug("Set value to null and keep weak reference");
 						payload[i] = null;
 						notAssignable++;
 					} else {
 						return false;
 					}
 				} else {
-					log.info(String.format("Value is assignable %s %s", parameterTypes[i], payload[i]));
+					log.debug(String.format("Value is assignable %s %s", parameterTypes[i], payload[i]));
 				}
 			}
 		}
 		if (notAssignable == parameterTypes.length) {
-			log.info("No values assignable at all");
+			log.debug("No values assignable at all");
 			return false;
 		}
 		return true;
@@ -165,6 +165,6 @@ public class EventBinding {
 	 */
 	@Override
 	public String toString() {
-		return "EventBinding [method=" + method + "]";
+		return "EventBinding [target=" + target + ", method=" + method + ", strengthReference=" + strengthReference + "]";
 	}
 }
