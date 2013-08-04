@@ -91,6 +91,7 @@ public class EventBinding {
 			log.info(String.format("Length not match for strong reference"));
 			return false;
 		}
+		int notAssignable = 0;
 		for (int i = 0; i < parameterTypes.length; i++) {
 			if (i < params.length) {
 				if (!parameterTypes[i].isAssignableFrom(params[i].getClass())) {
@@ -102,6 +103,7 @@ public class EventBinding {
 						}
 						log.info("Set value to null and keep weak reference");
 						params[i] = null;
+						notAssignable++;
 					} else {
 						return false;
 					}
@@ -109,6 +111,10 @@ public class EventBinding {
 					log.info(String.format("Value is assignable %s %s", parameterTypes[i], params[i]));
 				}
 			}
+		}
+		if (notAssignable == parameterTypes.length) {
+			log.info("No values assignable at all");
+			return false;
 		}
 		return true;
 	}
