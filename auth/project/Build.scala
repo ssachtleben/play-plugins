@@ -11,6 +11,7 @@ object ApplicationBuild extends Build {
         javaCore,
         "commons-lang" % "commons-lang" % "2.4",
         "org.scribe" % "scribe" % "1.3.5",
+        "com.ssachtleben" %% "play-base-plugin" % "0.1-SNAPSHOT",
         "com.ssachtleben" %% "play-event-plugin" % "0.1-SNAPSHOT"
     )
 

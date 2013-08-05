@@ -8,8 +8,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import play.Application;
-import play.Logger;
-import play.Plugin;
 import play.libs.Akka;
 import scala.concurrent.duration.Duration;
 import us.theatr.akka.quartz.AddCronSchedule;
@@ -18,6 +16,7 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 
+import com.ssachtleben.play.plugin.base.ExtendedPlugin;
 import com.ssachtleben.play.plugin.cron.annotations.CronJob;
 import com.ssachtleben.play.plugin.cron.annotations.StartJob;
 import com.ssachtleben.play.plugin.cron.jobs.Job;
@@ -29,13 +28,7 @@ import com.ssachtleben.play.plugin.cron.jobs.Job;
  * 
  * @author Sebastian Sachtleben
  */
-public class CronPlugin extends Plugin {
-	private static final Logger.ALogger log = Logger.of(CronPlugin.class);
-
-	/**
-	 * Current running play application.
-	 */
-	protected Application app;
+public class CronPlugin extends ExtendedPlugin {
 
 	/**
 	 * Create a ActorSystem for Akka to schedule jobs.
@@ -54,39 +47,50 @@ public class CronPlugin extends Plugin {
 	 *          The app to set
 	 */
 	public CronPlugin(final Application app) {
-		log.debug("Plugin created");
-		this.app = app;
+		super(app);
 	}
 
-	/**
-	 * The onStart method will be invoked during application start and scans the classpath for classes annotated with @Cronjob and call
-	 * scheduleJob method.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ssachtleben.play.plugin.base.ExtendedPlugin#name()
 	 */
 	@Override
-	public void onStart() {
-		log.debug("Start Plugin");
-		if (!app.configuration().getBoolean("cron.scanner.active", Boolean.TRUE)) {
-			return;
+	public String name() {
+		return "cron";
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ssachtleben.play.plugin.base.ExtendedPlugin#start()
+	 */
+	@Override
+	public void start() {
+		ActorRef quartzActor = system.actorOf(new Props(QuartzActor.class));
+		ActorRef cronActor = system.actorOf(new Props(CronActor.class));
+		// Handle cron jobs
+		jobs.addAll(findJobsByAnnotation(CronJob.class));
+		for (Job job : jobs) {
+			scheduleJob(quartzActor, cronActor, job);
 		}
-		if (app.configuration().getBoolean("cron.scanner.async", Boolean.TRUE)) {
-			Akka.future(new Callable<Void>() {
-				@Override
-				public Void call() throws Exception {
-					findJobs();
-					return null;
-				}
-			});
-		} else {
-			findJobs();
+		// Handle start jobs
+		Set<Job> startJobs = findJobsByAnnotation(StartJob.class);
+		for (Job job : startJobs) {
+			StartJob annotation = job.getClass().getAnnotation(StartJob.class);
+			if (annotation != null && annotation.active()) {
+				executeJob(job, annotation.async());
+			}
 		}
 	}
 
-	/**
-	 * The onStop method shutdown and remove all scheduled jobs.
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ssachtleben.play.plugin.base.ExtendedPlugin#stop()
 	 */
 	@Override
-	public void onStop() {
-		log.debug("Stop Plugin");
+	public void stop() {
 		system.shutdown();
 	}
 
@@ -109,6 +113,14 @@ public class CronPlugin extends Plugin {
 		}
 	}
 
+	/**
+	 * Executes a job once.
+	 * 
+	 * @param job
+	 *          The job to execute.
+	 * @param async
+	 *          Boolean if execute sync or async.
+	 */
 	private void executeJob(final Job job, final boolean async) {
 		if (async) {
 			Akka.future(new Callable<Void>() {
@@ -124,35 +136,12 @@ public class CronPlugin extends Plugin {
 	}
 
 	/**
-	 * Find jobs and register them.
-	 */
-	private void findJobs() {
-		ActorRef quartzActor = system.actorOf(new Props(QuartzActor.class));
-		ActorRef cronActor = system.actorOf(new Props(CronActor.class));
-		// Handle cron jobs
-		jobs.addAll(findJobsByAnnotation(CronJob.class));
-		for (Job job : jobs) {
-			scheduleJob(quartzActor, cronActor, job);
-		}
-		// Handle start jobs
-		Set<Job> startJobs = findJobsByAnnotation(StartJob.class);
-		for (Job job : startJobs) {
-			StartJob annotation = job.getClass().getAnnotation(StartJob.class);
-			if (annotation != null && annotation.active()) {
-				executeJob(job, annotation.async());
-			}
-		}
-	}
-
-	/**
-	 * Check the classpath for jobs. Depending on the config property "cron.useAnnotation" the classes will be searched by @Cronjob annotation
-	 * or by Job interace.
+	 * Check the classpath for jobs. Depending on the config property "cron.annotation" the classes will be searched by @Cronjob annotation or
+	 * by Job interace.
 	 * 
 	 * @return Set of classes which extends the job interface
 	 */
 	private Set<Job> findJobsByAnnotation(Class<? extends Annotation> annotation) {
-		return app.configuration().getBoolean("cron.scanner.annotation", Boolean.TRUE) ? CronUtils.findAnnotatedJobs(annotation) : CronUtils
-				.findImplementedJobs();
+		return CronUtils.findAnnotatedJobs(annotation);
 	}
-
 }

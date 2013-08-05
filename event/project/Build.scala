@@ -8,11 +8,14 @@ object ApplicationBuild extends Build {
     val libVersion      = "0.1-SNAPSHOT"
 
     val appDependencies = Seq(
-        javaCore
+        javaCore,
+        "com.ssachtleben" %% "play-base-plugin" % "0.1-SNAPSHOT"
     )
 
     val main = play.Project(appName, libVersion, appDependencies).settings(
-		organization := "com.ssachtleben",
+        resolvers += Resolver.url("ssachtleben repository (snapshots)", url("http://ssachtleben.github.io/play-plugins/repository/snapshots/"))(Resolver.ivyStylePatterns),
+        organization := "com.ssachtleben",
         publishArtifact in(Compile, packageDoc) := false
     )
+    
 }

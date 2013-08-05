@@ -2,13 +2,10 @@ package com.ssachtleben.play.plugin.event;
 
 import java.lang.reflect.Method;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import play.Application;
-import play.Logger;
-import play.Plugin;
-import play.libs.Akka;
 
+import com.ssachtleben.play.plugin.base.ExtendedPlugin;
 import com.ssachtleben.play.plugin.event.annotations.Observer;
 
 /**
@@ -20,13 +17,7 @@ import com.ssachtleben.play.plugin.event.annotations.Observer;
  * @see EventService
  * @see Events
  */
-public class EventPlugin extends Plugin {
-	private static final Logger.ALogger log = Logger.of(EventPlugin.class);
-
-	/**
-	 * Current play application instance.
-	 */
-	protected Application app;
+public class EventPlugin extends ExtendedPlugin {
 
 	/**
 	 * Creates a new EventPlugin.
@@ -35,44 +26,26 @@ public class EventPlugin extends Plugin {
 	 *          The app to set
 	 */
 	public EventPlugin(final Application app) {
-		log.debug("Plugin created");
-		this.app = app;
-	}
-
-	/**
-	 * Scans classpath during application start and register all annotated handler methods.
-	 */
-	@Override
-	public void onStart() {
-		log.debug("Start Plugin");
-		if (!app.configuration().getBoolean("event.scanner.active", Boolean.TRUE)) {
-			return;
-		}
-		if (app.configuration().getBoolean("event.scanner.async", Boolean.TRUE)) {
-			Akka.future(new Callable<Void>() {
-				@Override
-				public Void call() throws Exception {
-					scan();
-					return null;
-				}
-			});
-		} else {
-			scan();
-		}
+		super(app);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see play.Plugin#onStop()
+	 * @see com.ssachtleben.play.plugin.base.ExtendedPlugin#name()
 	 */
 	@Override
-	public void onStop() {
-		log.debug("Stop Plugin");
-		Events.instance().unregisterAll();
+	public String name() {
+		return "event";
 	}
 
-	private void scan() {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ssachtleben.play.plugin.base.ExtendedPlugin#start()
+	 */
+	@Override
+	public void start() {
 		Set<Method> annotatedMethods = EventUtils.findAnnotatedMethods(Observer.class);
 		for (Method method : annotatedMethods) {
 			Observer observer = method.getAnnotation(Observer.class);
@@ -86,4 +59,13 @@ public class EventPlugin extends Plugin {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ssachtleben.play.plugin.base.ExtendedPlugin#stop()
+	 */
+	@Override
+	public void stop() {
+		Events.instance().unregisterAll();
+	}
 }

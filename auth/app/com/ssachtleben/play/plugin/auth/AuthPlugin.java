@@ -3,91 +3,48 @@ package com.ssachtleben.play.plugin.auth;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.concurrent.Callable;
 
 import play.Application;
-import play.Logger;
-import play.Plugin;
-import play.libs.Akka;
 
 import com.ssachtleben.play.plugin.auth.annotations.Authenticates;
 import com.ssachtleben.play.plugin.auth.models.Identity;
 import com.ssachtleben.play.plugin.auth.providers.BaseProvider;
+import com.ssachtleben.play.plugin.base.ExtendedPlugin;
 
 /**
  * Registers providers during application start.
  * 
  * @author Sebastian Sachtleben
  */
-public class AuthPlugin extends Plugin {
+public class AuthPlugin extends ExtendedPlugin {
 
 	/**
-	 * The logger for {@link AuthPlugin} class.
-	 */
-	private static final Logger.ALogger log = Logger.of(AuthPlugin.class);
-
-	/**
-	 * The current {@link Application} instance.
-	 */
-	private Application app;
-
-	/**
-	 * Default constructor for {@link AuthPlugin}.
+	 * Default constructor.
 	 * 
 	 * @param app
-	 *          The {@link Application} instance.
+	 *          The app to set
 	 */
-	public AuthPlugin(final Application app) {
-		log.debug("Plugin created");
-		this.app = app;
-	}
-
-	/**
-	 * @return Get current {@link Application} instance.
-	 */
-	public Application app() {
-		return app;
+	public AuthPlugin(Application app) {
+		super(app);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see play.Plugin#onStart()
+	 * @see com.ssachtleben.play.plugin.base.ExtendedPlugin#name()
 	 */
 	@Override
-	public void onStart() {
-		log.debug("Start Plugin");
-		if (!app.configuration().getBoolean("auth.scanner.active", Boolean.TRUE)) {
-			return;
-		}
-		if (app.configuration().getBoolean("auth.scanner.async", Boolean.TRUE)) {
-			Akka.future(new Callable<Void>() {
-				@Override
-				public Void call() throws Exception {
-					findProviders();
-					return null;
-				}
-			});
-		} else {
-			findProviders();
-		}
+	public String name() {
+		return "auth";
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see play.Plugin#onStop()
+	 * @see com.ssachtleben.play.plugin.base.ExtendedPlugin#start()
 	 */
 	@Override
-	public void onStop() {
-		log.debug("Stop Plugin");
-		Providers.clear();
-	}
-
-	/**
-	 * Find Providers and auth methods.
-	 */
-	private void findProviders() {
+	public void start() {
 		final Set<BaseProvider<Identity>> providers = AuthUtils.findProviders();
 		final Set<Method> authMethods = AuthUtils.findAuthMethods();
 		Iterator<BaseProvider<Identity>> iter = providers.iterator();
@@ -107,5 +64,15 @@ public class AuthPlugin extends Plugin {
 			}
 			Providers.register(provider.key(), provider, authMethod);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ssachtleben.play.plugin.base.ExtendedPlugin#stop()
+	 */
+	@Override
+	public void stop() {
+		Providers.clear();
 	}
 }
