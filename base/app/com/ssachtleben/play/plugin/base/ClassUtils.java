@@ -17,7 +17,7 @@ import play.Logger;
 public class ClassUtils {
 	private static final Logger.ALogger log = Logger.of(ClassUtils.class);
 
-	public static final Set<?> findAnnotated(Class<? extends Annotation> annotation) {
+	public static final Set<Class<?>> findAnnotated(Class<? extends Annotation> annotation) {
 		long nanos = System.nanoTime();
 		log.debug("Start searching for classes with annotation @" + annotation.getSimpleName());
 		URL[] urls = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
