@@ -6,10 +6,14 @@ Useful plugins for Play Framework 2.x.
 
 **Here is a list of all plugins:**
 
-| Name                       | Description                                | Plugin Version | Play Version |
-| -------------------------- | ------------------------------------------ | -------------- | ------------ |
-| [play-cron-plugin](cron)   | Annotation driven time-based job scheduler | 0.1-SNAPSHOT   | 2.1.0        |
-| [play-event-plugin](event) | Publication and Subscription of events     | 0.1-SNAPSHOT   | 2.1.0        |
+| Name                 | Description                                | Plugin Version | Play Version |
+| -------------------- | ------------------------------------------ | -------------- | ------------ |
+| [auth](auth)         | Simple user authentication                 | 0.1-SNAPSHOT   | 2.1.0        |
+| [base](base)         | Extended plugin functionality              | 0.1-SNAPSHOT   | 2.1.0        |
+| [compress](compress) | HTML compress controller                   | 0.1-SNAPSHOT   | 2.1.0        |
+| [cron](cron)         | Annotation driven time-based job scheduler | 0.1-SNAPSHOT   | 2.1.0        |
+| [event](event)       | Publication and Subscription of events     | 0.1-SNAPSHOT   | 2.1.0        |
+| [json](json)         | Chainable json bean mapper                 | 0.1-SNAPSHOT   | 2.1.0        |
 
 Check the plugin readme to learn how to add the plugin to your project. Every plugin has usage informations in the readme and at least one sample project so it should be easy to find out how to use it.
 
