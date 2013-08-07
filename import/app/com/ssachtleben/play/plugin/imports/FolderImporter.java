@@ -6,7 +6,7 @@ import java.io.Serializable;
 import play.Play;
 
 /**
- * The FolderImporter runs over the base folder and import and update each geometry within this folder.
+ * The FolderImporter runs over the base folder and import data.
  * 
  * @author Sebastian Sachtleben
  * 
