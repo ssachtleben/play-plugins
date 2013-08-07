@@ -13,7 +13,7 @@ import play.Play;
  * @param <E>
  *          The entity which will be created.
  */
-public abstract class FolderImporter<E extends Serializable> extends AbstractImporter<E> {
+public abstract class PathImporter<E extends Serializable> extends AbstractImporter<E> {
 
 	@Override
 	public void process() {
