@@ -1,6 +1,5 @@
 package com.ssachtleben.play.plugin.cron;
 
-import java.lang.annotation.Annotation;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +17,6 @@ import akka.actor.Props;
 
 import com.ssachtleben.play.plugin.base.ExtendedPlugin;
 import com.ssachtleben.play.plugin.cron.annotations.CronJob;
-import com.ssachtleben.play.plugin.cron.annotations.StartJob;
 import com.ssachtleben.play.plugin.cron.jobs.Job;
 
 /**
@@ -38,7 +36,7 @@ public class CronPlugin extends ExtendedPlugin {
 	/**
 	 * A set with all registered jobs.
 	 */
-	private Set<Job> jobs = Collections.synchronizedSet(new HashSet<Job>());
+	private Set<JobData> jobs = Collections.synchronizedSet(new HashSet<JobData>());
 
 	/**
 	 * Default constructor.
@@ -70,17 +68,14 @@ public class CronPlugin extends ExtendedPlugin {
 		ActorRef quartzActor = system.actorOf(new Props(QuartzActor.class));
 		ActorRef cronActor = system.actorOf(new Props(CronActor.class));
 		// Handle cron jobs
-		jobs.addAll(findJobsByAnnotation(CronJob.class));
-		for (Job job : jobs) {
-			scheduleJob(quartzActor, cronActor, job);
+		jobs.addAll(CronUtils.findCronJobs());
+		for (JobData data : jobs) {
+			scheduleJob(quartzActor, cronActor, data.job());
 		}
 		// Handle start jobs
-		Set<Job> startJobs = findJobsByAnnotation(StartJob.class);
-		for (Job job : startJobs) {
-			StartJob annotation = job.getClass().getAnnotation(StartJob.class);
-			if (annotation != null && annotation.active()) {
-				executeJob(job, annotation.async());
-			}
+		Set<JobData> startJobs = CronUtils.findStartJobs();
+		for (JobData data : startJobs) {
+			executeJob(data);
 		}
 	}
 
@@ -116,32 +111,22 @@ public class CronPlugin extends ExtendedPlugin {
 	/**
 	 * Executes a job once.
 	 * 
-	 * @param job
-	 *          The job to execute.
-	 * @param async
-	 *          Boolean if execute sync or async.
+	 * @param jobData
+	 *          The jobData to execute.
 	 */
-	private void executeJob(final Job job, final boolean async) {
-		if (async) {
+	private void executeJob(final JobData jobData) {
+		if (jobData.async()) {
 			Akka.future(new Callable<Void>() {
 				@Override
 				public Void call() throws Exception {
-					job.run();
+					log.info(String.format("Run %s", jobData));
+					jobData.job().run();
 					return null;
 				}
 			});
 		} else {
-			job.run();
+			log.info(String.format("Run %s", jobData));
+			jobData.job().run();
 		}
-	}
-
-	/**
-	 * Check the classpath for jobs. Depending on the config property "cron.annotation" the classes will be searched by @Cronjob annotation or
-	 * by Job interace.
-	 * 
-	 * @return Set of classes which extends the job interface
-	 */
-	private Set<Job> findJobsByAnnotation(Class<? extends Annotation> annotation) {
-		return CronUtils.findAnnotatedJobs(annotation);
 	}
 }
