@@ -22,4 +22,14 @@ public @interface DependsOn {
 	 */
 	Class<?>[] values();
 
+	/**
+	 * @return boolean if missing dependencies should be ignored or not.
+	 */
+	boolean ignoreMissing() default true;
+
+	/**
+	 * @return boolean if inactive dependencies should be ignored or not.
+	 */
+	boolean ignoreInactive() default true;
+
 }

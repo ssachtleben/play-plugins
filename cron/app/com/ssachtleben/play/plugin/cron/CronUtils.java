@@ -66,7 +66,7 @@ public class CronUtils {
 				CronJob cj = cjClass.getAnnotation(CronJob.class);
 				if (cj.active()) {
 					try {
-						JobData data = new JobData(cjClass.asSubclass(Job.class).newInstance(), true, findDependsOn(cjClass));
+						JobData data = new JobData(cjClass.asSubclass(Job.class).newInstance(), true, cj.pattern(), findDependsOn(cjClass));
 						log.info(String.format("Found: %s", data));
 						jobs.add(data);
 					} catch (InstantiationException | IllegalAccessException e) {
@@ -92,7 +92,7 @@ public class CronUtils {
 				StartJob sj = sjClass.getAnnotation(StartJob.class);
 				if (sj.active()) {
 					try {
-						JobData data = new JobData(sjClass.asSubclass(Job.class).newInstance(), sj.async(), findDependsOn(sjClass));
+						JobData data = new JobData(sjClass.asSubclass(Job.class).newInstance(), sj.async(), null, findDependsOn(sjClass));
 						log.info(String.format("Found: %s", data));
 						jobs.add(data);
 					} catch (InstantiationException | IllegalAccessException e) {

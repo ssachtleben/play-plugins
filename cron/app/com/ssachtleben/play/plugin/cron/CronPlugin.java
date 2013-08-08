@@ -1,13 +1,16 @@
 package com.ssachtleben.play.plugin.cron;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import play.Application;
 import play.libs.Akka;
+import play.libs.F.Function;
 import scala.concurrent.duration.Duration;
 import us.theatr.akka.quartz.AddCronSchedule;
 import us.theatr.akka.quartz.QuartzActor;
@@ -16,8 +19,6 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 
 import com.ssachtleben.play.plugin.base.ExtendedPlugin;
-import com.ssachtleben.play.plugin.cron.annotations.CronJob;
-import com.ssachtleben.play.plugin.cron.jobs.Job;
 
 /**
  * The CronPlugin handles the start and stop process for all cronjobs. During the application start all classes annotated with @Cronjob will
@@ -33,10 +34,9 @@ public class CronPlugin extends ExtendedPlugin {
 	 */
 	private ActorSystem system = ActorSystem.create("sys");
 
-	/**
-	 * A set with all registered jobs.
-	 */
-	private Set<JobData> jobs = Collections.synchronizedSet(new HashSet<JobData>());
+	private Set<Class<?>> jobsDone = Collections.synchronizedSet(new HashSet<Class<?>>());
+
+	private Set<JobData> jobsPending = Collections.synchronizedSet(new HashSet<JobData>());
 
 	/**
 	 * Default constructor.
@@ -68,15 +68,24 @@ public class CronPlugin extends ExtendedPlugin {
 		ActorRef quartzActor = system.actorOf(new Props(QuartzActor.class));
 		ActorRef cronActor = system.actorOf(new Props(CronActor.class));
 		// Handle cron jobs
-		jobs.addAll(CronUtils.findCronJobs());
+		Set<JobData> jobs = CronUtils.findCronJobs();
 		for (JobData data : jobs) {
-			scheduleJob(quartzActor, cronActor, data.job());
+			Jobs.add(data);
+			scheduleJob(quartzActor, cronActor, data);
 		}
 		// Handle start jobs
 		Set<JobData> startJobs = CronUtils.findStartJobs();
 		for (JobData data : startJobs) {
-			executeJob(data);
+			Jobs.add(data);
+			if (data.dependsOn() != null || data.dependsOn().length > 0) {
+				jobsPending.add(data);
+			} else {
+				executeJob(data);
+			}
 		}
+		log.info(String.format("Found %d pending jobs", jobsPending.size()));
+		validatePendingJobs();
+		checkPendingJobs();
 	}
 
 	/*
@@ -96,16 +105,13 @@ public class CronPlugin extends ExtendedPlugin {
 	 *          The quartActor to set
 	 * @param runActor
 	 *          The runActor to set
-	 * @param jobClass
-	 *          The jobClass to set
+	 * @param jobData
+	 *          The jobData to set
 	 */
-	private void scheduleJob(ActorRef quartzActor, ActorRef runActor, Job job) {
-		CronJob cronjob = job.getClass().getAnnotation(CronJob.class);
-		if (cronjob.active()) {
-			log.debug("Register job '" + job.toString() + "' with cron pattern '" + cronjob.pattern() + "'");
-			system.scheduler().scheduleOnce(Duration.create(50, TimeUnit.MILLISECONDS), quartzActor,
-					new AddCronSchedule(runActor, cronjob.pattern(), job, true), system.dispatcher());
-		}
+	private void scheduleJob(ActorRef quartzActor, ActorRef runActor, JobData jobData) {
+		log.debug(String.format("Register %s", jobData));
+		system.scheduler().scheduleOnce(Duration.create(50, TimeUnit.MILLISECONDS), quartzActor,
+				new AddCronSchedule(runActor, jobData.pattern(), jobData.job(), true), system.dispatcher());
 	}
 
 	/**
@@ -115,18 +121,108 @@ public class CronPlugin extends ExtendedPlugin {
 	 *          The jobData to execute.
 	 */
 	private void executeJob(final JobData jobData) {
+		log.info(String.format("Run %s", jobData));
 		if (jobData.async()) {
-			Akka.future(new Callable<Void>() {
+			Akka.future(new Callable<JobData>() {
 				@Override
-				public Void call() throws Exception {
-					log.info(String.format("Run %s", jobData));
+				public JobData call() throws Exception {
 					jobData.job().run();
+					return jobData;
+				}
+			}).map(new Function<JobData, Void>() {
+				@Override
+				public Void apply(JobData jobData) throws Exception {
+					finishedJob(jobData);
 					return null;
 				}
 			});
 		} else {
-			log.info(String.format("Run %s", jobData));
 			jobData.job().run();
+		}
+	}
+
+	/**
+	 * The current running job is done and checks for pending jobs to start the next one.
+	 * 
+	 * @param jobData
+	 *          The jobData of the finished job.
+	 */
+	private void finishedJob(final JobData jobData) {
+		synchronized (jobsDone) {
+			log.info(String.format("Job %s done", jobData.job()));
+			jobsDone.add(jobData.job().getClass());
+			log.info(String.format("Jobs done: %s", Arrays.toString(jobsDone.toArray(new Class<?>[0]))));
+		}
+		checkPendingJobs();
+	}
+
+	/**
+	 * Validate pending jobs and check for their dependencies. If a wrong dependency occur the job will be removed from the list. TODO: This
+	 * part should be improved alot.
+	 */
+	private void validatePendingJobs() {
+		log.debug("Validate pending jobs");
+		synchronized (jobsPending) {
+			Iterator<JobData> iter = jobsPending.iterator();
+			while (iter.hasNext()) {
+				JobData data = iter.next();
+				log.info(String.format("Found pending %s", data));
+				boolean valid = true;
+				Class<?>[] dependsOn = data.dependsOn();
+				for (int i = 0; i < dependsOn.length; i++) {
+					if (Jobs.contains(dependsOn[i])) {
+						log.debug(String.format("Dependency %s exists", dependsOn[i]));
+					} else {
+						log.debug(String.format("Dependency %s not exists", dependsOn[i]));
+						valid = false;
+						break;
+					}
+				}
+				if (!valid) {
+					log.error(String.format("Removing invalid %s due missing depedencies", data));
+					iter.remove();
+				}
+			}
+		}
+	}
+
+	/**
+	 * Check for next pending job with finished dependencies to execute. If still pending jobs exists but still all have at least one missing
+	 * dependencies all jobs will be removed and an error log will be written. TODO: This part should be improved alot.
+	 */
+	private void checkPendingJobs() {
+		synchronized (jobsPending) {
+			if (jobsPending == null || jobsPending.size() == 0) {
+				return;
+			}
+			log.debug("Check for pending jobs");
+			int size = jobsPending.size();
+			Iterator<JobData> iter = jobsPending.iterator();
+			while (iter.hasNext()) {
+				JobData data = iter.next();
+				log.info(String.format("Found pending %s", data));
+				boolean valid = true;
+				Class<?>[] dependsOn = data.dependsOn();
+				for (int i = 0; i < dependsOn.length; i++) {
+					if (jobsDone.contains(dependsOn[i])) {
+						log.debug(String.format("Dependency %s is done", dependsOn[i]));
+					} else {
+						log.debug(String.format("Dependency %s not done", dependsOn[i]));
+						valid = false;
+						break;
+					}
+				}
+				if (valid) {
+					log.debug(String.format("All dependencies finished for %s", data));
+					executeJob(data);
+					iter.remove();
+					return;
+				}
+			}
+			if (size == jobsPending.size()) {
+				log.error(String.format("Found invalid jobs due missing dependencies: %s", Arrays.toString(jobsPending.toArray(new JobData[0]))));
+				jobsPending.clear();
+			}
 		}
 	}
 }
