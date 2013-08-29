@@ -68,16 +68,18 @@ public class CronPlugin extends ExtendedPlugin {
 		ActorRef quartzActor = system.actorOf(new Props(QuartzActor.class));
 		ActorRef cronActor = system.actorOf(new Props(CronActor.class));
 		// Handle cron jobs
+		log.info("Register annotated cron jobs");
 		Set<JobData> jobs = CronUtils.findCronJobs();
 		for (JobData data : jobs) {
 			Jobs.add(data);
 			scheduleJob(quartzActor, cronActor, data);
 		}
 		// Handle start jobs
+		log.info("Running annotated start jobs");
 		Set<JobData> startJobs = CronUtils.findStartJobs();
 		for (JobData data : startJobs) {
 			Jobs.add(data);
-			if (data.dependsOn() != null || data.dependsOn().length > 0) {
+			if (data.dependsOn() != null && data.dependsOn().length > 0) {
 				jobsPending.add(data);
 			} else {
 				executeJob(data);
@@ -133,6 +135,7 @@ public class CronPlugin extends ExtendedPlugin {
 				@Override
 				public Void apply(JobData jobData) throws Exception {
 					finishedJob(jobData);
+					checkPendingJobs();
 					return null;
 				}
 			});
@@ -142,6 +145,7 @@ public class CronPlugin extends ExtendedPlugin {
 			} catch (Exception e) {
 				log.error("Exception during jop occured", e);
 			}
+			finishedJob(jobData);
 		}
 	}
 
@@ -157,7 +161,6 @@ public class CronPlugin extends ExtendedPlugin {
 			jobsDone.add(jobData.job().getClass());
 			log.info(String.format("Jobs done: %s", Arrays.toString(jobsDone.toArray(new Class<?>[0]))));
 		}
-		checkPendingJobs();
 	}
 
 	/**
