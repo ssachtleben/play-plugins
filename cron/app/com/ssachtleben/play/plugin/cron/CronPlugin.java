@@ -137,7 +137,11 @@ public class CronPlugin extends ExtendedPlugin {
 				}
 			});
 		} else {
-			jobData.job().run();
+			try {
+				jobData.job().run();
+			} catch (Exception e) {
+				log.error("Exception during jop occured", e);
+			}
 		}
 	}
 
