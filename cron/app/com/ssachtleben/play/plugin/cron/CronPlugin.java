@@ -227,8 +227,11 @@ public class CronPlugin extends ExtendedPlugin {
 				}
 			}
 			if (size == jobsPending.size()) {
-				log.error(String.format("Found invalid jobs due missing dependencies: %s", Arrays.toString(jobsPending.toArray(new JobData[0]))));
-				jobsPending.clear();
+				// TODO: Check for running jobs here ...
+				log.warn("Check for pending jobs, but no job executed (maybe fail configuration?!?)");
+				// log.error(String.format("Found invalid jobs due missing dependencies: %s", Arrays.toString(jobsPending.toArray(new
+				// JobData[0]))));
+				// jobsPending.clear();
 			}
 		}
 	}
