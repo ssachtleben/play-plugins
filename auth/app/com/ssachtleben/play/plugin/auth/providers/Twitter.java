@@ -20,6 +20,11 @@ public class Twitter extends BaseOAuth1Provider<TwitterAuthUser> {
 	 */
 	public static final String KEY = "twitter";
 
+	/**
+	 * The userinfo url to fetch user data during authentication process.
+	 */
+	private static final String URL_USERINFO = "https://api.twitter.com/1.1/users/show.json?id=%s";
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -57,8 +62,8 @@ public class Twitter extends BaseOAuth1Provider<TwitterAuthUser> {
 	 */
 	@Override
 	protected TwitterAuthUser transform(Token token) {
-		// TODO: Read data from twitter for creating new account or comparing current values.
-		return new TwitterAuthUser(userId(token), token);
+		String userId = userId(token);
+		return new TwitterAuthUser(userId, token, data(token, String.format(URL_USERINFO, userId)));
 	}
 
 	/**
