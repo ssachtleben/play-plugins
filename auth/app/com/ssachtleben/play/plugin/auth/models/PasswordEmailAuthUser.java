@@ -1,5 +1,7 @@
 package com.ssachtleben.play.plugin.auth.models;
 
+import org.codehaus.jackson.JsonNode;
+
 import com.ssachtleben.play.plugin.auth.providers.PasswordEmail;
 import com.ssachtleben.play.plugin.auth.service.AuthService;
 
@@ -27,9 +29,10 @@ public class PasswordEmailAuthUser extends PasswordAuthUser {
 	 * @param clearPassword
 	 *          The clearPassword to set
 	 */
-	public PasswordEmailAuthUser(final String email, final String clearPassword) {
+	public PasswordEmailAuthUser(final String email, final String clearPassword, final JsonNode data) {
 		super(clearPassword);
 		this.email = email;
+		this.data = data;
 	}
 
 	/*

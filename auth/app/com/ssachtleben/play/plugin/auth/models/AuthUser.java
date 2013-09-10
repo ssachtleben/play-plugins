@@ -2,6 +2,8 @@ package com.ssachtleben.play.plugin.auth.models;
 
 import java.io.Serializable;
 
+import org.codehaus.jackson.JsonNode;
+
 import com.ssachtleben.play.plugin.auth.providers.BaseProvider;
 import com.ssachtleben.play.plugin.auth.service.AuthService;
 
@@ -15,6 +17,18 @@ import com.ssachtleben.play.plugin.auth.service.AuthService;
  */
 @SuppressWarnings("serial")
 public abstract class AuthUser implements Identity, Serializable {
+
+	/**
+	 * Keeps additional data obtained from identity.
+	 */
+	protected JsonNode data;
+
+	/**
+	 * @return The data as {@link JsonNode} fetched during authentication process.
+	 */
+	public JsonNode data() {
+		return data;
+	}
 
 	/*
 	 * (non-Javadoc)

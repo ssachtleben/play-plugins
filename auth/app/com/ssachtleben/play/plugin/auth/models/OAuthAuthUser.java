@@ -30,11 +30,6 @@ public abstract class OAuthAuthUser extends AuthUser {
 	private Token token;
 
 	/**
-	 * Keeps the data obtained from identity.
-	 */
-	private JsonNode data;
-
-	/**
 	 * Default constructor for {@link OAuthAuthUser}.
 	 * 
 	 * @param id
@@ -65,12 +60,5 @@ public abstract class OAuthAuthUser extends AuthUser {
 	 */
 	public Token token() {
 		return token;
-	}
-
-	/**
-	 * @return The data as {@link JsonNode} fetched during authentication process.
-	 */
-	public JsonNode data() {
-		return data;
 	}
 }
