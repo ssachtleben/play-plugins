@@ -5,6 +5,7 @@ import org.scribe.builder.api.TwitterApi.Authenticate;
 import org.scribe.model.Token;
 
 import com.ssachtleben.play.plugin.auth.annotations.Provider;
+import com.ssachtleben.play.plugin.auth.exceptions.AuthenticationException;
 import com.ssachtleben.play.plugin.auth.models.TwitterAuthUser;
 
 /**
@@ -23,7 +24,7 @@ public class Twitter extends BaseOAuth1Provider<TwitterAuthUser> {
 	/**
 	 * The userinfo url to fetch user data during authentication process.
 	 */
-	private static final String URL_USERINFO = "https://api.twitter.com/1.1/users/show.json?id=%s";
+	private static final String RESOURCE_URL = "https://api.twitter.com/1.1/users/show.json?id=%s";
 
 	/*
 	 * (non-Javadoc)
@@ -48,22 +49,12 @@ public class Twitter extends BaseOAuth1Provider<TwitterAuthUser> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#defaultScope()
-	 */
-	@Override
-	protected String defaultScope() {
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#transform(org.scribe.model.Token)
 	 */
 	@Override
-	protected TwitterAuthUser transform(Token token) {
+	protected TwitterAuthUser transform(Token token) throws AuthenticationException {
 		String userId = userId(token);
-		return new TwitterAuthUser(userId, token, data(token, String.format(URL_USERINFO, userId)));
+		return new TwitterAuthUser(userId, token, data(token, String.format(RESOURCE_URL, userId)));
 	}
 
 	/**

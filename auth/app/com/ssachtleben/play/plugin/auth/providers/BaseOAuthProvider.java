@@ -17,9 +17,13 @@ import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
 
 import play.Configuration;
+import play.Logger;
+import play.mvc.Http;
 import play.mvc.Http.Context;
+import play.mvc.Http.Cookie;
 import play.mvc.Http.Request;
 
+import com.ssachtleben.play.plugin.auth.exceptions.AuthenticationException;
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.AuthUser;
 import com.ssachtleben.play.plugin.auth.models.OAuthAuthUser;
@@ -30,6 +34,7 @@ import com.ssachtleben.play.plugin.auth.models.OAuthAuthUser;
  * @author Sebastian Sachtleben
  */
 public abstract class BaseOAuthProvider<U extends OAuthAuthUser> extends BaseProvider<U> {
+	private static final Logger.ALogger log = Logger.of(BaseOAuthProvider.class);
 
 	/**
 	 * New empty token used by some providers.
@@ -99,8 +104,9 @@ public abstract class BaseOAuthProvider<U extends OAuthAuthUser> extends BasePro
 	 * @param info
 	 *          The {@link OAuthAuthInfo} to set.
 	 * @return The transformed {@link OAuthAuthUser}.
+	 * @throws AuthenticationException
 	 */
-	protected abstract U transform(final Token token);
+	protected abstract U transform(final Token token) throws AuthenticationException;
 
 	/**
 	 * Retrieves {@link Token} from {@link Request}.
@@ -121,11 +127,23 @@ public abstract class BaseOAuthProvider<U extends OAuthAuthUser> extends BasePro
 	 * @return The {@link Token} instance.
 	 */
 	public Token accessToken(final String token, final String verifier) {
-		return service().getAccessToken(token != null ? new Token(token, verifier) : null, new Verifier(verifier));
+		Token requestToken = token != null ? new Token(token, verifier) : null;
+		Cookie tokenCookie = Http.Context.current().request().cookie("token");
+		if (tokenCookie != null) {
+			log.info(String.format("~~~ FOUND COOKIE: %s ~~~", tokenCookie.value()));
+			requestToken = new Token(token, tokenCookie.value());
+			Http.Context.current().response().discardCookie("token");
+		} else if (token != null) {
+			requestToken = new Token(token, verifier);
+		}
+		log.info(String.format("Try to get access token for %s - %s", requestToken, verifier));
+		Token tokenObj = service().getAccessToken(requestToken, new Verifier(verifier));
+		log.info(String.format("Retrieved token %s", tokenObj));
+		return tokenObj;
 	}
 
 	/**
-	 * Send request via {@OAuthRequest}. TODO: Explain more...
+	 * Send request via {@link OAuthRequest}. TODO: Explain more...
 	 * 
 	 * @param accessToken
 	 *          The {@link Token} to set.
@@ -137,8 +155,20 @@ public abstract class BaseOAuthProvider<U extends OAuthAuthUser> extends BasePro
 	 */
 	public Response request(final Token accessToken, final Verb verb, final String url) {
 		OAuthRequest request = new OAuthRequest(verb, url);
+		beforeSignRequest(request);
+		log.info(String.format("Send request with %s to %s", accessToken, request));
 		service().signRequest(accessToken, request);
 		return request.send();
+	}
+
+	/**
+	 * Invoked before the request will be signed.
+	 * 
+	 * @param request
+	 *          The {@link OAuthRequest} to before signed.
+	 */
+	public void beforeSignRequest(OAuthRequest request) {
+		// This is for easy override invocations
 	}
 
 	/**
@@ -175,11 +205,15 @@ public abstract class BaseOAuthProvider<U extends OAuthAuthUser> extends BasePro
 	 * @param token
 	 *          The {@link Token} to set.
 	 * @return Fetched response data as {@link JsonNode}.
+	 * @throws AuthenticationException
 	 */
-	protected JsonNode data(Token token, String url) {
+	protected JsonNode data(Token token, String url) throws AuthenticationException {
 		Response resp = request(token, Verb.GET, url);
 		logger().info(
 				String.format("Fetched response data [success=%s, code=%d, content=%s]", resp.isSuccessful(), resp.getCode(), resp.getBody()));
+		if (resp.getCode() != 200) {
+			throw new AuthenticationException(String.format("Failed to fetch data with %s from %s", token, url));
+		}
 		return toJson(resp.getBody());
 	}
 
@@ -206,7 +240,7 @@ public abstract class BaseOAuthProvider<U extends OAuthAuthUser> extends BasePro
 	 * @see com.ssachtleben.play.plugin.auth.providers.BaseProvider#handle(play.mvc.Http.Context)
 	 */
 	@Override
-	protected AuthUser handle(final Context context) {
+	protected AuthUser handle(final Context context) throws AuthenticationException {
 		final Token token = tokenFromRequest(context.request());
 		return token != null ? transform(token) : null;
 	}
