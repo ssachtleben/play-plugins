@@ -68,7 +68,7 @@ public class Providers {
 			}
 			return true;
 		} catch (MissingConfigurationException e) {
-			log.error(String.format("Failed to register %s provider", key), e);
+			log.warn(String.format("Failed to register %s provider", key), e);
 		}
 		return false;
 	}
