@@ -5,7 +5,7 @@ import play.Project._
 object ApplicationBuild extends Build {
 
     val appName         = "play-json-plugin"
-    val libVersion      = "1.0"
+    val libVersion      = "2.1-SNAPSHOT"
 
     val appDependencies = Seq(
         javaCore
