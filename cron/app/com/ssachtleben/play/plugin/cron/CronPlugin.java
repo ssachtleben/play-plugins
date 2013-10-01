@@ -113,7 +113,7 @@ public class CronPlugin extends ExtendedPlugin {
 	private void scheduleJob(ActorRef quartzActor, ActorRef runActor, JobData jobData) {
 		log.debug(String.format("Register %s", jobData));
 		system.scheduler().scheduleOnce(Duration.create(50, TimeUnit.MILLISECONDS), quartzActor,
-				new AddCronSchedule(runActor, jobData.pattern(), jobData.job(), true), system.dispatcher());
+				new AddCronSchedule(runActor, jobData.pattern(), jobData.job(), true), system.dispatcher(), null);
 	}
 
 	/**
