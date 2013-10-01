@@ -1,6 +1,6 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.YahooApi;
 import org.scribe.model.Token;
@@ -63,8 +63,8 @@ public class Yahoo extends BaseOAuth1Provider<YahooAuthUser> {
 		if (guidNode == null || guidNode.get("guid") == null || guidNode.get("guid").get("value") == null) {
 			throw new AuthenticationException(String.format("Failed to retrieve guid from this response: %s", guidNode));
 		}
-		String guid = guidNode.get("guid").get("value").getTextValue();
-		JsonNode data = data(token, String.format(RESOURCE_URL, guidNode.get("guid").get("value").getTextValue()));
+		String guid = guidNode.get("guid").get("value").asText();
+		JsonNode data = data(token, String.format(RESOURCE_URL, guidNode.get("guid").get("value").asText()));
 		logger().info("Retrieved: " + data.toString());
 		return new YahooAuthUser(guid, token, data);
 	}

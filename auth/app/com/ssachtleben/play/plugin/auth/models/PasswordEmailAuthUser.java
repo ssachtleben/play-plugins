@@ -1,6 +1,6 @@
 package com.ssachtleben.play.plugin.auth.models;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.ssachtleben.play.plugin.auth.providers.PasswordEmail;
 import com.ssachtleben.play.plugin.auth.service.AuthService;

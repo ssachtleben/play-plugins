@@ -1,6 +1,6 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.scribe.builder.api.Api;
 import org.scribe.model.Token;
 

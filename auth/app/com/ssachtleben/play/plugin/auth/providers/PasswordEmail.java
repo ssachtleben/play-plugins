@@ -3,8 +3,8 @@ package com.ssachtleben.play.plugin.auth.providers;
 import java.io.IOException;
 import java.util.Map;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import play.mvc.Http.Context;
 
@@ -55,7 +55,7 @@ public class PasswordEmail extends BaseProvider<PasswordEmailAuthUser> {
 		String contentType = context.request().getHeader("content-type");
 		if ("application/json".equals(contentType)) {
 			JsonNode node = context.request().body().asJson();
-			return new PasswordEmailAuthUser(node.get(RequestParameter.EMAIL).getTextValue(), node.get(RequestParameter.PASSWORD).getTextValue(),
+			return new PasswordEmailAuthUser(node.get(RequestParameter.EMAIL).asText(), node.get(RequestParameter.PASSWORD).asText(),
 					node);
 		} else {
 			Map<String, String[]> params = context.request().body().asFormUrlEncoded();

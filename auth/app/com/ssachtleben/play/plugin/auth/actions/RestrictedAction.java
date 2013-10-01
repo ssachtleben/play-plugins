@@ -3,11 +3,7 @@ package com.ssachtleben.play.plugin.auth.actions;
 import java.lang.reflect.Method;
 
 import play.Logger;
-import play.mvc.Action;
-import play.mvc.Action.Simple;
 import play.mvc.Controller;
-import play.mvc.Http.Context;
-import play.mvc.Result;
 
 import com.ssachtleben.play.plugin.auth.annotations.Restricts;
 
@@ -20,7 +16,7 @@ import com.ssachtleben.play.plugin.auth.annotations.Restricts;
  * 
  * @author Sebastian Sachtleben
  */
-public class RestrictedAction extends Action<Simple> {
+public class RestrictedAction { // extends Action<Simple> {
 
 	/**
 	 * The logger for {@link RestrictedAction} class.
@@ -51,11 +47,11 @@ public class RestrictedAction extends Action<Simple> {
 	 * 
 	 * @see play.mvc.Action#call(play.mvc.Http.Context)
 	 */
-	@Override
-	public Result call(Context ctx) throws Throwable {
-		Restricts annotation = actionMethod.getAnnotation(Restricts.class);
-		log.info(String.format("called - Found: %s", annotation));
-		return delegate.call(ctx);
-	}
+	// @Override
+	// public Result call(Context ctx) throws Throwable {
+	// Restricts annotation = actionMethod.getAnnotation(Restricts.class);
+	// log.info(String.format("called - Found: %s", annotation));
+	// return delegate.call(ctx);
+	// }
 
 }

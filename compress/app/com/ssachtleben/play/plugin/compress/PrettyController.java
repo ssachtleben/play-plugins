@@ -40,7 +40,7 @@ public class PrettyController extends Controller {
 	 * Prettify the {@link Content}, e.g. removing whitespaces and linebreaks.
 	 * 
 	 * @param content
-	 *            The {@link Content} to prettify.
+	 *          The {@link Content} to prettify.
 	 * @return The prettified content.
 	 */
 	private static String prettify(Content content) {

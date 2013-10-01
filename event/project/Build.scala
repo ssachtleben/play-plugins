@@ -5,11 +5,11 @@ import play.Project._
 object ApplicationBuild extends Build {
 
     val appName         = "play-event-plugin"
-    val libVersion      = "0.1-SNAPSHOT"
+    val libVersion      = "2.1-SNAPSHOT"
 
     val appDependencies = Seq(
         javaCore,
-        "com.ssachtleben" %% "play-base-plugin" % "0.1-SNAPSHOT"
+        "com.ssachtleben" %% "play-base-plugin" % "2.1-SNAPSHOT"
     )
 
     val main = play.Project(appName, libVersion, appDependencies).settings(

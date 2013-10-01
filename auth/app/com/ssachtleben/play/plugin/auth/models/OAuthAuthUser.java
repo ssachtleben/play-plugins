@@ -1,6 +1,6 @@
 package com.ssachtleben.play.plugin.auth.models;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.scribe.model.Token;
 
 import com.ssachtleben.play.plugin.auth.providers.BaseOAuthProvider;

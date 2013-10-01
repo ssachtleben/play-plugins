@@ -2,7 +2,7 @@ package com.ssachtleben.play.plugin.auth.models;
 
 import java.io.Serializable;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import com.ssachtleben.play.plugin.auth.providers.BaseProvider;
 import com.ssachtleben.play.plugin.auth.service.AuthService;
