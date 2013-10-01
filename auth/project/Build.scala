@@ -5,7 +5,7 @@ import play.Project._
 object ApplicationBuild extends Build {
 
     val appName         = "play-auth-plugin"
-    val libVersion      = "0.1-SNAPSHOT"
+    val libVersion      = "2.1-SNAPSHOT"
 
     val appDependencies = Seq(
         javaCore,
