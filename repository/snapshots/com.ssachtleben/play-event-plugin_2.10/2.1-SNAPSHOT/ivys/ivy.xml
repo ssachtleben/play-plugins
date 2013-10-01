@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
-	<info organisation="com.ssachtleben" module="play-json-plugin_2.10" revision="2.1-SNAPSHOT" status="integration" publication="20131002004134">
+	<info organisation="com.ssachtleben" module="play-event-plugin_2.10" revision="2.1-SNAPSHOT" status="integration" publication="20131002003123">
 		<description>
-		play-json-plugin
+		play-event-plugin
 		</description>
 	</info>
 	<configurations>
@@ -21,9 +21,9 @@
 		
 	</configurations>
 	<publications>
-		<artifact name="play-json-plugin_2.10" type="pom" ext="pom" conf="pom"/>
-		<artifact name="play-json-plugin_2.10" type="jar" ext="jar" conf="compile"/>
-		<artifact name="play-json-plugin_2.10" type="src" ext="jar" conf="sources" e:classifier="sources"/>
+		<artifact name="play-event-plugin_2.10" type="pom" ext="pom" conf="pom"/>
+		<artifact name="play-event-plugin_2.10" type="jar" ext="jar" conf="compile"/>
+		<artifact name="play-event-plugin_2.10" type="src" ext="jar" conf="sources" e:classifier="sources"/>
 	</publications>
 	<dependencies>
 		
@@ -32,5 +32,6 @@
 		<dependency org="com.typesafe.play" name="play-test_2.10" rev="2.2.0" conf="test->default(compile)"/>
 		
 		<dependency org="com.typesafe.play" name="play-java_2.10" rev="2.2.0" conf="compile->default(compile)"/>
+		<dependency org="com.ssachtleben" name="play-base-plugin_2.10" rev="2.1-SNAPSHOT" conf="compile->default(compile)"/>
 	</dependencies>
 </ivy-module>
