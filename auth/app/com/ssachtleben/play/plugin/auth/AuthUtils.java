@@ -13,6 +13,7 @@ import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
+import play.Application;
 import play.Logger;
 
 import com.ssachtleben.play.plugin.auth.annotations.Authenticates;
@@ -33,10 +34,10 @@ public class AuthUtils {
 	 * @return Set of {@link BaseProvider} instances.
 	 */
 	@SuppressWarnings("unchecked")
-	public static Set<BaseProvider<Identity>> findProviders() {
+	public static Set<BaseProvider<Identity>> findProviders(Application app) {
 		long nanos = System.nanoTime();
-		log.info("Start searching for provider classes with annotation @" + Provider.class.getSimpleName());
-		URL[] urls = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
+		log.info(String.format("Start searching for provider classes with annotation @%s", Provider.class.getSimpleName()));
+		URL[] urls = ((URLClassLoader) (AuthUtils.class.getClassLoader())).getURLs();
 		Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(urls).setScanners(new TypeAnnotationsScanner()));
 		Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Provider.class);
 		long elapsed = Math.round((double) (System.nanoTime() - nanos) / 1000000.0);
