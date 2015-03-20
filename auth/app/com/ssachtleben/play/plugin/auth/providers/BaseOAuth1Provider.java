@@ -3,6 +3,7 @@ package com.ssachtleben.play.plugin.auth.providers;
 import org.apache.commons.lang.StringUtils;
 import org.scribe.model.Token;
 
+import play.mvc.Http;
 import play.mvc.Http.Request;
 
 import com.ssachtleben.play.plugin.auth.models.OAuthAuthUser;
@@ -31,7 +32,21 @@ public abstract class BaseOAuth1Provider<U extends OAuthAuthUser> extends BaseOA
 	 */
 	@Override
 	public String authUrl() {
-		return service().getAuthorizationUrl(service().getRequestToken());
+		Token requestToken = service().getRequestToken();
+		String url = service().getAuthorizationUrl(requestToken);
+		Http.Context.current().response().setCookie("token", requestToken.getSecret());
+		logger().info(String.format("authUrl %s retrieved %s", requestToken, url));
+		return url;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#defaultScope()
+	 */
+	@Override
+	protected String defaultScope() {
+		return null;
 	}
 
 	/*

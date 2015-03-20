@@ -4,6 +4,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 
 import com.ssachtleben.play.plugin.auth.Auth;
+import com.ssachtleben.play.plugin.auth.exceptions.AuthenticationException;
 
 /**
  * Provides login and logout methods to handle authentication process via this plugin. The {@link #login(String)} and {@link #logout()}
@@ -21,8 +22,9 @@ public class Authenticate extends Controller {
 	 * @param provider
 	 *          The provider key.
 	 * @return Play {@link Result} object.
+	 * @throws AuthenticationException
 	 */
-	public static Result login(final String provider) {
+	public static Result login(final String provider) throws AuthenticationException {
 		return Auth.login(ctx(), provider);
 	}
 

@@ -20,7 +20,7 @@ public class CronActor extends UntypedActor {
 					+ "' is not implemented ...");
 			return;
 		}
-		log.info("Execute '" + job.getClass().getName() + "' job");
+		log.debug("Execute '" + job.getClass().getName() + "' job");
 		((Job) job).run();
 	}
 }

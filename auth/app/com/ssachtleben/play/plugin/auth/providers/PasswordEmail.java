@@ -1,6 +1,10 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
+import java.io.IOException;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import play.mvc.Http.Context;
 
@@ -48,9 +52,24 @@ public class PasswordEmail extends BaseProvider<PasswordEmailAuthUser> {
 	 */
 	@Override
 	protected AuthUser handle(Context context) {
-		Map<String, String[]> params = context.request().body().asFormUrlEncoded();
-		if (params != null && params.containsKey(RequestParameter.EMAIL) && params.containsKey(RequestParameter.PASSWORD)) {
-			return new PasswordEmailAuthUser(params.get(RequestParameter.EMAIL)[0], params.get(RequestParameter.PASSWORD)[0]);
+		String contentType = context.request().getHeader("content-type");
+		if ("application/json".equals(contentType)) {
+			JsonNode node = context.request().body().asJson();
+			return new PasswordEmailAuthUser(node.get(RequestParameter.EMAIL).asText(), node.get(RequestParameter.PASSWORD).asText(),
+					node);
+		} else {
+			Map<String, String[]> params = context.request().body().asFormUrlEncoded();
+			if (params != null && params.containsKey(RequestParameter.EMAIL) && params.containsKey(RequestParameter.PASSWORD)) {
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode data;
+				try {
+					data = mapper.readTree(mapper.writeValueAsString(params));
+				} catch (IOException e) {
+					logger().error("Failed to serialize params to json", e);
+					data = mapper.createObjectNode();
+				}
+				return new PasswordEmailAuthUser(params.get(RequestParameter.EMAIL)[0], params.get(RequestParameter.PASSWORD)[0], data);
+			}
 		}
 		return null;
 	}

@@ -19,6 +19,7 @@ import play.mvc.Results;
 
 import com.ssachtleben.play.plugin.auth.Auth;
 import com.ssachtleben.play.plugin.auth.Providers;
+import com.ssachtleben.play.plugin.auth.exceptions.AuthenticationException;
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.AuthUser;
 import com.ssachtleben.play.plugin.auth.models.Identity;
@@ -92,8 +93,9 @@ public abstract class BaseProvider<U extends Identity> {
 	 * @param ctx
 	 *          The {@link Context} to set.
 	 * @return Play {@link Result} object.
+	 * @throws AuthenticationException
 	 */
-	public Result login(final Context ctx) {
+	public Result login(final Context ctx) throws AuthenticationException {
 		Events.instance().publish(EventKeys.AUTHENTICATION_BEFORE, key(), ctx);
 		AuthUser authUser = handle(ctx);
 		if (authUser != null) {
@@ -172,8 +174,9 @@ public abstract class BaseProvider<U extends Identity> {
 	 * @param context
 	 *          The current {@link Context}.
 	 * @return The {@link AuthUser}.
+	 * @throws AuthenticationException
 	 */
-	protected abstract AuthUser handle(final Context context);
+	protected abstract AuthUser handle(final Context context) throws AuthenticationException;
 
 	/**
 	 * List of setting keys which must be provided from the application.conf. These keys will be validated during application start.

@@ -1,6 +1,6 @@
 package com.ssachtleben.play.plugin.auth.models;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.scribe.model.Token;
 
 import com.ssachtleben.play.plugin.auth.providers.BaseOAuthProvider;
@@ -28,11 +28,6 @@ public abstract class OAuthAuthUser extends AuthUser {
 	 * Keeps the token used during authentication process.
 	 */
 	private Token token;
-
-	/**
-	 * Keeps the data obtained from identity.
-	 */
-	private JsonNode data;
 
 	/**
 	 * Default constructor for {@link OAuthAuthUser}.
@@ -65,12 +60,5 @@ public abstract class OAuthAuthUser extends AuthUser {
 	 */
 	public Token token() {
 		return token;
-	}
-
-	/**
-	 * @return The data as {@link JsonNode} fetched during authentication process.
-	 */
-	public JsonNode data() {
-		return data;
 	}
 }

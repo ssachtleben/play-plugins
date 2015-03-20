@@ -1,12 +1,13 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.FacebookApi;
 import org.scribe.model.Token;
 
 import com.ssachtleben.play.plugin.auth.annotations.Provider;
+import com.ssachtleben.play.plugin.auth.exceptions.AuthenticationException;
 import com.ssachtleben.play.plugin.auth.models.FacebookAuthUser;
 
 /**
@@ -25,14 +26,14 @@ public class Facebook extends BaseOAuth2Provider<FacebookAuthUser> {
 	/**
 	 * The Facebook Graph url.
 	 */
-	public static final String GRAPH_URL = "https://graph.facebook.com";
+	public static final String RESOURCE_URL = "https://graph.facebook.com";
 
 	/**
 	 * Provides setting keys for {@link Facebook} provider.
 	 * 
 	 * @author Sebastian Sachtleben
 	 */
-	public static abstract class FacebookSettingKeys {
+	public static abstract class SettingKeys {
 
 		/**
 		 * The fields fetched from graph during authentication.
@@ -46,7 +47,7 @@ public class Facebook extends BaseOAuth2Provider<FacebookAuthUser> {
 	 * 
 	 * @author Sebastian Sachtleben
 	 */
-	public static abstract class FacebookSettingDefault {
+	public static abstract class SettingDefault {
 
 		/**
 		 * The default scope for {@link Facebook} oauth provider.
@@ -87,7 +88,7 @@ public class Facebook extends BaseOAuth2Provider<FacebookAuthUser> {
 	 */
 	@Override
 	protected String defaultScope() {
-		return FacebookSettingDefault.SCOPE;
+		return SettingDefault.SCOPE;
 	}
 
 	/*
@@ -96,8 +97,8 @@ public class Facebook extends BaseOAuth2Provider<FacebookAuthUser> {
 	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#transform(org.scribe.model.Token)
 	 */
 	@Override
-	protected FacebookAuthUser transform(Token token) {
-		String fields = config().getString(FacebookSettingKeys.FIELDS, FacebookSettingDefault.FIELDS);
+	protected FacebookAuthUser transform(Token token) throws AuthenticationException {
+		String fields = config().getString(SettingKeys.FIELDS, SettingDefault.FIELDS);
 		JsonNode data = null;
 		if (fields == null || !"".equals(fields)) {
 			data = me(token, fields);
@@ -116,8 +117,9 @@ public class Facebook extends BaseOAuth2Provider<FacebookAuthUser> {
 	 * @param fields
 	 *          The fields to set
 	 * @return User data as {@link JsonNode} fetched from Facebook Graph.
+	 * @throws AuthenticationException
 	 */
-	private JsonNode me(Token token, String fields) {
-		return data(token, String.format("%s/me?fields=%s", GRAPH_URL, fields));
+	private JsonNode me(Token token, String fields) throws AuthenticationException {
+		return data(token, String.format("%s/me?fields=%s", RESOURCE_URL, fields));
 	}
 }

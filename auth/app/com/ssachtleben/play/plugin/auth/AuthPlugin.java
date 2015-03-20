@@ -45,7 +45,7 @@ public class AuthPlugin extends ExtendedPlugin {
 	 */
 	@Override
 	public void start() {
-		final Set<BaseProvider<Identity>> providers = AuthUtils.findProviders();
+		final Set<BaseProvider<Identity>> providers = AuthUtils.findProviders(app);
 		final Set<Method> authMethods = AuthUtils.findAuthMethods();
 		Iterator<BaseProvider<Identity>> iter = providers.iterator();
 		while (iter.hasNext()) {

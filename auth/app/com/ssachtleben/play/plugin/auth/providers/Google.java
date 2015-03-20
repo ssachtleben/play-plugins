@@ -1,11 +1,12 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
-import org.codehaus.jackson.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.scribe.builder.api.Api;
 import org.scribe.model.Token;
 
 import com.ssachtleben.play.plugin.auth.annotations.Provider;
 import com.ssachtleben.play.plugin.auth.builders.Google2Api;
+import com.ssachtleben.play.plugin.auth.exceptions.AuthenticationException;
 import com.ssachtleben.play.plugin.auth.models.GoogleAuthUser;
 
 /**
@@ -32,7 +33,7 @@ public class Google extends BaseOAuth2Provider<GoogleAuthUser> {
 	/**
 	 * The userinfo url to fetch user data during authentication process.
 	 */
-	private static final String URL_USERINFO = "https://www.googleapis.com/oauth2/v3/userinfo?alt=json";
+	private static final String RESOURCE_URL = "https://www.googleapis.com/oauth2/v3/userinfo?alt=json";
 
 	/*
 	 * (non-Javadoc)
@@ -70,8 +71,8 @@ public class Google extends BaseOAuth2Provider<GoogleAuthUser> {
 	 * @see com.ssachtleben.play.plugin.auth.providers.OAuthProvider#transform(org.scribe.model.Token)
 	 */
 	@Override
-	protected GoogleAuthUser transform(Token token) {
-		JsonNode data = data(token, URL_USERINFO);
+	protected GoogleAuthUser transform(Token token) throws AuthenticationException {
+		JsonNode data = data(token, RESOURCE_URL);
 		logger().info("Retrieved: " + data.toString());
 		return new GoogleAuthUser(token, data);
 	}

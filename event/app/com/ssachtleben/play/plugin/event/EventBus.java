@@ -223,7 +223,7 @@ public class EventBus implements EventService {
 				try {
 					ActorRef eventActor = system.actorOf(new Props(EventActor.class));
 					EventDeliveryRequest request = new EventDeliveryRequest(binding.method(), payload);
-					system.scheduler().scheduleOnce(Duration.create(50, TimeUnit.MILLISECONDS), eventActor, request, system.dispatcher());
+					system.scheduler().scheduleOnce(Duration.create(50, TimeUnit.MILLISECONDS), eventActor, request, system.dispatcher(), null);
 					if (!published) {
 						published = true;
 					}

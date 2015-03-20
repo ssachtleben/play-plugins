@@ -9,6 +9,7 @@ import play.mvc.Http.Session;
 import play.mvc.Result;
 import play.mvc.Results;
 
+import com.ssachtleben.play.plugin.auth.exceptions.AuthenticationException;
 import com.ssachtleben.play.plugin.auth.service.AuthService;
 
 /**
@@ -54,8 +55,9 @@ public class Auth {
 	 * @param provider
 	 *          The provider to set.
 	 * @return Play {@link Result} object.
+	 * @throws AuthenticationException
 	 */
-	public static Result login(final Context ctx, final String provider) {
+	public static Result login(final Context ctx, final String provider) throws AuthenticationException {
 		log.info(String.format("Login %s", provider));
 		if (!Providers.has(provider)) {
 			log.warn(String.format("Provider '%s' is unknowned", provider));
