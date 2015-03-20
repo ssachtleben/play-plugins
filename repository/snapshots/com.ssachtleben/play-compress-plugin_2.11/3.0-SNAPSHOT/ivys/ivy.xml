@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
-	<info organisation="com.ssachtleben" module="play-compress-plugin_2.11" revision="2.2-SNAPSHOT" status="integration" publication="20150320155822">
+	<info organisation="com.ssachtleben" module="play-compress-plugin_2.11" revision="3.0-SNAPSHOT" status="integration" publication="20150320192222">
 		<description>
 		play-compress-plugin
 		</description>
@@ -33,10 +33,6 @@
 		<dependency org="com.typesafe.play" name="play-test_2.11" rev="2.3.8" conf="test->default(compile)"/>
 		
 		<dependency org="com.typesafe.play" name="play-java_2.11" rev="2.3.8" conf="compile->default(compile)"/>
-		<dependency org="com.typesafe.play" name="play-java-jdbc_2.11" rev="2.3.8" conf="compile->default(compile)"/>
-		<dependency org="com.typesafe.play" name="play-java-ebean_2.11" rev="2.3.8" conf="compile->default(compile)"/>
-		<dependency org="com.typesafe.play" name="play-cache_2.11" rev="2.3.8" conf="compile->default(compile)"/>
-		<dependency org="com.typesafe.play" name="play-java-ws_2.11" rev="2.3.8" conf="compile->default(compile)"/>
 		<dependency org="com.googlecode.htmlcompressor" name="htmlcompressor" rev="1.5.2" conf="compile->default(compile)"/>
 		<dependency org="com.yahoo.platform.yui" name="yuicompressor" rev="2.4.6" conf="compile->default(compile)"/>
 	</dependencies>
