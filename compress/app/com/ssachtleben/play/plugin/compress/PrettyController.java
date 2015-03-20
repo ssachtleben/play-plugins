@@ -1,7 +1,7 @@
 package com.ssachtleben.play.plugin.compress;
 
 import play.Play;
-import play.api.templates.Html;
+//import play.api.templates.Html;
 import play.mvc.Content;
 import play.mvc.Controller;
 import play.mvc.Results;
@@ -21,49 +21,49 @@ public class PrettyController extends Controller {
 		return Results.ok(prettify(content)).as("text/html; charset=utf-8");
 	}
 
-	public static Results.Status ok(final Html html) {
-		return Results.ok(prettify(html)).as("text/html; charset=utf-8");
-	}
+//	public static Results.Status ok(final Html html) {
+//		return Results.ok(prettify(html)).as("text/html; charset=utf-8");
+//	}
 
 	public static Results.Status badRequest(final Content content) {
 		return Results.badRequest(prettify(content)).as("text/html; charset=utf-8");
 	}
 
-	public static Results.Status badRequest(final Html html) {
-		return Results.badRequest(prettify(html)).as("text/html; charset=utf-8");
-	}
+//	public static Results.Status badRequest(final Html html) {
+//		return Results.badRequest(prettify(html)).as("text/html; charset=utf-8");
+//	}
 
 	public static Results.Status notFound(final Content content) {
 		return Results.notFound(prettify(content)).as("text/html; charset=utf-8");
 	}
 
-	public static Results.Status notFound(final Html html) {
-		return Results.notFound(prettify(html)).as("text/html; charset=utf-8");
-	}
+//	public static Results.Status notFound(final Html html) {
+//		return Results.notFound(prettify(html)).as("text/html; charset=utf-8");
+//	}
 
 	public static Results.Status forbidden(final Content content) {
 		return Results.forbidden(prettify(content)).as("text/html; charset=utf-8");
 	}
 
-	public static Results.Status forbidden(final Html html) {
-		return Results.forbidden(prettify(html)).as("text/html; charset=utf-8");
-	}
+//	public static Results.Status forbidden(final Html html) {
+//		return Results.forbidden(prettify(html)).as("text/html; charset=utf-8");
+//	}
 
 	public static Results.Status internalServerError(final Content content) {
 		return Results.internalServerError(prettify(content)).as("text/html; charset=utf-8");
 	}
 
-	public static Results.Status internalServerError(final Html html) {
-		return Results.internalServerError(prettify(html)).as("text/html; charset=utf-8");
-	}
+//	public static Results.Status internalServerError(final Html html) {
+//		return Results.internalServerError(prettify(html)).as("text/html; charset=utf-8");
+//	}
 
 	public static Results.Status unauthorized(final Content content) {
 		return Results.unauthorized(prettify(content)).as("text/html; charset=utf-8");
 	}
 
-	public static Results.Status unauthorized(final Html html) {
-		return Results.unauthorized(prettify(html)).as("text/html; charset=utf-8");
-	}
+//	public static Results.Status unauthorized(final Html html) {
+//		return Results.unauthorized(prettify(html)).as("text/html; charset=utf-8");
+//	}
 
 	/**
 	 * Prettify the {@link Content}, e.g. removing whitespaces and linebreaks.
