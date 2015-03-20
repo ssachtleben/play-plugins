@@ -4,18 +4,29 @@ Useful plugins for Play Framework 2.x.
 
 ## Overview
 
-**Here is a list of all plugins:**
+**Here is a list of all plugins for Play Framework v2.3.x:**
 
 | Name                 | Description                                | Plugin Version | Play Version |
 | -------------------- | ------------------------------------------ | -------------- | ------------ |
-| [auth](auth)         | Simple user authentication                 | 0.1-SNAPSHOT   | 2.1.0        |
-| [base](base)         | Extended plugin functionality              | 0.1-SNAPSHOT   | 2.1.0        |
-| [compress](compress) | HTML compress controller                   | 0.1-SNAPSHOT   | 2.1.0        |
-| [cron](cron)         | Annotation driven time-based job scheduler | 0.1-SNAPSHOT   | 2.1.0        |
-| [event](event)       | Publication and Subscription of events     | 0.1-SNAPSHOT   | 2.1.0        |
-| [json](json)         | Chainable json bean mapper                 | 0.1-SNAPSHOT   | 2.1.0        |
+| [auth](auth)         | Simple user authentication                 | 3.0-SNAPSHOT   | 2.3.x        |
+| [base](base)         | Extended plugin functionality              | 3.0-SNAPSHOT   | 2.3.x        |
+| [compress](compress) | HTML compress controller                   | 3.0-SNAPSHOT   | 2.3.x        |
+| [cron](cron)         | Annotation driven time-based job scheduler | 3.0-SNAPSHOT   | 2.3.x        |
+| [event](event)       | Publication and Subscription of events     | 3.0-SNAPSHOT   | 2.3.x        |
+| [json](json)         | Chainable json bean mapper                 | 3.0-SNAPSHOT   | 2.3.x        |
 
 Check the plugin readme to learn how to add the plugin to your project. Every plugin has usage informations in the readme and at least one sample project so it should be easy to find out how to use it.
+
+**Previous Play Framework versions:**
+
+| Name                 | Description                                | Plugin Version | Play Version |
+| -------------------- | ------------------------------------------ | -------------- | ------------ |
+| [auth](auth)         | Simple user authentication                 | 2.1-SNAPSHOT   | 2.1.x - 2.2.x |
+| [base](base)         | Extended plugin functionality              | 2.1-SNAPSHOT   | 2.1.x - 2.2.x |
+| [compress](compress) | HTML compress controller                   | 2.1-SNAPSHOT   | 2.1.x - 2.2.x |
+| [cron](cron)         | Annotation driven time-based job scheduler | 2.1-SNAPSHOT   | 2.1.x - 2.2.x |
+| [event](event)       | Publication and Subscription of events     | 2.1-SNAPSHOT   | 2.1.x - 2.2.x |
+| [json](json)         | Chainable json bean mapper                 | 2.1-SNAPSHOT   | 2.1.x - 2.2.x |
 
 ## Licence
 
