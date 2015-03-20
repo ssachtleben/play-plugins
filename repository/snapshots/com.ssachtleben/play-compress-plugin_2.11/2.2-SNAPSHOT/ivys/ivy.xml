@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ivy-module version="2.0" xmlns:e="http://ant.apache.org/ivy/extra">
-	<info organisation="com.ssachtleben" module="play-compress-plugin_2.11" revision="2.2-SNAPSHOT" status="integration" publication="20150319094920">
+	<info organisation="com.ssachtleben" module="play-compress-plugin_2.11" revision="2.2-SNAPSHOT" status="integration" publication="20150320155822">
 		<description>
 		play-compress-plugin
 		</description>
