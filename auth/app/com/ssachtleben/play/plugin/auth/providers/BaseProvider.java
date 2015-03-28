@@ -101,7 +101,8 @@ public abstract class BaseProvider<U extends Identity> {
    * @throws AuthenticationException
    */
   public Result login(final Context ctx) throws AuthenticationException {
-    final boolean asyncEvents = config().getConfig("events").getBoolean("async", false);
+    final Configuration eventConfig = config().getConfig("events");
+    final boolean asyncEvents = eventConfig != null ? config().getConfig("events").getBoolean("async", false) : false;
     fireEvent(asyncEvents, AuthEvents.AUTHENTICATION_BEFORE, ctx, key());
     AuthUser authUser = handle(ctx);
     if (authUser != null) {

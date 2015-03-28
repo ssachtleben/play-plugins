@@ -61,9 +61,9 @@ Here is a list with all authentication events:
 | AuthEvents.AUTHENTICATION_ERROR      | This event will be fired if the user can't properly authenticate. | play.mvc.Http.Context ctx, String providerKey              |
 | AuthEvents.AUTHENTICATION_SUCCESS    | This event will be executed on a sucessful auth.                  | play.mvc.Http.Context ctx, Object user, String providerKey |
 
-All events are sync by default, if you want to execute time consuming operations you should schedule a task with Akka.
+All events will be executed syncron by default which means if you want to execute time consuming operations in the observer methods you should schedule a async task with Akka.
 
-Its possible to change all events to async via application.conf: 
+It's also possible to change all events to async via application.conf: 
 
 ```
 auth.events.async = true
