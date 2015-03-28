@@ -1,8 +1,12 @@
 package com.ssachtleben.play.plugin.auth.models;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.math.NumberUtils;
 import org.scribe.model.Token;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.ssachtleben.play.plugin.auth.providers.BaseOAuthProvider;
 import com.ssachtleben.play.plugin.auth.service.AuthService;
 
@@ -32,6 +36,11 @@ public abstract class OAuthAuthUser extends AuthUser {
   private Token token;
 
   /**
+   * Keeps the expire date if the token contains it.
+   */
+  private Long expires;
+
+  /**
    * Default constructor for {@link OAuthAuthUser}.
    * 
    * @param id
@@ -45,6 +54,13 @@ public abstract class OAuthAuthUser extends AuthUser {
     this.id = id;
     this.token = token;
     this.data = data;
+    final Matcher matcher = Pattern.compile("expires=([^&]+)").matcher(token.getRawResponse());
+    if (matcher.find()) {
+      final String expires = matcher.group(1);
+      if (NumberUtils.isNumber(expires)) {
+        this.expires = Long.parseLong(expires);
+      }
+    }
   }
 
   /*
@@ -62,5 +78,12 @@ public abstract class OAuthAuthUser extends AuthUser {
    */
   public Token token() {
     return token;
+  }
+
+  /**
+   * @return The expire time.
+   */
+  public Long expires() {
+    return expires;
   }
 }

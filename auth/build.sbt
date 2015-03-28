@@ -1,6 +1,6 @@
 name := """play-auth-plugin"""
 
-version := "3.1-SNAPSHOT"
+version := "3.2-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava)
 
