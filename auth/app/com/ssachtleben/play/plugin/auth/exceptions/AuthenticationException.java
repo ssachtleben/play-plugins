@@ -8,14 +8,14 @@ package com.ssachtleben.play.plugin.auth.exceptions;
 @SuppressWarnings("serial")
 public class AuthenticationException extends Exception {
 
-	/**
-	 * Default constructor for {@link AuthenticationException}.
-	 * 
-	 * @param message
-	 *          The message to set.
-	 */
-	public AuthenticationException(String message) {
-		super(message);
-	}
+  /**
+   * Default constructor for {@link AuthenticationException}.
+   * 
+   * @param message
+   *          The message to set.
+   */
+  public AuthenticationException(String message) {
+    super(message);
+  }
 
 }

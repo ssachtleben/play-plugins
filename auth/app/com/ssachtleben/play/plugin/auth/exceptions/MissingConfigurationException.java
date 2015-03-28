@@ -8,13 +8,13 @@ package com.ssachtleben.play.plugin.auth.exceptions;
 @SuppressWarnings("serial")
 public class MissingConfigurationException extends Exception {
 
-	/**
-	 * Default constructor for {@link MissingConfigurationException}.
-	 * 
-	 * @param message
-	 *          The message to set.
-	 */
-	public MissingConfigurationException(String message) {
-		super(message);
-	}
+  /**
+   * Default constructor for {@link MissingConfigurationException}.
+   * 
+   * @param message
+   *          The message to set.
+   */
+  public MissingConfigurationException(String message) {
+    super(message);
+  }
 }

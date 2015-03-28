@@ -16,10 +16,10 @@ import com.ssachtleben.play.plugin.auth.models.Identity;
 @Target(ElementType.TYPE)
 public @interface Provider {
 
-	/**
-	 * The {@link Identity} model which will be provided.
-	 * 
-	 * @return The {@link Identity} model.
-	 */
-	Class<? extends Identity> type() default Identity.class;
+  /**
+   * The {@link Identity} model which will be provided.
+   * 
+   * @return The {@link Identity} model.
+   */
+  Class<? extends Identity> type() default Identity.class;
 }

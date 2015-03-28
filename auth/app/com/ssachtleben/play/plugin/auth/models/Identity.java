@@ -7,18 +7,18 @@ package com.ssachtleben.play.plugin.auth.models;
  */
 public interface Identity {
 
-	/**
-	 * The user id of the identity.
-	 * 
-	 * @return The user id.
-	 */
-	String id();
+  /**
+   * The user id of the identity.
+   * 
+   * @return The user id.
+   */
+  String id();
 
-	/**
-	 * The provider used during login, for example email, facebook, twitter etc.
-	 * 
-	 * @return The provider.
-	 */
-	String provider();
+  /**
+   * The provider used during login, for example email, facebook, twitter etc.
+   * 
+   * @return The provider.
+   */
+  String provider();
 
 }

@@ -9,9 +9,11 @@ import java.lang.reflect.Method;
 import play.mvc.Controller;
 
 /**
- * Restricts {@link Controller} methods and checks if the logged in user has privilege to execute the {@link Method}.
+ * Restricts {@link Controller} methods and checks if the logged in user has
+ * privilege to execute the {@link Method}.
  * <p>
- * <b>Important:</b> This annotation works only for methods which will be directly invoked by routes.
+ * <b>Important:</b> This annotation works only for methods which will be
+ * directly invoked by routes.
  * </p>
  * 
  * @author Sebastian Sachtleben
@@ -20,18 +22,20 @@ import play.mvc.Controller;
 @Target(ElementType.METHOD)
 public @interface Restricts {
 
-	/**
-	 * The current logged in user must match this role otherwise the method will not invoked.
-	 * 
-	 * @return The cron pattern
-	 */
-	String role() default "";
+  /**
+   * The current logged in user must match this role otherwise the method will
+   * not invoked.
+   * 
+   * @return The cron pattern
+   */
+  String role() default "";
 
-	/**
-	 * The active boolean decides if the restriction check will be executed or not.
-	 * 
-	 * @return The active boolean
-	 */
-	boolean active() default true;
+  /**
+   * The active boolean decides if the restriction check will be executed or
+   * not.
+   * 
+   * @return The active boolean
+   */
+  boolean active() default true;
 
 }

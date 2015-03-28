@@ -16,18 +16,18 @@ import com.ssachtleben.play.plugin.auth.providers.BaseProvider;
 @Target(ElementType.METHOD)
 public @interface PostAuthentication {
 
-	/**
-	 * The Provider to handle, leave this blank to invoke on all authentications.
-	 * 
-	 * @return The {@link BaseProvider} key.
-	 */
-	String provider();
+  /**
+   * The Provider to handle, leave this blank to invoke on all authentications.
+   * 
+   * @return The {@link BaseProvider} key.
+   */
+  String provider();
 
-	/**
-	 * The active boolean decides if method will be invoked or not.
-	 * 
-	 * @return The active boolean.
-	 */
-	boolean active() default true;
+  /**
+   * The active boolean decides if method will be invoked or not.
+   * 
+   * @return The active boolean.
+   */
+  boolean active() default true;
 
 }

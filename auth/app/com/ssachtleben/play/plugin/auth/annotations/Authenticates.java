@@ -16,18 +16,18 @@ import com.ssachtleben.play.plugin.auth.providers.BaseProvider;
 @Target(ElementType.METHOD)
 public @interface Authenticates {
 
-	/**
-	 * The Provider which will be authenticated.
-	 * 
-	 * @return The {@link BaseProvider} key.
-	 */
-	String provider();
+  /**
+   * The Provider which will be authenticated.
+   * 
+   * @return The {@link BaseProvider} key.
+   */
+  String provider();
 
-	/**
-	 * The active boolean decides if the authentication method check will be used.
-	 * 
-	 * @return The active boolean.
-	 */
-	boolean active() default true;
+  /**
+   * The active boolean decides if the authentication method check will be used.
+   * 
+   * @return The active boolean.
+   */
+  boolean active() default true;
 
 }
