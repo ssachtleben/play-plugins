@@ -8,7 +8,7 @@ Useful plugins for Play Framework 2.x.
 
 | Name                 | Description                                | Plugin Version | Play Version |
 | -------------------- | ------------------------------------------ | -------------- | ------------ |
-| [auth](auth)         | Simple user authentication                 | 3.0-SNAPSHOT   | 2.3.x        |
+| [auth](auth)         | Simple user authentication                 | 3.1-SNAPSHOT   | 2.3.x        |
 | [base](base)         | Extended plugin functionality              | 3.0-SNAPSHOT   | 2.3.x        |
 | [compress](compress) | HTML compress controller                   | 3.0-SNAPSHOT   | 2.3.x        |
 | [cron](cron)         | Annotation driven time-based job scheduler | 3.0-SNAPSHOT   | 2.3.x        |
