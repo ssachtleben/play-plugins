@@ -16,47 +16,47 @@ import com.googlecode.htmlcompressor.compressor.HtmlCompressor;
  */
 public class PrettyController extends Controller {
 
-	public static Results.Status ok(final Content content) {
-		return Results.ok(prettify(content)).as("text/html; charset=utf-8");
-	}
+  public static Results.Status ok(final Content content) {
+    return Results.ok(prettify(content)).as("text/html; charset=utf-8");
+  }
 
-	public static Results.Status badRequest(final Content content) {
-		return Results.badRequest(prettify(content)).as("text/html; charset=utf-8");
-	}
+  public static Results.Status badRequest(final Content content) {
+    return Results.badRequest(prettify(content)).as("text/html; charset=utf-8");
+  }
 
-	public static Results.Status notFound(final Content content) {
-		return Results.notFound(prettify(content)).as("text/html; charset=utf-8");
-	}
+  public static Results.Status notFound(final Content content) {
+    return Results.notFound(prettify(content)).as("text/html; charset=utf-8");
+  }
 
-	public static Results.Status forbidden(final Content content) {
-		return Results.forbidden(prettify(content)).as("text/html; charset=utf-8");
-	}
+  public static Results.Status forbidden(final Content content) {
+    return Results.forbidden(prettify(content)).as("text/html; charset=utf-8");
+  }
 
-	public static Results.Status internalServerError(final Content content) {
-		return Results.internalServerError(prettify(content)).as("text/html; charset=utf-8");
-	}
+  public static Results.Status internalServerError(final Content content) {
+    return Results.internalServerError(prettify(content)).as("text/html; charset=utf-8");
+  }
 
-	public static Results.Status unauthorized(final Content content) {
-		return Results.unauthorized(prettify(content)).as("text/html; charset=utf-8");
-	}
+  public static Results.Status unauthorized(final Content content) {
+    return Results.unauthorized(prettify(content)).as("text/html; charset=utf-8");
+  }
 
-	/**
-	 * Prettify the {@link Content}, e.g. removing whitespaces and linebreaks.
-	 * 
-	 * @param content
-	 *          The {@link Content} to prettify.
-	 * @return The prettified content.
-	 */
-	private static String prettify(final Content content) {
-		if (Play.isDev()) {
-			return content.body();
-		}
-		final HtmlCompressor compressor = new HtmlCompressor();
-		final String output = content.body().trim();
-		compressor.setRemoveComments(true);
-		compressor.setCompressCss(true);
-		compressor.setCompressJavaScript(true);
-		compressor.setRemoveIntertagSpaces(true);
-		return compressor.compress(output);
-	}
+  /**
+   * Prettify the {@link Content}, e.g. removing whitespaces and linebreaks.
+   * 
+   * @param content
+   *          The {@link Content} to prettify.
+   * @return The prettified content.
+   */
+  private static String prettify(final Content content) {
+    if (Play.isDev()) {
+      return content.body();
+    }
+    final HtmlCompressor compressor = new HtmlCompressor();
+    final String output = content.body().trim();
+    compressor.setRemoveComments(true);
+    compressor.setCompressCss(true);
+    compressor.setCompressJavaScript(true);
+    compressor.setRemoveIntertagSpaces(true);
+    return compressor.compress(output);
+  }
 }

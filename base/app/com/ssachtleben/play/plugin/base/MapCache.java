@@ -5,10 +5,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class MapCache<K, V> {
 
-	private ConcurrentHashMap<K, V> cache = new ConcurrentHashMap<K, V>();
+  private ConcurrentHashMap<K, V> cache = new ConcurrentHashMap<K, V>();
 
-	public Map<K, V> cache() {
-		return cache;
-	}
+  public Map<K, V> cache() {
+    return cache;
+  }
 
 }
