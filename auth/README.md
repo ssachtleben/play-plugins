@@ -2,29 +2,49 @@
 
 **IMPORTANT: The plugin is still in develop and maybe cause unexpected behaviors**
 
+This plugin adds a simple user authentication layer to your application. It depends on Scribe for the oauth process.
+
 ## Provider Configuration
 
-The following providers are supported:
+The following auth providers are supported:
 
-- facebook
-- google
-- linkedin
-- twitter
-- yahoo
+| Name     | Type   | Configuration Key |
+| ---------| -------| ----------------- |
+| Facebook | OAuth2 | facebook          |
+| Google   | OAuth2 | google			|
+| LinkedIn | OAuth2 | linkedin			|
+| Twitter  | OAuth1 | twitter			|
+| Yahoo    | OAuth1 | yahoo				|
 
-Here is a list of all properties which can be defined for each provider:
+Each provider needs to be configurated in the application.conf:
+
+| Name     | Description                                                     |
+| ---------| --------------------------------------------------------------- |
+| key      | The application id                                              |
+| secret   | The appication secret                                           |
+| scope    | The oauth scope                                                 |
+| fields   | Name of the fields which will be provided in a json data object |
+| callback | The callback url                                                |
+| success  | The success url                                                 |
+| error    | The error url                                                   |
+
+This is an example configuration for facebook:
 
 ```
-auth.facebook.key=""
-auth.facebook.secret=""
-auth.facebook.scope=""
-auth.facebook.fields=""
-auth.facebook.callback=""
-auth.facebook.success=""
-auth.facebook.error=""
+auth.facebook.key="123456789"
+auth.facebook.secret="123456789123456789"
+auth.facebook.scope="email,publish_actions"
+auth.facebook.fields="id,name,email,first_name,picture"
+auth.facebook.callback="http://localhost:9000/login/facebook/auth"
+auth.facebook.success="http://localhost:9000/login/facebook/success"
+auth.facebook.error="http://localhost:9000/login/facebook/error"
 ```
 
-All providers with a valid configuration are active by default.
+All providers with a valid configuration are active by default. If a provider is not working as excepted change the log level in the application.conf and check the log files for warnings:
+
+```
+logger.com.ssachtleben.play.plugin.auth.Providers=WARN
+```
 
 ## Authentication Events
 
@@ -51,7 +71,7 @@ auth.events.async = true
 
 ### Observe Events
 
-The auth plugin depends on the event plugin which is used to trigger them. It's very easy to observe them:
+The auth plugin depends on the event plugin which is used to trigger them. It's very easy to observe them. Here is an example:
 
 ```
 @Observer(topic = AuthEvents.AUTHENTICATION_SUCCESSFUL)
