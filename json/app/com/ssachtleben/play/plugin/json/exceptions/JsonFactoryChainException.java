@@ -10,23 +10,24 @@ import com.ssachtleben.play.plugin.json.JsonFactory;
 @SuppressWarnings("serial")
 public class JsonFactoryChainException extends Exception {
 
-	/**
-	 * Default {@link JsonFactoryChainException} constructor with message that contains what happend.
-	 * 
-	 * @param message
-	 *          The message about the problem.
-	 */
-	public JsonFactoryChainException(String message) {
-		super(message);
-	}
+  /**
+   * Default {@link JsonFactoryChainException} constructor with message that
+   * contains what happend.
+   * 
+   * @param message
+   *          The message about the problem.
+   */
+  public JsonFactoryChainException(String message) {
+    super(message);
+  }
 
-	/**
-	 * Default {@link JsonFactoryChainException} constructor with an exception.
-	 * 
-	 * @param e
-	 *          The ocurred exception.
-	 */
-	public JsonFactoryChainException(Exception e) {
-		super(e);
-	}
+  /**
+   * Default {@link JsonFactoryChainException} constructor with an exception.
+   * 
+   * @param e
+   *          The ocurred exception.
+   */
+  public JsonFactoryChainException(Exception e) {
+    super(e);
+  }
 }

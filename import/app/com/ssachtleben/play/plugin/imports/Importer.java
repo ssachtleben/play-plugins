@@ -7,6 +7,6 @@ package com.ssachtleben.play.plugin.imports;
  */
 public interface Importer {
 
-	void process();
+  void process();
 
 }

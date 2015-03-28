@@ -6,7 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The StartJob annotation declares a class as job and will be executed by the {@link CronService} during application start.
+ * The StartJob annotation declares a class as job and will be executed by the
+ * {@link CronService} during application start.
  * 
  * @author Sebastian Sachtleben
  */
@@ -14,14 +15,15 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface StartJob {
 
-	/**
-	 * @return The async boolean decides if the job will be executed sync or async.
-	 */
-	boolean async() default false;
+  /**
+   * @return The async boolean decides if the job will be executed sync or
+   *         async.
+   */
+  boolean async() default false;
 
-	/**
-	 * @return The active boolean decides if the job will be executed or not.
-	 */
-	boolean active() default true;
+  /**
+   * @return The active boolean decides if the job will be executed or not.
+   */
+  boolean active() default true;
 
 }

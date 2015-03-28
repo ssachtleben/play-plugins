@@ -11,7 +11,9 @@ Useful plugins for Play Framework 2.x.
 | [auth](auth)         | Simple user authentication                 | 3.0-SNAPSHOT   | 2.3.x        |
 | [base](base)         | Extended plugin functionality              | 3.0-SNAPSHOT   | 2.3.x        |
 | [compress](compress) | HTML compress controller                   | 3.0-SNAPSHOT   | 2.3.x        |
+| [cron](cron)         | Annotation driven time-based job scheduler | 3.0-SNAPSHOT   | 2.3.x        |
 | [event](event)       | Publication and Subscription of events     | 3.0-SNAPSHOT   | 2.3.x        |
+| [json](json)         | Chainable json bean mapper                 | 3.0-SNAPSHOT   | 2.3.x        |
 
 Check the plugin readme to learn how to add the plugin to your project. Every plugin has usage informations in the readme and at least one sample project so it should be easy to find out how to use it.
 

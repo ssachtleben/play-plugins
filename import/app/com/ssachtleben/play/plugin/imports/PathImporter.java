@@ -15,10 +15,10 @@ import play.Play;
  */
 public abstract class PathImporter<E extends Serializable> extends AbstractImporter<E> {
 
-	@Override
-	public void process() {
-		File baseFolder = new File(Play.application().path(), getBaseFolder());
-		readDirectory(baseFolder, null, true);
-	}
+  @Override
+  public void process() {
+    File baseFolder = new File(Play.application().path(), getBaseFolder());
+    readDirectory(baseFolder, null, true);
+  }
 
 }

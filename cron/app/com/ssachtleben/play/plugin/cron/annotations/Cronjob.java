@@ -6,8 +6,9 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The Cronjob annotation declares a class as job and will be executed by the {@link CronService} if the {@code active} boolean is true. The
- * annotated class should also implement Runnable for the run method.
+ * The Cronjob annotation declares a class as job and will be executed by the
+ * {@link CronService} if the {@code active} boolean is true. The annotated
+ * class should also implement Runnable for the run method.
  * 
  * @author Sebastian Sachtleben
  */
@@ -15,18 +16,19 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface CronJob {
 
-	/**
-	 * The pattern when the job will be executed. By default it will be triggered every second.
-	 * 
-	 * @return The cron pattern
-	 */
-	String pattern() default "* * * * * ?";
+  /**
+   * The pattern when the job will be executed. By default it will be triggered
+   * every second.
+   * 
+   * @return The cron pattern
+   */
+  String pattern() default "* * * * * ?";
 
-	/**
-	 * The active boolean decides if the job will be executed or not.
-	 * 
-	 * @return The active boolean
-	 */
-	boolean active() default true;
+  /**
+   * The active boolean decides if the job will be executed or not.
+   * 
+   * @return The active boolean
+   */
+  boolean active() default true;
 
 }
