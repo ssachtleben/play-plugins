@@ -48,11 +48,11 @@ logger.com.ssachtleben.play.plugin.auth.Providers=WARN
 
 ## Authentication Events
 
-It's possible to execute custom code before or after the autentication. There are also events if the authentication was successful or failed.
+It's possible to execute custom code during the authentication process. There are multiple events which can be observed.
 
 ### Event Types
 
-Here is a list with all events:
+Here is a list with all authentication events:
 
 | Name                                 | Description                                                       | Parameter      							                |
 | ------------------------------------ | ----------------------------------------------------------------- | ---------------------------------------------------------- |
