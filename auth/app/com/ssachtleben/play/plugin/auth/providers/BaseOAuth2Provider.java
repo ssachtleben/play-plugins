@@ -1,6 +1,6 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;
 

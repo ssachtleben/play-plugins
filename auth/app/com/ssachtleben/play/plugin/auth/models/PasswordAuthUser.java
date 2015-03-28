@@ -1,7 +1,7 @@
 package com.ssachtleben.play.plugin.auth.models;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import play.Logger;
 
