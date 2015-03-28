@@ -47,25 +47,27 @@ public abstract class BaseProvider<U extends Identity> {
    * 
    * @author Sebastian Sachtleben
    */
-  public static abstract class EventKeys {
+  public static abstract class AuthEvents {
 
     /**
-     * Fired sync event before authentication process starts. Parameters are
-     * provider string and context.
+     * Fired sync event before authentication process starts.
      */
     public static final String AUTHENTICATION_BEFORE = "authenticationBefore";
 
     /**
-     * Fired async event after successful authentication. Parameters are
-     * provider string and auth user.
+     * Fired sync event after authentication process is done.
      */
-    public static final String AUTHENTICATION_SUCCESSFUL = "authenticationSuccessful";
+    public static final String AUTHENTICATION_AFTER = "authenticationAfter";
 
     /**
-     * Fired async event after failed authentication. Parameters are provider
-     * string and context.
+     * Fired async event after successful authentication.
      */
-    public static final String AUTHENTICATION_FAILED = "authenticationFailed";
+    public static final String AUTHENTICATION_SUCCESS = "authenticationSuccess";
+
+    /**
+     * Fired async event after failed authentication.
+     */
+    public static final String AUTHENTICATION_ERROR = "authenticationError";
   }
 
   /**
@@ -99,7 +101,8 @@ public abstract class BaseProvider<U extends Identity> {
    * @throws AuthenticationException
    */
   public Result login(final Context ctx) throws AuthenticationException {
-    Events.instance().publish(EventKeys.AUTHENTICATION_BEFORE, key(), ctx);
+    final boolean asyncEvents = config().getConfig("events").getBoolean("async", false);
+    fireEvent(asyncEvents, AuthEvents.AUTHENTICATION_BEFORE, ctx, key());
     AuthUser authUser = handle(ctx);
     if (authUser != null) {
       Object user = null;
@@ -118,12 +121,21 @@ public abstract class BaseProvider<U extends Identity> {
       logger().debug("User: " + user);
       if (user != null) {
         ctx.session().put(Auth.SESSION_USER_KEY, user.toString());
-        Events.instance().publishAsync(EventKeys.AUTHENTICATION_SUCCESSFUL, key(), user);
+        fireEvent(asyncEvents, AuthEvents.AUTHENTICATION_SUCCESS, ctx, user, key());
+        fireEvent(asyncEvents, AuthEvents.AUTHENTICATION_AFTER, ctx, key());
         return onSuccess(ctx);
       }
     }
-    Events.instance().publishAsync(EventKeys.AUTHENTICATION_FAILED, key(), ctx);
+    fireEvent(asyncEvents, AuthEvents.AUTHENTICATION_ERROR, ctx, key());
     return onError(ctx);
+  }
+
+  private void fireEvent(final boolean async, final String name, final Object... params) {
+    if (async) {
+      Events.instance().publishAsync(name, params);
+    } else {
+      Events.instance().publish(name, params);
+    }
   }
 
   /**

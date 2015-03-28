@@ -32,7 +32,8 @@ public class Auth {
   public static abstract class SettingKeys {
 
     /**
-     * The setting key for all auth configuration properties in application.cof.
+     * The setting key for all auth configuration properties in
+     * application.conf.
      */
     public static final String AUTH = "auth";
   }
