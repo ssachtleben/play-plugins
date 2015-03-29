@@ -1,6 +1,5 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import org.scribe.builder.api.Api;
 import org.scribe.model.Token;
 
@@ -76,8 +75,6 @@ public class Google extends BaseOAuth2Provider<GoogleAuthUser> {
    */
   @Override
   protected GoogleAuthUser transform(Token token) throws AuthenticationException {
-    JsonNode data = data(token, RESOURCE_URL);
-    logger().info("Retrieved: " + data.toString());
-    return new GoogleAuthUser(token, data);
+    return new GoogleAuthUser(token, data(token, RESOURCE_URL));
   }
 }

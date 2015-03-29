@@ -109,14 +109,14 @@ public abstract class BaseProvider<U extends Identity> {
       Object user = null;
       Method authMethod = Providers.getMethod(key());
       if (authMethod != null) {
-        logger().info(String.format("Using custom auth method for %s provider", key()));
+        logger().debug(String.format("Using custom auth method for %s provider", key()));
         try {
           user = authMethod.invoke(null, ctx, authUser);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
           logger().error(String.format("Failed to invoke authenticate method for %s provider", key()), e);
         }
       } else {
-        logger().info("Using default auth service ... (maybe deprecated soon)");
+        logger().warn("Using default auth service ... (maybe deprecated soon)");
         user = Auth.service().find(authUser);
       }
       logger().debug("User: " + user);

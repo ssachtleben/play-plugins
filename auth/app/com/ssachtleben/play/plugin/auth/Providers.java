@@ -60,16 +60,16 @@ public class Providers {
    *          The {@link BaseProvider} instance.
    */
   public static boolean register(final String key, final BaseProvider<?> provider) {
-    log.info(String.format("Register %s provider", WordUtils.capitalize(key)));
+    log.debug(String.format("Register %s provider", WordUtils.capitalize(key)));
     try {
       provider.validate();
       final Object previous = cache.put(key, provider);
       if (previous != null) {
-        log.warn(String.format("There are multiple auth providers registered for key '%s'", key));
+        log.warn(String.format("There are multiple auth providers registered for key '%s'", WordUtils.capitalize(key)));
       }
       return true;
     } catch (MissingConfigurationException e) {
-      log.warn(String.format("Failed to register %s provider", key), e);
+      log.warn(String.format("Failed to register %s provider: %s", WordUtils.capitalize(key), e.getMessage()));
     }
     return false;
   }
@@ -81,7 +81,7 @@ public class Providers {
    *          The provider key.
    */
   public static void unregister(final String key) {
-    log.info(String.format("Unregister %s provider", key));
+    log.debug(String.format("Unregister %s provider", key));
     cache.remove(key);
   }
 

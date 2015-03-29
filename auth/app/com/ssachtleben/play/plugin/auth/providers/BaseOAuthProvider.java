@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.Api;
 import org.scribe.model.OAuthRequest;
@@ -23,6 +21,8 @@ import play.mvc.Http.Context;
 import play.mvc.Http.Cookie;
 import play.mvc.Http.Request;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssachtleben.play.plugin.auth.exceptions.AuthenticationException;
 import com.ssachtleben.play.plugin.auth.exceptions.MissingConfigurationException;
 import com.ssachtleben.play.plugin.auth.models.AuthUser;
@@ -132,17 +132,17 @@ public abstract class BaseOAuthProvider<U extends OAuthAuthUser> extends BasePro
    */
   public Token accessToken(final String token, final String verifier) {
     Token requestToken = token != null ? new Token(token, verifier) : null;
-    Cookie tokenCookie = Http.Context.current().request().cookie("token");
+    final Cookie tokenCookie = Http.Context.current().request().cookie("token");
     if (tokenCookie != null) {
-      log.info(String.format("~~~ FOUND COOKIE: %s ~~~", tokenCookie.value()));
+      log.debug(String.format("~~~ FOUND COOKIE: %s ~~~", tokenCookie.value()));
       requestToken = new Token(token, tokenCookie.value());
       Http.Context.current().response().discardCookie("token");
     } else if (token != null) {
       requestToken = new Token(token, verifier);
     }
-    log.info(String.format("Try to get access token for %s - %s", requestToken, verifier));
-    Token tokenObj = service().getAccessToken(requestToken, new Verifier(verifier));
-    log.info(String.format("Retrieved token %s", tokenObj));
+    log.debug(String.format("Try to get access token for %s - %s", requestToken, verifier));
+    final Token tokenObj = service().getAccessToken(requestToken, new Verifier(verifier));
+    log.debug(String.format("Retrieved token %s", tokenObj));
     return tokenObj;
   }
 

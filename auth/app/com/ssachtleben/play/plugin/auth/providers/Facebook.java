@@ -1,11 +1,12 @@
 package com.ssachtleben.play.plugin.auth.providers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.scribe.builder.api.Api;
 import org.scribe.builder.api.FacebookApi;
 import org.scribe.model.Token;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssachtleben.play.plugin.auth.annotations.Provider;
 import com.ssachtleben.play.plugin.auth.exceptions.AuthenticationException;
 import com.ssachtleben.play.plugin.auth.models.FacebookAuthUser;
@@ -101,12 +102,14 @@ public class Facebook extends BaseOAuth2Provider<FacebookAuthUser> {
    */
   @Override
   protected FacebookAuthUser transform(Token token) throws AuthenticationException {
-    String fields = config().getString(SettingKeys.FIELDS, SettingDefault.FIELDS);
     JsonNode data = null;
-    if (fields == null || !"".equals(fields)) {
-      data = me(token, fields);
-    } else {
-      data = new ObjectMapper().createObjectNode();
+    String fields = config().getString(SettingKeys.FIELDS, SettingDefault.FIELDS);
+    if (StringUtils.isNotBlank(fields)) {
+      if (fields == null || !"".equals(fields)) {
+        data = me(token, fields);
+      } else {
+        data = new ObjectMapper().createObjectNode();
+      }
     }
     logger().info("Retrieved: " + data.toString());
     return new FacebookAuthUser(token, data);

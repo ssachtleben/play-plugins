@@ -35,7 +35,7 @@ public abstract class BaseOAuth1Provider<U extends OAuthAuthUser> extends BaseOA
     Token requestToken = service().getRequestToken();
     String url = service().getAuthorizationUrl(requestToken);
     Http.Context.current().response().setCookie("token", requestToken.getSecret());
-    logger().info(String.format("authUrl %s retrieved %s", requestToken, url));
+    logger().debug(String.format("authUrl %s retrieved %s", requestToken, url));
     return url;
   }
 
