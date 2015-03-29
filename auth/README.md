@@ -79,3 +79,14 @@ public static void handleAuthenticationSuccess(final Context ctx, final Object u
     log.info(String.format("Authentication success event [provider=%s, user=%s]", provider, user));
 }
 ```
+
+### Security
+
+The @LoggedIn annotation allows only http request for logged in users:
+
+```
+@LoggedIn
+public class Application extends Controller {
+	...
+}
+```
