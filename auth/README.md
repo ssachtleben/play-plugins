@@ -4,6 +4,24 @@
 
 This plugin adds a simple user authentication layer to your application. It depends on Scribe for the oauth process.
 
+## Plugin Usage
+
+Add the library dependency and the repository resolver to the build.sbt:
+
+```
+libraryDependencies += "com.ssachtleben" %% "play-auth-plugin" % "3.5-SNAPSHOT",
+
+resolvers += Resolver.url("ssachtleben repository (snapshots)", url("http://ssachtleben.github.io/play-plugins/repository/snapshots/"))(Resolver.ivyStylePatterns)
+```
+
+The auth and event plugins have to be added in the conf/play.plugins:
+
+```
+1300:com.ssachtleben.play.plugin.event.EventPlugin
+1400:com.ssachtleben.play.plugin.auth.AuthPlugin
+```
+
+
 ## Provider Configuration
 
 The following auth providers are supported:
