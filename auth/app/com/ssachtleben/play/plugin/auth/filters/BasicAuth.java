@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD, ElementType.TYPE })
 public @interface BasicAuth {
 
+  String realm() default "login";
+
   String username() default "security.baseauth.username";
 
   String password() default "security.baseauth.password";

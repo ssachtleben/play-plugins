@@ -1,8 +1,5 @@
 package com.ssachtleben.play.plugin.auth.filters;
 
-import com.ssachtleben.play.plugin.base.filters.JavaFilter;
-import com.ssachtleben.play.plugin.base.filters.ResultAdapter;
-
 import java.io.IOException;
 import java.lang.reflect.Method;
 
@@ -16,21 +13,26 @@ import play.api.mvc.Result;
 import play.mvc.Results;
 import scala.Option;
 
+import com.ssachtleben.play.plugin.base.filters.JavaFilter;
+import com.ssachtleben.play.plugin.base.filters.ResultAdapter;
+
 public class BasicAuthFilter extends JavaFilter {
   
   @Override
   public Result Apply(Result currentResult, RequestHeader requestHeader) {
     boolean hasMethodAnnotation = false;
     boolean hasClassAnnotation = false;
+    String realm = "";
     String username = "";
     String password = "";
     if (!requestHeader.tags().get("ROUTE_ACTION_METHOD").isEmpty() && !requestHeader.tags().get("ROUTE_CONTROLLER").isEmpty()) {
       try {
-        final Class<?> clazz = Class.forName(requestHeader.tags().get("ROUTE_CONTROLLER").get());
+        final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(requestHeader.tags().get("ROUTE_CONTROLLER").get());
         for (final Method method : clazz.getMethods()) {
           if (method.getName().equals(requestHeader.tags().get("ROUTE_ACTION_METHOD").get()) && method.isAnnotationPresent(BasicAuth.class)) {
             final BasicAuth methodBasicAuth = method.getAnnotation(BasicAuth.class);
             hasMethodAnnotation = true;
+            realm = methodBasicAuth.realm();
             username = Play.application().configuration().getString(methodBasicAuth.username());
             password = Play.application().configuration().getString(methodBasicAuth.password());
           }
@@ -38,6 +40,7 @@ public class BasicAuthFilter extends JavaFilter {
         final BasicAuth classBasicAuth = clazz.getAnnotation(BasicAuth.class);
         if (!hasMethodAnnotation && classBasicAuth != null) {
           hasClassAnnotation = true;
+          realm = classBasicAuth.realm();
           username = Play.application().configuration().getString(classBasicAuth.username());
           password = Play.application().configuration().getString(classBasicAuth.password());
         }
@@ -62,6 +65,6 @@ public class BasicAuthFilter extends JavaFilter {
         Logger.error("Failed to decode authorization header", e);
       }
     }    
-    return new ResultAdapter(Results.unauthorized().toScala()).WithHeader("WWW-Authenticate", "Basic realm=\"my-realm\"!");
+    return new ResultAdapter(Results.unauthorized().toScala()).WithHeader("WWW-Authenticate", "Basic realm=\"" + realm + "\"!");
   }
 }
