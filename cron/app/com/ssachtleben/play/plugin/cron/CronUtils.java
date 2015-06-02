@@ -15,6 +15,7 @@ import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
 import play.Logger;
+import play.api.Play;
 
 import com.ssachtleben.play.plugin.cron.annotations.CronJob;
 import com.ssachtleben.play.plugin.cron.annotations.DependsOn;
@@ -68,10 +69,10 @@ public class CronUtils {
         CronJob cj = cjClass.getAnnotation(CronJob.class);
         if (cj.active()) {
           try {
-            JobData data = new JobData(cjClass.asSubclass(Job.class).newInstance(), true, cj.pattern(), findDependsOn(cjClass));
+            JobData data = new JobData(Play.current().injector().instanceOf(cjClass.asSubclass(Job.class)), true, cj.pattern(), findDependsOn(cjClass));
             log.info(String.format("Found: %s", data));
             jobs.add(data);
-          } catch (InstantiationException | IllegalAccessException e) {
+          } catch (Exception e) {
             log.error(String.format("Failed to create instance of %s", cjClass), e);
           }
         }
