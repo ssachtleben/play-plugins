@@ -8,7 +8,7 @@ scalaVersion := "2.11.1"
 
 libraryDependencies ++= Seq(
     "us.theatr" %% "akka-quartz" % "0.3.0" exclude("org.scala-lang", "scala-library"),
-    "com.ssachtleben" %% "play-base-plugin" % "3.0-SNAPSHOT"
+    "com.ssachtleben" %% "play-base-plugin" % "4.0-SNAPSHOT"
 )
 
 organization := "com.ssachtleben"
