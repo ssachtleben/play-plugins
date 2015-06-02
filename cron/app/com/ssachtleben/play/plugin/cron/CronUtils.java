@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
@@ -40,7 +41,7 @@ public class CronUtils {
     long nanos = System.nanoTime();
     log.debug("Start searching for classes with annotation @" + annotation.getSimpleName());
     URL[] urls = ((URLClassLoader) (Thread.currentThread().getContextClassLoader())).getURLs();
-    Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(urls).setScanners(new TypeAnnotationsScanner()));
+    Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(urls).setScanners(new TypeAnnotationsScanner(), new SubTypesScanner()));
     Set<Class<?>> classes = reflections.getTypesAnnotatedWith(annotation);
     long elapsed = Math.round((double) (System.nanoTime() - nanos) / 1000000.0);
     Set<Class<?>> validClasses = new HashSet<Class<?>>();
