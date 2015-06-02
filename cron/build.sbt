@@ -1,6 +1,6 @@
 name := """play-cron-plugin"""
 
-version := "3.0-SNAPSHOT"
+version := "4.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava)
 

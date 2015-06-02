@@ -2,6 +2,8 @@ package com.ssachtleben.play.plugin.base;
 
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import play.Application;
 import play.Logger;
 import play.Plugin;
@@ -21,7 +23,8 @@ public abstract class ExtendedPlugin extends Plugin {
   /**
    * The {@link Application} instance.
    */
-  protected Application app;
+  @Inject
+  Application app;
 
   /**
    * Default constructor for {@link ExtendedPlugin}.
@@ -29,9 +32,8 @@ public abstract class ExtendedPlugin extends Plugin {
    * @param app
    *          The {@link Application} instance.
    */
-  public ExtendedPlugin(final Application app) {
+  public ExtendedPlugin() {
     log.debug("Create Plugin");
-    this.app = app;
   }
 
   public abstract String name();
