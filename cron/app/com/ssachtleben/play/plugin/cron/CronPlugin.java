@@ -42,16 +42,6 @@ public class CronPlugin extends ExtendedPlugin {
 
   private Set<JobData> jobsPending = Collections.synchronizedSet(new HashSet<JobData>());
 
-  /**
-   * Default constructor.
-   * 
-   * @param app
-   *          The app to set
-   */
-  public CronPlugin(final Application app) {
-    super(app);
-  }
-
   /*
    * (non-Javadoc)
    * 
