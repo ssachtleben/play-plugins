@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
@@ -23,6 +25,9 @@ import com.ssachtleben.play.plugin.auth.providers.BaseProvider;
 
 public class AuthUtils {
 
+  @Inject
+  Application app;
+
   /**
    * The logger for {@link AuthUtils} class.
    */
@@ -34,7 +39,7 @@ public class AuthUtils {
    * @return Set of {@link BaseProvider} instances.
    */
   @SuppressWarnings("unchecked")
-  public static Set<BaseProvider<Identity>> findProviders(Application app) {
+  public static Set<BaseProvider<Identity>> findProviders() {
     long nanos = System.nanoTime();
     log.info(String.format("Start searching for provider classes with annotation @%s", Provider.class.getSimpleName()));
     URL[] urls = ((URLClassLoader) (AuthUtils.class.getClassLoader())).getURLs();

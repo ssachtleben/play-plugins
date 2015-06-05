@@ -20,16 +20,6 @@ import com.ssachtleben.play.plugin.event.annotations.Observer;
  */
 public class EventPlugin extends ExtendedPlugin {
 
-  /**
-   * Creates a new EventPlugin.
-   * 
-   * @param app
-   *          The app to set
-   */
-  public EventPlugin(final Application app) {
-    super(app);
-  }
-
   /*
    * (non-Javadoc)
    * 

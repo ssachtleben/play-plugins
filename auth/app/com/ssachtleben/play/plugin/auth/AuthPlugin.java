@@ -18,16 +18,6 @@ import com.ssachtleben.play.plugin.base.ExtendedPlugin;
  */
 public class AuthPlugin extends ExtendedPlugin {
 
-  /**
-   * Default constructor.
-   * 
-   * @param app
-   *          The app to set
-   */
-  public AuthPlugin(Application app) {
-    super(app);
-  }
-
   /*
    * (non-Javadoc)
    * 
@@ -45,7 +35,7 @@ public class AuthPlugin extends ExtendedPlugin {
    */
   @Override
   public void start() {
-    final Set<BaseProvider<Identity>> providers = AuthUtils.findProviders(app);
+    final Set<BaseProvider<Identity>> providers = AuthUtils.findProviders();
     final Set<Method> authMethods = AuthUtils.findAuthMethods();
     Iterator<BaseProvider<Identity>> iter = providers.iterator();
     while (iter.hasNext()) {
