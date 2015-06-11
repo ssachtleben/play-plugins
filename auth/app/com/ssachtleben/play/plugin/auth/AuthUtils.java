@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import org.reflections.Reflections;
 import org.reflections.scanners.MethodAnnotationsScanner;
+import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ConfigurationBuilder;
 
@@ -43,7 +44,7 @@ public class AuthUtils {
     long nanos = System.nanoTime();
     log.info(String.format("Start searching for provider classes with annotation @%s", Provider.class.getSimpleName()));
     URL[] urls = ((URLClassLoader) (AuthUtils.class.getClassLoader())).getURLs();
-    Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(urls).setScanners(new TypeAnnotationsScanner()));
+    Reflections reflections = new Reflections(new ConfigurationBuilder().setUrls(urls).setScanners(new TypeAnnotationsScanner(), new SubTypesScanner()));
     Set<Class<?>> classes = reflections.getTypesAnnotatedWith(Provider.class);
     long elapsed = Math.round((double) (System.nanoTime() - nanos) / 1000000.0);
     Set<BaseProvider<Identity>> foundClasses = new HashSet<BaseProvider<Identity>>();
