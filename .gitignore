@@ -1,12 +1,15 @@
 /.settings
 /.target
+/.idea
 /project/project
 /project/target
 /target
 /auth
+/base
 /compress
 /cron
 /event
+/import
 /json
 .classpath
 .project
