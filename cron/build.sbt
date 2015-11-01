@@ -1,14 +1,14 @@
 name := """play-cron-plugin"""
 
-version := "4.0-SNAPSHOT"
+version := "4.0"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava)
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.6"
 
 libraryDependencies ++= Seq(
     "us.theatr" %% "akka-quartz" % "0.3.0" exclude("org.scala-lang", "scala-library"),
-    "com.ssachtleben" %% "play-base-plugin" % "4.0-SNAPSHOT"
+    "com.ssachtleben" %% "play-base-plugin" % "4.0"
 )
 
 organization := "com.ssachtleben"

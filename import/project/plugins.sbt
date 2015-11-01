@@ -1,11 +1,3 @@
-// Comment to get more information during initialization
-logLevel := Level.Warn
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.3")
 
-// The Typesafe repository
-resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
-
-// The Theatr.us repository
-resolvers += "Theatr.us repository" at "http://repo.theatr.us/"
-
-// Use the Play sbt plugin for Play projects
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.3.9")
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "3.0.0")

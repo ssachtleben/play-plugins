@@ -1,13 +1,13 @@
 name := """play-event-plugin"""
 
-version := "4.0-SNAPSHOT"
+version := "4.0"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava)
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.6"
 
 libraryDependencies ++= Seq(
-  "com.ssachtleben" %% "play-base-plugin" % "4.0-SNAPSHOT"
+  "com.ssachtleben" %% "play-base-plugin" % "4.0"
 )
 
 organization := "com.ssachtleben"

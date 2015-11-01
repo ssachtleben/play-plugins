@@ -1,6 +1,6 @@
 name := """play-base-plugin"""
 
-version := "4.0-SNAPSHOT"
+version := "4.0"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava)
 
@@ -13,3 +13,5 @@ libraryDependencies ++= Seq(
 organization := "com.ssachtleben"
 
 publishArtifact in(Compile, packageDoc) := false
+
+fork in run := true
