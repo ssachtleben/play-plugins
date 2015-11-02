@@ -124,13 +124,13 @@ public class CronPlugin extends ExtendedPlugin {
    *          The jobData to execute.
    */
   private void executeJob(final JobData jobData) {
-    log.info(String.format("Run %s", jobData));
     if (jobData.async()) {
       promise(new Function0<JobData>() {
         @Override
         public JobData apply() throws Exception {
-          jobData.job().run();
-          return jobData;
+        	log.info(String.format("Run %s", jobData));
+        	jobData.job().run();
+        	return jobData;
         }
       }).map(new Function<JobData, Void>() {
         @Override
@@ -142,7 +142,8 @@ public class CronPlugin extends ExtendedPlugin {
       });
     } else {
       try {
-        jobData.job().run();
+    	  log.info(String.format("Run %s", jobData));
+    	  jobData.job().run();
       } catch (Exception e) {
         log.error("Exception during jop occured", e);
       }

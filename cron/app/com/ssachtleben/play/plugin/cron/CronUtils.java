@@ -95,10 +95,10 @@ public class CronUtils {
         StartJob sj = sjClass.getAnnotation(StartJob.class);
         if (sj.active()) {
           try {
-            JobData data = new JobData(sjClass.asSubclass(Job.class).newInstance(), sj.async(), null, findDependsOn(sjClass));
+            JobData data = new JobData(Play.current().injector().instanceOf(sjClass.asSubclass(Job.class)), sj.async(), null, findDependsOn(sjClass));
             log.info(String.format("Found: %s", data));
             jobs.add(data);
-          } catch (InstantiationException | IllegalAccessException e) {
+          } catch (Exception e) {
             log.error(String.format("Failed to create instance of %s", sjClass), e);
           }
         }
