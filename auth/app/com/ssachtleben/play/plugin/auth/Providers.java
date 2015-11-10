@@ -69,7 +69,7 @@ public class Providers {
       }
       return true;
     } catch (MissingConfigurationException e) {
-      log.warn(String.format("Failed to register %s provider: %s", WordUtils.capitalize(key), e.getMessage()));
+      log.debug(String.format("Failed to register %s provider: %s", WordUtils.capitalize(key), e.getMessage()));
     }
     return false;
   }

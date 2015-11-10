@@ -54,6 +54,9 @@ public class AuthPlugin extends ExtendedPlugin {
       }
       Providers.register(provider.key(), provider, authMethod);
     }
+    if (Providers.list().size() == 0) {
+    	log.warn("Failed to register any auth providers");
+    }
   }
 
   /*
