@@ -213,7 +213,7 @@ public class CronPlugin extends ExtendedPlugin {
       Iterator<JobData> iter = jobsPending.iterator();
       while (iter.hasNext()) {
         JobData data = iter.next();
-        log.info(String.format("Found pending %s", data));
+        log.debug(String.format("Found pending %s", data));
         boolean valid = true;
         Class<?>[] dependsOn = data.dependsOn();
         for (int i = 0; i < dependsOn.length; i++) {
@@ -232,9 +232,9 @@ public class CronPlugin extends ExtendedPlugin {
           return;
         }
       }
-      if (size == jobsPending.size()) {
+      if (size > 0 && size == jobsPending.size()) {
         // TODO: Check for running jobs here ...
-        log.warn("Check for pending jobs, but no job executed (maybe fail configuration?!?)");
+        log.debug(String.format("Check for pending jobs, but no job executed (maybe fail configuration?!?) - %s", jobsPending));
         // log.error(String.format("Found invalid jobs due missing dependencies: %s",
         // Arrays.toString(jobsPending.toArray(new
         // JobData[0]))));
